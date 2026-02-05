@@ -1,0 +1,13 @@
+autodocs
+cmdk
+evenodd
+lucide
+noopener
+noreferrer
+reactjs
+stylesheet
+tanstack
+viewports
+vite
+nowrap
+disabledpointer

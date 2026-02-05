@@ -1,0 +1,14 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "extends": "//",
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["!src/routeTree.gen.ts"]
+  },
+  "root": false
+}

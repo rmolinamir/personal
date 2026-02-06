@@ -3,13 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@acme/ui": "workspace:*",

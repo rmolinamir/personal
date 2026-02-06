@@ -1,5 +1,5 @@
 {
-  "extends": "@acme/tsconfig/tsconfig.reactjs.json",
+  "extends": "@acme/tsconfig/tsconfig.react.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "target": "ES2022",

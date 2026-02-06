@@ -166,7 +166,7 @@ const WindowHeader = React.forwardRef<
     data-slot="window-header"
     className={cn(
       "os-window__drag-handle flex cursor-grab select-none flex-row items-center justify-between gap-3",
-      "border-border/80 border-b bg-muted/60 px-3 py-2!",
+      "border-border/80 border-b bg-muted/60 px-3 py-2",
       "auto-rows-auto grid-rows-none items-center",
       className,
     )}
@@ -233,7 +233,7 @@ const WindowAction = React.forwardRef<
   />
 ));
 
-WindowAction.displayName = "WindowControlButton";
+WindowAction.displayName = "WindowAction";
 
 const WindowFooter = React.forwardRef<
   HTMLDivElement,

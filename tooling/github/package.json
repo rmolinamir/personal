@@ -1,3 +1,6 @@
 {
-	"name": "@acme/github"
+  "name": "@acme/github",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules"
+  }
 }

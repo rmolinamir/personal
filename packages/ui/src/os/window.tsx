@@ -18,12 +18,16 @@ import {
 import { cn } from "../lib/utils";
 import { useWindowBounds } from "./window-hooks";
 import { useWindowState } from "./window-provider";
-import type { WindowFraming, WindowPosition, WindowSize } from "./window-utils";
+import { useWindowSnap } from "./window-snap";
 import {
   clampPercentFraming,
   getCenteredPosition,
+  getPointerPosition,
   toPercentFraming,
   toPixelFraming,
+  type WindowFraming,
+  type WindowPosition,
+  type WindowSize,
 } from "./window-utils";
 
 const fallbackMinSize: WindowSize = { height: 200, width: 280 };
@@ -61,28 +65,44 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
     const previousBoundsRef = React.useRef<WindowSize | null>(null);
     const desiredPixelFramingRef = React.useRef<WindowFraming | null>(null);
 
-    const boundsSize = useWindowBounds(rndRef);
     const { activate, framing, isActive, setFraming, zIndex } =
       useWindowState(windowId);
+    const bounds = useWindowBounds(rndRef);
+    const snap = useWindowSnap();
 
     const defaultSize = initialSize ?? fallbackSize;
 
     const defaultPosition = React.useMemo(() => {
-      if (!boundsSize || initialPosition) {
+      if (!bounds || initialPosition) {
         return initialPosition ?? fallbackPosition;
       }
-      return getCenteredPosition(boundsSize, defaultSize);
-    }, [boundsSize, defaultSize, initialPosition]);
+      return getCenteredPosition(bounds, defaultSize);
+    }, [bounds, defaultSize, initialPosition]);
 
     const pixelFraming = React.useMemo(() => {
-      if (!boundsSize || !framing) return null;
-      return toPixelFraming(framing, boundsSize);
-    }, [boundsSize, framing]);
+      if (!bounds || !framing) return null;
+      return toPixelFraming(framing, bounds);
+    }, [bounds, framing]);
 
     const handleDragStop = React.useCallback<RndDragCallback>(
-      (_event, data) => {
-        if (!boundsSize) return;
+      (event, data) => {
+        if (!bounds) return;
         const currentSize = pixelFraming?.size ?? defaultSize;
+        const snapPointer = getPointerPosition(event);
+        const snapFraming = snapPointer
+          ? snap?.getSnapFraming({
+              pointer: snapPointer,
+              size: currentSize,
+            })
+          : null;
+
+        // If the window is snapping, use the snap's framing then clear the overlay
+        if (snapFraming) {
+          setFraming(snapFraming);
+          snap?.clearOverlay();
+          return;
+        }
+
         desiredPixelFramingRef.current = {
           position: { x: data.x, y: data.y },
           size: currentSize,
@@ -93,15 +113,30 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
               position: { x: data.x, y: data.y },
               size: currentSize,
             },
-            boundsSize,
+            bounds,
           ),
-          boundsSize,
+          bounds,
           minSize,
           maxSize,
         );
         setFraming(nextFraming);
+        snap?.clearOverlay();
       },
-      [boundsSize, defaultSize, maxSize, minSize, pixelFraming, setFraming],
+      [bounds, defaultSize, maxSize, minSize, pixelFraming, setFraming, snap],
+    );
+
+    const handleDrag = React.useCallback<RndDragCallback>(
+      (event) => {
+        if (!bounds) return;
+        const currentSize = pixelFraming?.size ?? defaultSize;
+        const snapPointer = getPointerPosition(event);
+        if (!snapPointer) return;
+        snap?.onDrag({
+          pointer: snapPointer,
+          size: currentSize,
+        });
+      },
+      [bounds, defaultSize, pixelFraming, snap],
     );
 
     const handleDragStart = React.useCallback<RndDragCallback>(() => {
@@ -110,7 +145,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
 
     const handleResizeStop = React.useCallback<RndResizeCallback>(
       (_event, _direction, refElement, _delta, nextPosition) => {
-        if (!boundsSize) return;
+        if (!bounds) return;
         const nextSize = {
           height: refElement.offsetHeight,
           width: refElement.offsetWidth,
@@ -125,15 +160,15 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
               position: nextPosition,
               size: nextSize,
             },
-            boundsSize,
+            bounds,
           ),
-          boundsSize,
+          bounds,
           minSize,
           maxSize,
         );
         setFraming(nextFraming);
       },
-      [boundsSize, maxSize, minSize, setFraming],
+      [bounds, maxSize, minSize, setFraming],
     );
 
     const handleResizeStart = React.useCallback<RndResizeStartCallback>(() => {
@@ -146,22 +181,22 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
 
     // Initialize the frame once we know bounds
     React.useEffect(() => {
-      if (!boundsSize || framing) return;
+      if (!bounds || framing) return;
       const nextFraming = clampPercentFraming(
         toPercentFraming(
           {
             position: defaultPosition,
             size: defaultSize,
           },
-          boundsSize,
+          bounds,
         ),
-        boundsSize,
+        bounds,
         minSize,
         maxSize,
       );
       setFraming(nextFraming);
     }, [
-      boundsSize,
+      bounds,
       defaultPosition,
       defaultSize,
       framing,
@@ -172,23 +207,23 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
 
     // Keep the window inside bounds when the workspace size changes
     React.useEffect(() => {
-      if (!boundsSize || !framing) {
-        previousBoundsRef.current = boundsSize;
+      if (!bounds || !framing) {
+        previousBoundsRef.current = bounds;
         return;
       }
 
       const previousBounds = previousBoundsRef.current;
       if (!previousBounds) {
-        previousBoundsRef.current = boundsSize;
+        previousBoundsRef.current = bounds;
         return;
       }
 
       const boundsDecreased =
-        boundsSize.width < previousBounds.width ||
-        boundsSize.height < previousBounds.height;
+        bounds.width < previousBounds.width ||
+        bounds.height < previousBounds.height;
       const boundsIncreased =
-        boundsSize.width > previousBounds.width ||
-        boundsSize.height > previousBounds.height;
+        bounds.width > previousBounds.width ||
+        bounds.height > previousBounds.height;
 
       if (boundsDecreased || boundsIncreased) {
         // Use the last user-driven pixel frame as the target
@@ -198,27 +233,26 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
             size: defaultSize,
           };
 
-        const widthOverflow = desiredPixelFraming.size.width > boundsSize.width;
-        const heightOverflow =
-          desiredPixelFraming.size.height > boundsSize.height;
+        const widthOverflow = desiredPixelFraming.size.width > bounds.width;
+        const heightOverflow = desiredPixelFraming.size.height > bounds.height;
 
         const nextSize = {
           height: heightOverflow
             ? Math.max(
                 minSize.height,
-                Math.min(desiredPixelFraming.size.height, boundsSize.height),
+                Math.min(desiredPixelFraming.size.height, bounds.height),
               )
             : desiredPixelFraming.size.height,
           width: widthOverflow
             ? Math.max(
                 minSize.width,
-                Math.min(desiredPixelFraming.size.width, boundsSize.width),
+                Math.min(desiredPixelFraming.size.width, bounds.width),
               )
             : desiredPixelFraming.size.width,
         };
 
-        const maxX = Math.max(0, boundsSize.width - nextSize.width);
-        const maxY = Math.max(0, boundsSize.height - nextSize.height);
+        const maxX = Math.max(0, bounds.width - nextSize.width);
+        const maxY = Math.max(0, bounds.height - nextSize.height);
 
         const nextPosition = {
           x: Math.min(Math.max(desiredPixelFraming.position.x, 0), maxX),
@@ -230,7 +264,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
             position: nextPosition,
             size: nextSize,
           },
-          boundsSize,
+          bounds,
         );
 
         if (
@@ -243,8 +277,8 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
         }
       }
 
-      previousBoundsRef.current = boundsSize;
-    }, [boundsSize, framing, minSize, setFraming, pixelFraming, defaultSize]);
+      previousBoundsRef.current = bounds;
+    }, [bounds, framing, minSize, setFraming, pixelFraming, defaultSize]);
 
     return (
       <Rnd
@@ -269,6 +303,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
           ...style,
           zIndex,
         }}
+        onDrag={handleDrag}
         onDragStop={handleDragStop}
         onDragStart={handleDragStart}
         onResizeStart={handleResizeStart}
@@ -306,7 +341,7 @@ const WindowHeader = React.forwardRef<
     data-slot="window-header"
     className={cn(
       "os-window__drag-handle flex cursor-grab select-none flex-row items-center justify-between gap-3",
-      "border-border/80 border-b bg-muted/60 px-3 py-2",
+      "border-border/80 border-b bg-muted/60 px-3 py-2!",
       "auto-rows-auto grid-rows-none items-center",
       className,
     )}

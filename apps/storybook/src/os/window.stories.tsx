@@ -9,6 +9,7 @@ import {
   WindowTitle,
 } from "@acme/ui/os/window";
 import { WindowProvider } from "@acme/ui/os/window-provider";
+import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -195,4 +196,61 @@ export const ConstrainedBounds: Story = {
       </WindowProvider>
     );
   },
+};
+
+export const WithSnapping: Story = {
+  render: () => (
+    <WindowProvider>
+      <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+        <Window
+          defaultPosition={{ x: 80, y: 80 }}
+          defaultSize={{ height: 320, width: 520 }}
+        >
+          <WindowHeader>
+            <WindowTitle>About</WindowTitle>
+            <WindowActions>
+              <WindowAction aria-label="Minimize">—</WindowAction>
+              <WindowAction aria-label="Maximize">□</WindowAction>
+              <WindowAction aria-label="Close">×</WindowAction>
+            </WindowActions>
+          </WindowHeader>
+          <WindowContent>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Snap Assist</p>
+              <p className="text-muted-foreground">
+                Drag a window to the left or right edge to preview snapping.
+              </p>
+            </div>
+          </WindowContent>
+        </Window>
+
+        <Window
+          defaultPosition={{ x: 260, y: 140 }}
+          defaultSize={{ height: 320, width: 520 }}
+        >
+          <WindowHeader>
+            <WindowTitle>Explorer</WindowTitle>
+            <WindowActions>
+              <WindowAction aria-label="Minimize">—</WindowAction>
+              <WindowAction aria-label="Maximize">□</WindowAction>
+              <WindowAction aria-label="Close">×</WindowAction>
+            </WindowActions>
+          </WindowHeader>
+          <WindowContent>
+            <div className="grid gap-3 text-sm">
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                Snap to the right half.
+              </div>
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                Overlay appears on hover.
+              </div>
+            </div>
+          </WindowContent>
+          <WindowFooter className="text-muted-foreground text-xs">
+            Drag to edges
+          </WindowFooter>
+        </Window>
+      </WindowSnap>
+    </WindowProvider>
+  ),
 };

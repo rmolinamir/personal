@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import type { Rnd } from "react-rnd";
+import type { Rnd, RndDragCallback } from "react-rnd";
 
 export type WindowPosition = {
   x: number;
@@ -23,6 +23,8 @@ export type RndInstance = Rnd & {
   resizableElement?: HTMLElement;
 };
 
+export type RndDraggableEvent = Parameters<RndDragCallback>[0];
+
 export function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -38,6 +40,16 @@ export function getParentElement(rndRef: RefObject<Rnd | null>) {
   const selfElement =
     instance?.getSelfElement?.() ?? instance?.resizableElement ?? null;
   return selfElement?.parentElement ?? null;
+}
+
+export function getPointerPosition(event: RndDraggableEvent | null) {
+  if (!event) return null;
+  if ("touches" in event) {
+    const touch = event.touches[0] ?? event.changedTouches[0];
+    if (!touch) return null;
+    return { x: touch.clientX, y: touch.clientY };
+  }
+  return { x: event.clientX, y: event.clientY };
 }
 
 export function toPercentFraming(

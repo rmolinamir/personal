@@ -8,13 +8,19 @@ export type ActiveWindow = {
 
 export type WindowProviderState = {
   stack: ActiveWindow[];
-  windows: Record<string, WindowFraming>;
+  windows: Record<string, WindowData>;
   focusedId?: string;
+};
+
+type WindowData = {
+  framing?: WindowFraming;
+  isMaximized?: boolean;
+  previousFraming?: WindowFraming | null;
 };
 
 export type WindowContextValue = {
   stack: ActiveWindow[];
-  windows: Record<string, WindowFraming>;
+  windows: Record<string, WindowData>;
   focusedId?: string;
   mountWindow: (id: string) => void;
   unmountWindow: (id: string) => void;
@@ -22,6 +28,8 @@ export type WindowContextValue = {
   getWindow: (id: string) => ActiveWindow | undefined;
   getFraming: (id: string) => WindowFraming | undefined;
   setFraming: (id: string, framing: WindowFraming) => void;
+  toggleMaximize: (id: string) => void;
+  getIsMaximized: (id: string) => boolean;
 };
 
 const WindowContext = React.createContext<WindowContextValue | null>(null);
@@ -118,7 +126,7 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
   );
 
   const getFraming = React.useCallback(
-    (id: string) => state.windows[id],
+    (id: string) => state.windows[id]?.framing,
     [state.windows],
   );
 
@@ -127,9 +135,57 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
       ...prev,
       windows: {
         ...prev.windows,
-        [id]: framing,
+        [id]: {
+          ...prev.windows[id],
+          framing,
+        },
       },
     }));
+  }, []);
+
+  const getIsMaximized = React.useCallback(
+    (id: string) => Boolean(state.windows[id]?.isMaximized),
+    [state.windows],
+  );
+
+  const toggleMaximize = React.useCallback((id: string) => {
+    setState((prev) => {
+      const windowData = prev.windows[id];
+      if (!windowData?.framing) return prev;
+
+      if (windowData.isMaximized) {
+        const restoredFraming =
+          windowData.previousFraming ?? windowData.framing;
+        return {
+          ...prev,
+          windows: {
+            ...prev.windows,
+            [id]: {
+              ...windowData,
+              framing: restoredFraming,
+              isMaximized: false,
+              previousFraming: null,
+            },
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        windows: {
+          ...prev.windows,
+          [id]: {
+            ...windowData,
+            framing: {
+              position: { x: 0, y: 0 },
+              size: { height: 100, width: 100 },
+            },
+            isMaximized: true,
+            previousFraming: windowData.framing,
+          },
+        },
+      };
+    });
   }, []);
 
   const value = React.useMemo<WindowContextValue>(
@@ -137,15 +193,18 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
       activateWindow,
       focusedId: state.focusedId,
       getFraming: getFraming,
+      getIsMaximized,
       getWindow,
       mountWindow,
       setFraming: setFraming,
       stack: state.stack,
+      toggleMaximize,
       unmountWindow,
       windows: state.windows,
     }),
     [
       activateWindow,
+      getIsMaximized,
       getFraming,
       getWindow,
       state.windows,
@@ -153,6 +212,7 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
       setFraming,
       state.focusedId,
       state.stack,
+      toggleMaximize,
       unmountWindow,
     ],
   );
@@ -176,10 +236,12 @@ function useWindows() {
 
 export type WindowState = {
   isActive: boolean;
+  isMaximized: boolean;
   zIndex: number;
   activate: () => void;
   framing?: WindowFraming;
   setFraming: (framing: WindowFraming) => void;
+  toggleMaximize: () => void;
 };
 
 function useWindowState(id: string): WindowState {
@@ -206,7 +268,9 @@ function useWindowState(id: string): WindowState {
     activate: () => activateWindow(id),
     framing: manager.getFraming(id),
     isActive: manager.focusedId === id,
+    isMaximized: manager.getIsMaximized(id),
     setFraming: (framing) => manager.setFraming(id, framing),
+    toggleMaximize: () => manager.toggleMaximize(id),
     zIndex: activeWindow?.zIndex ?? 1,
   };
 }

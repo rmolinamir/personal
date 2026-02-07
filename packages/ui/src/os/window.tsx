@@ -34,6 +34,18 @@ const fallbackMinSize: WindowSize = { height: 200, width: 280 };
 const fallbackPosition: WindowPosition = { x: 0, y: 0 };
 const fallbackSize: WindowSize = { height: 360, width: 480 };
 
+type WindowControlsContextValue = {
+  isMaximized: boolean;
+  toggleMaximize: () => void;
+};
+
+const WindowControllerContext =
+  React.createContext<WindowControlsContextValue | null>(null);
+
+function useWindowController() {
+  return React.useContext(WindowControllerContext);
+}
+
 export type WindowProps = React.HTMLAttributes<HTMLDivElement> & {
   defaultPosition?: WindowPosition;
   defaultSize?: WindowSize;
@@ -65,12 +77,24 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
     const previousBoundsRef = React.useRef<WindowSize | null>(null);
     const desiredPixelFramingRef = React.useRef<WindowFraming | null>(null);
 
-    const { activate, framing, isActive, setFraming, zIndex } =
-      useWindowState(windowId);
+    const {
+      activate,
+      framing,
+      isActive,
+      isMaximized,
+      setFraming,
+      toggleMaximize,
+      zIndex,
+    } = useWindowState(windowId);
     const bounds = useWindowBounds(rndRef);
     const snap = useWindowSnap();
 
     const defaultSize = initialSize ?? fallbackSize;
+
+    const controller = React.useMemo<WindowControlsContextValue>(
+      () => ({ isMaximized, toggleMaximize }),
+      [isMaximized, toggleMaximize],
+    );
 
     const defaultPosition = React.useMemo(() => {
       if (!bounds || initialPosition) {
@@ -207,7 +231,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
 
     // Keep the window inside bounds when the workspace size changes
     React.useEffect(() => {
-      if (!bounds || !framing) {
+      if (!bounds || !framing || isMaximized) {
         previousBoundsRef.current = bounds;
         return;
       }
@@ -278,54 +302,64 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
       }
 
       previousBoundsRef.current = bounds;
-    }, [bounds, framing, minSize, setFraming, pixelFraming, defaultSize]);
+    }, [
+      bounds,
+      framing,
+      isMaximized,
+      minSize,
+      setFraming,
+      pixelFraming,
+      defaultSize,
+    ]);
 
     return (
-      <Rnd
-        ref={rndRef}
-        bounds="parent"
-        disableDragging={!draggable}
-        enableResizing={resizable}
-        dragHandleClassName="os-window__drag-handle"
-        minWidth={minSize.width}
-        minHeight={minSize.height}
-        maxWidth={maxSize?.width}
-        maxHeight={maxSize?.height}
-        default={{
-          ...defaultSize,
-          ...defaultPosition,
-        }}
-        position={pixelFraming?.position}
-        size={pixelFraming?.size}
-        style={{
-          maxHeight: "100%",
-          maxWidth: "100%",
-          ...style,
-          zIndex,
-        }}
-        onDrag={handleDrag}
-        onDragStop={handleDragStop}
-        onDragStart={handleDragStart}
-        onResizeStart={handleResizeStart}
-        onResizeStop={handleResizeStop}
-        onMouseDown={handleMouseDown}
-      >
-        <Card
-          ref={ref}
-          data-slot="window"
-          data-focused={isActive ? "true" : "false"}
-          className={cn(
-            "os-window flex h-full w-full flex-col gap-0 border-border/80 p-0 shadow-lg",
-            "transition-shadow data-[focused=true]:shadow-xl",
-            "data-[focused=false]:**:data-[slot=window-content]:select-none",
-            "data-[focused=true]:**:data-[slot=window-content]:select-text",
-            className,
-          )}
-          {...props}
+      <WindowControllerContext.Provider value={controller}>
+        <Rnd
+          ref={rndRef}
+          bounds="parent"
+          disableDragging={!draggable}
+          enableResizing={resizable}
+          dragHandleClassName="os-window__drag-handle"
+          minWidth={minSize.width}
+          minHeight={minSize.height}
+          maxWidth={maxSize?.width}
+          maxHeight={maxSize?.height}
+          default={{
+            ...defaultSize,
+            ...defaultPosition,
+          }}
+          position={pixelFraming?.position}
+          size={pixelFraming?.size}
+          style={{
+            maxHeight: "100%",
+            maxWidth: "100%",
+            ...style,
+            zIndex,
+          }}
+          onDrag={handleDrag}
+          onDragStop={handleDragStop}
+          onDragStart={handleDragStart}
+          onResizeStart={handleResizeStart}
+          onResizeStop={handleResizeStop}
+          onMouseDown={handleMouseDown}
         >
-          {children}
-        </Card>
-      </Rnd>
+          <Card
+            ref={ref}
+            data-slot="window"
+            data-focused={isActive ? "true" : "false"}
+            className={cn(
+              "os-window flex h-full w-full flex-col gap-0 border-border/80 p-0 shadow-lg",
+              "transition-shadow data-[focused=true]:shadow-xl",
+              "data-[focused=false]:**:data-[slot=window-content]:select-none",
+              "data-[focused=true]:**:data-[slot=window-content]:select-text",
+              className,
+            )}
+            {...props}
+          >
+            {children}
+          </Card>
+        </Rnd>
+      </WindowControllerContext.Provider>
     );
   },
 );
@@ -410,6 +444,51 @@ const WindowAction = React.forwardRef<
 
 WindowAction.displayName = "WindowAction";
 
+function useWindowMaximize() {
+  const controls = useWindowController();
+
+  const onDoubleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!controls) return;
+      if (event.currentTarget !== event.target) return;
+      controls.toggleMaximize();
+    },
+    [controls],
+  );
+
+  const toggleMaximize = React.useCallback(() => {
+    controls?.toggleMaximize();
+  }, [controls]);
+
+  return {
+    isMaximized: controls?.isMaximized ?? false,
+    onDoubleClick,
+    toggleMaximize,
+  };
+}
+
+const WindowMaximizeButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<typeof WindowAction>
+>(({ onClick, ...props }, ref) => {
+  const controls = useWindowController();
+
+  return (
+    <WindowAction
+      ref={ref}
+      data-window-maximize
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        controls?.toggleMaximize();
+      }}
+      {...props}
+    />
+  );
+});
+
+WindowMaximizeButton.displayName = "WindowMaximizeButton";
+
 const WindowFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -445,9 +524,12 @@ export {
   WindowDescription,
   WindowActions,
   WindowAction,
+  WindowMaximizeButton,
   WindowContent,
   WindowFooter,
 };
+
+export { useWindowMaximize };
 
 export type {
   WindowFraming,

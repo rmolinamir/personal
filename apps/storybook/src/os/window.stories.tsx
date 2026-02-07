@@ -6,7 +6,9 @@ import {
   WindowDescription,
   WindowFooter,
   WindowHeader,
+  WindowMaximizeButton,
   WindowTitle,
+  useWindowMaximize,
 } from "@acme/ui/os/window";
 import { WindowProvider } from "@acme/ui/os/window-provider";
 import { WindowSnap } from "@acme/ui/os/window-snap";
@@ -30,10 +32,7 @@ export const Default: Story = {
     return (
       <WindowProvider>
         <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-          <Window
-            defaultPosition={{ x: 96, y: 64 }}
-            defaultSize={{ height: 380, width: 560 }}
-          >
+          <Window>
             <WindowHeader>
               <WindowTitle>About</WindowTitle>
               <WindowActions>
@@ -253,4 +252,41 @@ export const WithSnapping: Story = {
       </WindowSnap>
     </WindowProvider>
   ),
+};
+
+export const WithMaximize: Story = {
+  render: () => {
+    const MaximizeHeader = () => {
+      const maximize = useWindowMaximize();
+
+      return (
+        <WindowHeader onDoubleClick={maximize.onDoubleClick}>
+          <WindowTitle>Maximize me</WindowTitle>
+          <WindowActions>
+            <WindowAction aria-label="Minimize">—</WindowAction>
+            <WindowMaximizeButton aria-label="Maximize">□</WindowMaximizeButton>
+            <WindowAction aria-label="Close">×</WindowAction>
+          </WindowActions>
+        </WindowHeader>
+      );
+    };
+
+    return (
+      <WindowProvider>
+        <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+          <Window defaultSize={{ height: 360, width: 520 }}>
+            <MaximizeHeader />
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Double-click the header.</p>
+                <p className="text-muted-foreground">
+                  Clicking the maximize button toggles full screen.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
+        </WindowSnap>
+      </WindowProvider>
+    );
+  },
 };

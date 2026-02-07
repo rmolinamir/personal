@@ -1,15 +1,17 @@
+import { Window } from "@acme/ui/os/window";
 import {
-  Window,
+  useWindowMaximize,
   WindowAction,
-  WindowActions,
+  WindowControls,
+  WindowMaximizeButton,
+} from "@acme/ui/os/window-actions";
+import {
+  WindowCaption,
   WindowContent,
-  WindowDescription,
   WindowFooter,
   WindowHeader,
-  WindowMaximizeButton,
   WindowTitle,
-  useWindowMaximize,
-} from "@acme/ui/os/window";
+} from "@acme/ui/os/window-layout";
 import { WindowProvider } from "@acme/ui/os/window-provider";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -35,11 +37,11 @@ export const Default: Story = {
           <Window>
             <WindowHeader>
               <WindowTitle>About</WindowTitle>
-              <WindowActions>
+              <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
                 <WindowAction aria-label="Maximize">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
-              </WindowActions>
+              </WindowControls>
             </WindowHeader>
             <WindowContent>
               <div className="space-y-3 text-sm">
@@ -69,13 +71,13 @@ export const WithDescription: Story = {
           <WindowHeader>
             <div className="space-y-0.5">
               <WindowTitle>Explorer</WindowTitle>
-              <WindowDescription>~/Projects/website</WindowDescription>
+              <WindowCaption>~/Projects/website</WindowCaption>
             </div>
-            <WindowActions>
+            <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
               <WindowAction aria-label="Maximize">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
-            </WindowActions>
+            </WindowControls>
           </WindowHeader>
           <WindowContent>
             <div className="grid gap-3 text-sm">
@@ -107,11 +109,11 @@ export const MultiWindow: Story = {
           >
             <WindowHeader>
               <WindowTitle>About</WindowTitle>
-              <WindowActions>
+              <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
                 <WindowAction aria-label="Maximize">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
-              </WindowActions>
+              </WindowControls>
             </WindowHeader>
             <WindowContent>
               <div className="space-y-2 text-sm">
@@ -130,13 +132,13 @@ export const MultiWindow: Story = {
             <WindowHeader>
               <div className="space-y-0.5">
                 <WindowTitle>Explorer</WindowTitle>
-                <WindowDescription>~/Projects/website</WindowDescription>
+                <WindowCaption>~/Projects/website</WindowCaption>
               </div>
-              <WindowActions>
+              <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
                 <WindowAction aria-label="Maximize">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
-              </WindowActions>
+              </WindowControls>
             </WindowHeader>
             <WindowContent>
               <div className="grid gap-3 text-sm">
@@ -174,11 +176,11 @@ export const ConstrainedBounds: Story = {
             >
               <WindowHeader>
                 <WindowTitle>Constrained Window</WindowTitle>
-                <WindowActions>
+                <WindowControls>
                   <WindowAction aria-label="Minimize">—</WindowAction>
                   <WindowAction aria-label="Maximize">□</WindowAction>
                   <WindowAction aria-label="Close">×</WindowAction>
-                </WindowActions>
+                </WindowControls>
               </WindowHeader>
               <WindowContent>
                 <div className="space-y-2 text-sm">
@@ -207,11 +209,11 @@ export const WithSnapping: Story = {
         >
           <WindowHeader>
             <WindowTitle>About</WindowTitle>
-            <WindowActions>
+            <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
               <WindowAction aria-label="Maximize">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
-            </WindowActions>
+            </WindowControls>
           </WindowHeader>
           <WindowContent>
             <div className="space-y-2 text-sm">
@@ -229,11 +231,11 @@ export const WithSnapping: Story = {
         >
           <WindowHeader>
             <WindowTitle>Explorer</WindowTitle>
-            <WindowActions>
+            <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
               <WindowAction aria-label="Maximize">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
-            </WindowActions>
+            </WindowControls>
           </WindowHeader>
           <WindowContent>
             <div className="grid gap-3 text-sm">
@@ -257,16 +259,16 @@ export const WithSnapping: Story = {
 export const WithMaximize: Story = {
   render: () => {
     const MaximizeHeader = () => {
-      const maximize = useWindowMaximize();
+      const { handleDoubleClick } = useWindowMaximize();
 
       return (
-        <WindowHeader onDoubleClick={maximize.onDoubleClick}>
+        <WindowHeader onDoubleClick={handleDoubleClick}>
           <WindowTitle>Maximize me</WindowTitle>
-          <WindowActions>
+          <WindowControls>
             <WindowAction aria-label="Minimize">—</WindowAction>
             <WindowMaximizeButton aria-label="Maximize">□</WindowMaximizeButton>
             <WindowAction aria-label="Close">×</WindowAction>
-          </WindowActions>
+          </WindowControls>
         </WindowHeader>
       );
     };

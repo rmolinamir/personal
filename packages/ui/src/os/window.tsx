@@ -5,16 +5,7 @@ import {
   type RndResizeCallback,
   type RndResizeStartCallback,
 } from "react-rnd";
-import { Button } from "../components/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../components/card";
+import { Card } from "../components/card";
 import { cn } from "../lib/utils";
 import { useWindowBounds } from "./window-hooks";
 import { useWindowState } from "./window-provider";
@@ -76,6 +67,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
     const rndRef = React.useRef<Rnd>(null);
     const previousBoundsRef = React.useRef<WindowSize | null>(null);
     const desiredPixelFramingRef = React.useRef<WindowFraming | null>(null);
+    const dragStartPointerRef = React.useRef<WindowPosition | null>(null);
 
     const {
       activate,
@@ -108,9 +100,23 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
       return toPixelFraming(framing, bounds);
     }, [bounds, framing]);
 
+    const computeNextFraming = React.useCallback(
+      (payload: WindowFraming) => {
+        if (!bounds) return null;
+        return clampPercentFraming(
+          toPercentFraming(payload, bounds),
+          bounds,
+          minSize,
+          maxSize,
+        );
+      },
+      [bounds, maxSize, minSize],
+    );
+
     const handleDragStop = React.useCallback<RndDragCallback>(
       (event, data) => {
         if (!bounds) return;
+        dragStartPointerRef.current = null;
         const currentSize = pixelFraming?.size ?? defaultSize;
         const snapPointer = getPointerPosition(event);
         const snapFraming = snapPointer
@@ -127,45 +133,43 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
           return;
         }
 
-        desiredPixelFramingRef.current = {
+        const desiredPixelFraming = {
           position: { x: data.x, y: data.y },
           size: currentSize,
         };
-        const nextFraming = clampPercentFraming(
-          toPercentFraming(
-            {
-              position: { x: data.x, y: data.y },
-              size: currentSize,
-            },
-            bounds,
-          ),
-          bounds,
-          minSize,
-          maxSize,
-        );
-        setFraming(nextFraming);
+        desiredPixelFramingRef.current = desiredPixelFraming;
+
+        const nextFraming = computeNextFraming(desiredPixelFraming);
+        if (nextFraming) {
+          setFraming(nextFraming);
+        }
         snap?.clearOverlay();
       },
-      [bounds, defaultSize, maxSize, minSize, pixelFraming, setFraming, snap],
+      [bounds, defaultSize, pixelFraming, setFraming, snap, computeNextFraming],
     );
 
     const handleDrag = React.useCallback<RndDragCallback>(
       (event) => {
-        if (!bounds) return;
+        if (!bounds || isMaximized) return;
         const currentSize = pixelFraming?.size ?? defaultSize;
         const snapPointer = getPointerPosition(event);
         if (!snapPointer) return;
-        snap?.onDrag({
+
+        snap?.handleDrag({
           pointer: snapPointer,
           size: currentSize,
         });
       },
-      [bounds, defaultSize, pixelFraming, snap],
+      [bounds, defaultSize, isMaximized, pixelFraming, snap],
     );
 
-    const handleDragStart = React.useCallback<RndDragCallback>(() => {
-      activate();
-    }, [activate]);
+    const handleDragStart = React.useCallback<RndDragCallback>(
+      (event) => {
+        dragStartPointerRef.current = getPointerPosition(event);
+        activate();
+      },
+      [activate],
+    );
 
     const handleResizeStop = React.useCallback<RndResizeCallback>(
       (_event, _direction, refElement, _delta, nextPosition) => {
@@ -174,25 +178,18 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
           height: refElement.offsetHeight,
           width: refElement.offsetWidth,
         };
-        desiredPixelFramingRef.current = {
+        const desiredPixelFraming = {
           position: nextPosition,
           size: nextSize,
         };
-        const nextFraming = clampPercentFraming(
-          toPercentFraming(
-            {
-              position: nextPosition,
-              size: nextSize,
-            },
-            bounds,
-          ),
-          bounds,
-          minSize,
-          maxSize,
-        );
-        setFraming(nextFraming);
+        desiredPixelFramingRef.current = desiredPixelFraming;
+
+        const nextFraming = computeNextFraming(desiredPixelFraming);
+        if (nextFraming) {
+          setFraming(nextFraming);
+        }
       },
-      [bounds, maxSize, minSize, setFraming],
+      [bounds, setFraming, computeNextFraming],
     );
 
     const handleResizeStart = React.useCallback<RndResizeStartCallback>(() => {
@@ -206,27 +203,20 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
     // Initialize the frame once we know bounds
     React.useEffect(() => {
       if (!bounds || framing) return;
-      const nextFraming = clampPercentFraming(
-        toPercentFraming(
-          {
-            position: defaultPosition,
-            size: defaultSize,
-          },
-          bounds,
-        ),
-        bounds,
-        minSize,
-        maxSize,
-      );
-      setFraming(nextFraming);
+      const nextFraming = computeNextFraming({
+        position: defaultPosition,
+        size: defaultSize,
+      });
+      if (nextFraming) {
+        setFraming(nextFraming);
+      }
     }, [
       bounds,
       defaultPosition,
       defaultSize,
       framing,
-      maxSize,
-      minSize,
       setFraming,
+      computeNextFraming,
     ]);
 
     // Keep the window inside bounds when the workspace size changes
@@ -317,9 +307,8 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
         <Rnd
           ref={rndRef}
           bounds="parent"
-          disableDragging={!draggable}
-          enableResizing={resizable}
-          dragHandleClassName="os-window__drag-handle"
+          disableDragging={!draggable || isMaximized}
+          enableResizing={resizable && !isMaximized}
           minWidth={minSize.width}
           minHeight={minSize.height}
           maxWidth={maxSize?.width}
@@ -347,11 +336,14 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
             ref={ref}
             data-slot="window"
             data-focused={isActive ? "true" : "false"}
+            data-maximized={isMaximized ? "true" : "false"}
             className={cn(
               "os-window flex h-full w-full flex-col gap-0 border-border/80 p-0 shadow-lg",
               "transition-shadow data-[focused=true]:shadow-xl",
               "data-[focused=false]:**:data-[slot=window-content]:select-none",
               "data-[focused=true]:**:data-[slot=window-content]:select-text",
+              "data-[maximized=false]:**:data-[slot=window-content]:cursor-move",
+              "data-[maximized=true]:**:data-[slot=window-content]:cursor-default",
               className,
             )}
             {...props}
@@ -366,170 +358,7 @@ const Window = React.forwardRef<HTMLDivElement, WindowProps>(
 
 Window.displayName = "Window";
 
-const WindowHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardHeader
-    ref={ref}
-    data-slot="window-header"
-    className={cn(
-      "os-window__drag-handle flex cursor-grab select-none flex-row items-center justify-between gap-3",
-      "border-border/80 border-b bg-muted/60 px-3 py-2!",
-      "auto-rows-auto grid-rows-none items-center",
-      className,
-    )}
-    {...props}
-  />
-));
-
-WindowHeader.displayName = "WindowHeader";
-
-const WindowTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardTitle
-    ref={ref}
-    data-slot="window-title"
-    className={cn("truncate font-medium text-sm", className)}
-    {...props}
-  />
-));
-
-WindowTitle.displayName = "WindowTitle";
-
-const WindowDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardDescription
-    ref={ref}
-    data-slot="window-description"
-    className={cn("text-xs", className)}
-    {...props}
-  />
-));
-
-WindowDescription.displayName = "WindowDescription";
-
-const WindowActions = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardAction
-    ref={ref}
-    data-slot="window-actions"
-    className={cn("flex items-center gap-1", className)}
-    {...props}
-  />
-));
-
-WindowActions.displayName = "WindowActions";
-
-const WindowAction = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, size = "icon-sm", variant = "ghost", ...props }, ref) => (
-  <Button
-    ref={ref}
-    data-slot="window-control"
-    data-window-control
-    size={size}
-    variant={variant}
-    className={cn("text-muted-foreground", className)}
-    {...props}
-  />
-));
-
-WindowAction.displayName = "WindowAction";
-
-function useWindowMaximize() {
-  const controls = useWindowController();
-
-  const onDoubleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!controls) return;
-      if (event.currentTarget !== event.target) return;
-      controls.toggleMaximize();
-    },
-    [controls],
-  );
-
-  const toggleMaximize = React.useCallback(() => {
-    controls?.toggleMaximize();
-  }, [controls]);
-
-  return {
-    isMaximized: controls?.isMaximized ?? false,
-    onDoubleClick,
-    toggleMaximize,
-  };
-}
-
-const WindowMaximizeButton = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<typeof WindowAction>
->(({ onClick, ...props }, ref) => {
-  const controls = useWindowController();
-
-  return (
-    <WindowAction
-      ref={ref}
-      data-window-maximize
-      onClick={(event) => {
-        onClick?.(event);
-        if (event.defaultPrevented) return;
-        controls?.toggleMaximize();
-      }}
-      {...props}
-    />
-  );
-});
-
-WindowMaximizeButton.displayName = "WindowMaximizeButton";
-
-const WindowFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardFooter
-    ref={ref}
-    data-slot="window-footer"
-    className={cn("px-3 py-2", className)}
-    {...props}
-  />
-));
-
-WindowFooter.displayName = "WindowFooter";
-
-const WindowContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <CardContent
-    ref={ref}
-    data-slot="window-content"
-    className={cn("flex-1 select-text overflow-auto px-3 py-2", className)}
-    {...props}
-  />
-));
-
-WindowContent.displayName = "WindowContent";
-
-export {
-  Window,
-  WindowHeader,
-  WindowTitle,
-  WindowDescription,
-  WindowActions,
-  WindowAction,
-  WindowMaximizeButton,
-  WindowContent,
-  WindowFooter,
-};
-
-export { useWindowMaximize };
+export { Window, useWindowController };
 
 export type {
   WindowFraming,

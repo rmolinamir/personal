@@ -10,7 +10,7 @@ type SnapPayload = {
 };
 
 type WindowSnapContextValue = {
-  onDrag: (payload: SnapPayload) => void;
+  handleDrag: (payload: SnapPayload) => void;
   getSnapFraming: (payload: SnapPayload) => WindowFraming | null;
   clearOverlay: () => void;
 };
@@ -62,7 +62,7 @@ const WindowSnap = React.forwardRef<HTMLDivElement, WindowSnapProps>(
       return () => observer.disconnect();
     }, []);
 
-    const onDrag = React.useCallback(
+    const handleDrag = React.useCallback(
       (payload: SnapPayload) => {
         if (!boundsSize || !snapRef.current) return;
         const rect = snapRef.current.getBoundingClientRect();
@@ -90,9 +90,9 @@ const WindowSnap = React.forwardRef<HTMLDivElement, WindowSnapProps>(
       () => ({
         clearOverlay,
         getSnapFraming,
-        onDrag,
+        handleDrag,
       }),
-      [clearOverlay, onDrag, getSnapFraming],
+      [clearOverlay, handleDrag, getSnapFraming],
     );
 
     return (

@@ -1,43 +1,48 @@
 import * as React from "react";
 import type { WindowPercentFraming } from "./window-utils";
 
-export type ActiveWindow = {
+export type WindowInstance = {
   id: string;
   zIndex: number;
-};
-
-export type WindowProviderState = {
-  stack: ActiveWindow[];
-  windows: Record<string, WindowData>;
-  focusedId?: string;
-};
-
-type WindowData = {
   framing?: WindowPercentFraming;
   isFullscreen?: boolean;
+  isHidden?: boolean;
   previousFraming?: WindowPercentFraming | null;
 };
 
+export type WindowProviderState = {
+  windows: WindowInstance[];
+  map: Record<string, WindowInstance>;
+  focusedId?: string;
+};
+
 export type WindowContextValue = {
-  stack: ActiveWindow[];
-  windows: Record<string, WindowData>;
+  windows: WindowInstance[];
   focusedId?: string;
   mountWindow: (id: string) => void;
   unmountWindow: (id: string) => void;
   activateWindow: (id: string) => void;
-  getWindow: (id: string) => ActiveWindow | undefined;
+  hideWindow: (id: string) => void;
+  showWindow: (id: string) => void;
+  getWindow: (id: string) => WindowInstance | undefined;
+  getWindowData: (id: string) => WindowInstance | undefined;
   getFraming: (id: string) => WindowPercentFraming | undefined;
   setFraming: (id: string, framing: WindowPercentFraming) => void;
   toggleFullscreen: (id: string) => void;
   getIsFullscreen: (id: string) => boolean;
+  getIsHidden: (id: string) => boolean;
 };
 
 const WindowContext = React.createContext<WindowContextValue | null>(null);
 
-function findTopWindow(windows: ActiveWindow[]) {
-  let top: ActiveWindow | null = null;
+function findTopWindow(
+  windows: WindowInstance[],
+  map: Record<string, WindowInstance>,
+) {
+  let top: WindowInstance | null = null;
 
   for (const window of windows) {
+    if (map[window.id]?.isHidden) continue;
     if (!top || window.zIndex > top.zIndex) {
       top = window;
     }
@@ -46,98 +51,164 @@ function findTopWindow(windows: ActiveWindow[]) {
   return top;
 }
 
-export type WindowManagerProviderProps = {
+export type WindowProviderProps = {
   children: React.ReactNode;
 };
 
-function WindowProvider({ children }: WindowManagerProviderProps) {
+function WindowProvider({ children }: WindowProviderProps) {
   const [state, setState] = React.useState<WindowProviderState>(() => ({
     focusedId: undefined,
-    stack: [],
-    windows: {},
+    map: {},
+    windows: [],
   }));
 
   const mountWindow = React.useCallback((id: string) => {
     setState((prev) => {
       // If the window is already mounted, do nothing
-      if (prev.stack.some((window) => window.id === id)) {
+      if (prev.windows.some((window) => window.id === id)) {
         return prev;
       }
 
-      const entry: ActiveWindow = { id, zIndex: prev.stack.length + 1 };
+      const entry: WindowInstance = {
+        id,
+        zIndex: prev.windows.length + 1,
+      };
 
       return {
         ...prev,
         focusedId: id,
-        stack: [...prev.stack, entry],
+        map: {
+          ...prev.map,
+          [id]: entry,
+        },
+        windows: [...prev.windows, entry],
       };
     });
   }, []);
 
   const unmountWindow = React.useCallback((id: string) => {
     setState((prev) => {
-      const stack = prev.stack.filter((window) => window.id !== id);
-      const { [id]: _removedWindow, ...windows } = prev.windows;
+      const windows = prev.windows.filter((window) => window.id !== id);
+      const { [id]: _removedWindow, ...map } = prev.map;
 
       if (prev.focusedId !== id) {
-        return { ...prev, stack: stack, windows: windows };
+        return { ...prev, map, windows };
       }
 
       // If the window being unmounted is the focused window, also focus the next window
-      const nextFocused = findTopWindow(stack);
+      const nextFocused = findTopWindow(windows, map);
       const nextFocusedId = nextFocused?.id;
       return {
         ...prev,
         focusedId: nextFocusedId,
-        stack: stack,
-        windows: windows,
+        map,
+        windows,
       };
     });
   }, []);
 
   const activateWindow = React.useCallback((id: string) => {
     setState((prev) => {
-      const hasWindow = prev.stack.some((window) => window.id === id);
+      const hasWindow = prev.windows.some((window) => window.id === id);
       if (!hasWindow) {
         return prev;
       }
 
-      const activeWindow = prev.stack.find((window) => window.id === id);
+      const activeWindow = prev.windows.find((window) => window.id === id);
       if (!activeWindow) return prev;
 
       // Recalculating the z-index values based on the new order
-      const reordered = prev.stack.filter((window) => window.id !== id);
+      const reordered = prev.windows.filter((window) => window.id !== id);
       const windows = [...reordered, activeWindow].map((window, index) => ({
         ...window,
         zIndex: index + 1,
       }));
 
+      const nextMap = { ...prev.map };
+      for (const window of windows) {
+        nextMap[window.id] = {
+          ...(nextMap[window.id] ?? window),
+          ...window,
+        };
+      }
+      nextMap[id] = {
+        ...(nextMap[id] ?? activeWindow),
+        isHidden: false,
+      };
+
       return {
         ...prev,
         focusedId: id,
-        stack: windows,
+        map: nextMap,
+        windows,
+      };
+    });
+  }, []);
+
+  const hideWindow = React.useCallback((id: string) => {
+    setState((prev) => {
+      const windowData = prev.map[id];
+      const nextMap = {
+        ...prev.map,
+        [id]: {
+          ...(windowData ?? { id, zIndex: prev.windows.length + 1 }),
+          isHidden: true,
+        },
+      };
+      const nextFocusedId =
+        prev.focusedId === id
+          ? findTopWindow(prev.windows, nextMap)?.id
+          : prev.focusedId;
+
+      return {
+        ...prev,
+        focusedId: nextFocusedId,
+        map: nextMap,
+      };
+    });
+  }, []);
+
+  const showWindow = React.useCallback((id: string) => {
+    setState((prev) => {
+      const windowData = prev.map[id];
+      if (!windowData) return prev;
+
+      return {
+        ...prev,
+        map: {
+          ...prev.map,
+          [id]: {
+            ...windowData,
+            isHidden: false,
+          },
+        },
       };
     });
   }, []);
 
   const getWindow = React.useCallback(
-    (id: string) => state.stack.find((window) => window.id === id),
-    [state.stack],
+    (id: string) => state.windows.find((window) => window.id === id),
+    [state.windows],
+  );
+
+  const getWindowData = React.useCallback(
+    (id: string) => state.map[id],
+    [state.map],
   );
 
   const getFraming = React.useCallback(
-    (id: string) => state.windows[id]?.framing,
-    [state.windows],
+    (id: string) => state.map[id]?.framing,
+    [state.map],
   );
 
   const setFraming = React.useCallback(
     (id: string, framing: WindowPercentFraming) => {
       setState((prev) => ({
         ...prev,
-        windows: {
-          ...prev.windows,
+        map: {
+          ...prev.map,
           [id]: {
-            ...prev.windows[id],
+            ...(prev.map[id] ?? { id, zIndex: prev.windows.length + 1 }),
             framing,
           },
         },
@@ -147,13 +218,18 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
   );
 
   const getIsFullscreen = React.useCallback(
-    (id: string) => Boolean(state.windows[id]?.isFullscreen),
-    [state.windows],
+    (id: string) => Boolean(state.map[id]?.isFullscreen),
+    [state.map],
+  );
+
+  const getIsHidden = React.useCallback(
+    (id: string) => Boolean(state.map[id]?.isHidden),
+    [state.map],
   );
 
   const toggleFullscreen = React.useCallback((id: string) => {
     setState((prev) => {
-      const windowData = prev.windows[id];
+      const windowData = prev.map[id];
       if (!windowData?.framing) return prev;
 
       if (windowData.isFullscreen) {
@@ -161,8 +237,8 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
           windowData.previousFraming ?? windowData.framing;
         return {
           ...prev,
-          windows: {
-            ...prev.windows,
+          map: {
+            ...prev.map,
             [id]: {
               ...windowData,
               framing: restoredFraming,
@@ -175,8 +251,8 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
 
       return {
         ...prev,
-        windows: {
-          ...prev.windows,
+        map: {
+          ...prev.map,
           [id]: {
             ...windowData,
             framing: {
@@ -198,10 +274,13 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
       focusedId: state.focusedId,
       getFraming: getFraming,
       getIsFullscreen,
+      getIsHidden,
       getWindow,
+      getWindowData,
+      hideWindow,
       mountWindow,
       setFraming: setFraming,
-      stack: state.stack,
+      showWindow,
       toggleFullscreen,
       unmountWindow,
       windows: state.windows,
@@ -209,13 +288,16 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
     [
       activateWindow,
       getIsFullscreen,
+      getIsHidden,
       getFraming,
       getWindow,
-      state.windows,
+      getWindowData,
+      hideWindow,
       mountWindow,
+      showWindow,
       setFraming,
       state.focusedId,
-      state.stack,
+      state.windows,
       toggleFullscreen,
       unmountWindow,
     ],
@@ -226,12 +308,8 @@ function WindowProvider({ children }: WindowManagerProviderProps) {
   );
 }
 
-function useWindowContext() {
-  return React.useContext(WindowContext);
-}
-
 function useWindows() {
-  const context = useWindowContext();
+  const context = React.useContext(WindowContext);
   if (!context) {
     throw new Error("useWindows must be used within WindowProvider");
   }
@@ -241,24 +319,28 @@ function useWindows() {
 export type WindowState = {
   isActive: boolean;
   isFullscreen: boolean;
+  isHidden: boolean;
   zIndex: number;
   activate: () => void;
   framing?: WindowPercentFraming;
   setFraming: (framing: WindowPercentFraming) => void;
+  hide: () => void;
+  show: () => void;
+  toggleHidden: () => void;
   toggleFullscreen: () => void;
 };
 
 function useWindowState(id: string): WindowState {
-  const manager = useWindows();
+  const provider = useWindows();
 
   const mountWindow = React.useEffectEvent((windowId: string) => {
-    manager.mountWindow(windowId);
+    provider.mountWindow(windowId);
   });
   const unmountWindow = React.useEffectEvent((windowId: string) => {
-    manager.unmountWindow(windowId);
+    provider.unmountWindow(windowId);
   });
   const activateWindow = React.useEffectEvent((windowId: string) => {
-    manager.activateWindow(windowId);
+    provider.activateWindow(windowId);
   });
 
   React.useEffect(() => {
@@ -266,17 +348,31 @@ function useWindowState(id: string): WindowState {
     return () => unmountWindow(id);
   }, [id]);
 
-  const activeWindow = manager.getWindow(id);
+  const activeWindow = provider.getWindow(id);
 
   return {
     activate: () => activateWindow(id),
-    framing: manager.getFraming(id),
-    isActive: manager.focusedId === id,
-    isFullscreen: manager.getIsFullscreen(id),
-    setFraming: (framing) => manager.setFraming(id, framing),
-    toggleFullscreen: () => manager.toggleFullscreen(id),
+    framing: provider.getFraming(id),
+    hide: () => provider.hideWindow(id),
+    isActive: provider.focusedId === id,
+    isFullscreen: provider.getIsFullscreen(id),
+    isHidden: provider.getIsHidden(id),
+    setFraming: (framing) => provider.setFraming(id, framing),
+    show: () => {
+      provider.showWindow(id);
+      provider.activateWindow(id);
+    },
+    toggleFullscreen: () => provider.toggleFullscreen(id),
+    toggleHidden: () => {
+      if (provider.getIsHidden(id)) {
+        provider.showWindow(id);
+        provider.activateWindow(id);
+        return;
+      }
+      provider.hideWindow(id);
+    },
     zIndex: activeWindow?.zIndex ?? 1,
   };
 }
 
-export { WindowProvider, useWindowState, useWindowContext, useWindows };
+export { WindowProvider, useWindowState, useWindows };

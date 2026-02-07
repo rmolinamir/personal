@@ -39,6 +39,27 @@ function WindowAction({
   );
 }
 
+function WindowHideButton({
+  onClick,
+  ref,
+  ...props
+}: React.ComponentProps<typeof WindowAction>) {
+  const controls = useWindowController();
+
+  return (
+    <WindowAction
+      ref={ref}
+      data-window-hide
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        controls?.toggleHidden();
+      }}
+      {...props}
+    />
+  );
+}
+
 function WindowFullscreenButton({
   onClick,
   ref,
@@ -58,6 +79,19 @@ function WindowFullscreenButton({
       {...props}
     />
   );
+}
+
+function useWindowHide() {
+  const controls = useWindowController();
+
+  const toggleHidden = React.useCallback(() => {
+    controls?.toggleHidden();
+  }, [controls]);
+
+  return {
+    isHidden: controls?.isHidden ?? false,
+    toggleHidden,
+  };
 }
 
 function useWindowFullscreen() {
@@ -86,6 +120,8 @@ function useWindowFullscreen() {
 export {
   WindowAction,
   WindowControls,
+  WindowHideButton,
+  useWindowHide,
   WindowFullscreenButton,
   useWindowFullscreen,
 };

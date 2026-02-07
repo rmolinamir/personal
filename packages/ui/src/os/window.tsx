@@ -28,6 +28,8 @@ const fallbackFraming = getCenteredFraming(fallbackFramingSize);
 
 type WindowControlsContextValue = {
   isFullscreen: boolean;
+  isHidden: boolean;
+  toggleHidden: () => void;
   toggleFullscreen: () => void;
 };
 
@@ -76,7 +78,9 @@ function Window({
     framing,
     isActive,
     isFullscreen,
+    isHidden,
     setFraming,
+    toggleHidden,
     toggleFullscreen,
     zIndex,
   } = useWindowState(windowId);
@@ -84,8 +88,8 @@ function Window({
   const snap = useWindowSnap();
 
   const controller = React.useMemo<WindowControlsContextValue>(
-    () => ({ isFullscreen, toggleFullscreen }),
-    [isFullscreen, toggleFullscreen],
+    () => ({ isFullscreen, isHidden, toggleFullscreen, toggleHidden }),
+    [isFullscreen, isHidden, toggleFullscreen, toggleHidden],
   );
 
   const computeNextFraming = React.useCallback(
@@ -327,8 +331,8 @@ function Window({
       <Rnd
         ref={rndRef}
         bounds="parent"
-        disableDragging={!draggable || isFullscreen}
-        enableResizing={resizable && !isFullscreen}
+        disableDragging={!draggable || isFullscreen || isHidden}
+        enableResizing={resizable && !isFullscreen && !isHidden}
         minWidth={minSize.width}
         minHeight={minSize.height}
         maxWidth={maxSize?.width}
@@ -339,6 +343,8 @@ function Window({
         style={{
           maxHeight: "100%",
           maxWidth: "100%",
+          opacity: isHidden ? 0 : 1,
+          pointerEvents: isHidden ? "none" : undefined,
           ...style,
           zIndex,
         }}
@@ -353,6 +359,7 @@ function Window({
           ref={ref}
           data-slot="window"
           data-focused={isActive ? "true" : "false"}
+          data-hidden={isHidden ? "true" : "false"}
           data-fullscreen={isFullscreen ? "true" : "false"}
           className={cn(
             "os-window flex h-full w-full flex-col gap-0 border-border/80 p-0 shadow-lg",

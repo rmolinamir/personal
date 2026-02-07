@@ -1,9 +1,9 @@
 import { Window } from "@acme/ui/os/window";
 import {
-  useWindowMaximize,
+  useWindowFullscreen,
   WindowAction,
   WindowControls,
-  WindowMaximizeButton,
+  WindowFullscreenButton,
 } from "@acme/ui/os/window-actions";
 import {
   WindowCaption,
@@ -39,7 +39,7 @@ export const Default: Story = {
               <WindowTitle>About</WindowTitle>
               <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
-                <WindowAction aria-label="Maximize">□</WindowAction>
+                <WindowAction aria-label="Fullscreen">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
               </WindowControls>
             </WindowHeader>
@@ -67,7 +67,12 @@ export const WithDescription: Story = {
   render: () => (
     <WindowProvider>
       <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-        <Window defaultPosition={{ x: 140, y: 120 }}>
+        <Window
+          defaultFraming={{
+            position: { x: 15, y: 15 },
+            size: { height: 50, width: 50 },
+          }}
+        >
           <WindowHeader>
             <div className="space-y-0.5">
               <WindowTitle>Explorer</WindowTitle>
@@ -75,7 +80,7 @@ export const WithDescription: Story = {
             </div>
             <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
-              <WindowAction aria-label="Maximize">□</WindowAction>
+              <WindowAction aria-label="Fullscreen">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
             </WindowControls>
           </WindowHeader>
@@ -104,14 +109,16 @@ export const MultiWindow: Story = {
       <WindowProvider>
         <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
           <Window
-            defaultPosition={{ x: 80, y: 80 }}
-            defaultSize={{ height: 340, width: 520 }}
+            defaultFraming={{
+              position: { x: 8, y: 8 },
+              size: { height: 50, width: 50 },
+            }}
           >
             <WindowHeader>
               <WindowTitle>About</WindowTitle>
               <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
-                <WindowAction aria-label="Maximize">□</WindowAction>
+                <WindowAction aria-label="Fullscreen">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
               </WindowControls>
             </WindowHeader>
@@ -126,8 +133,10 @@ export const MultiWindow: Story = {
           </Window>
 
           <Window
-            defaultPosition={{ x: 220, y: 160 }}
-            defaultSize={{ height: 360, width: 520 }}
+            defaultFraming={{
+              position: { x: 28, y: 18 },
+              size: { height: 50, width: 50 },
+            }}
           >
             <WindowHeader>
               <div className="space-y-0.5">
@@ -136,7 +145,7 @@ export const MultiWindow: Story = {
               </div>
               <WindowControls>
                 <WindowAction aria-label="Minimize">—</WindowAction>
-                <WindowAction aria-label="Maximize">□</WindowAction>
+                <WindowAction aria-label="Fullscreen">□</WindowAction>
                 <WindowAction aria-label="Close">×</WindowAction>
               </WindowControls>
             </WindowHeader>
@@ -170,15 +179,12 @@ export const ConstrainedBounds: Story = {
             <span>Dock Area</span>
           </div>
           <div className="relative h-[calc(100%-3.5rem)] p-6">
-            <Window
-              defaultPosition={{ x: 120, y: 60 }}
-              defaultSize={{ height: 340, width: 520 }}
-            >
+            <Window>
               <WindowHeader>
                 <WindowTitle>Constrained Window</WindowTitle>
                 <WindowControls>
                   <WindowAction aria-label="Minimize">—</WindowAction>
-                  <WindowAction aria-label="Maximize">□</WindowAction>
+                  <WindowAction aria-label="Fullscreen">□</WindowAction>
                   <WindowAction aria-label="Close">×</WindowAction>
                 </WindowControls>
               </WindowHeader>
@@ -204,14 +210,16 @@ export const WithSnapping: Story = {
     <WindowProvider>
       <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
         <Window
-          defaultPosition={{ x: 80, y: 80 }}
-          defaultSize={{ height: 320, width: 520 }}
+          defaultFraming={{
+            position: { x: 8, y: 8 },
+            size: { height: 50, width: 50 },
+          }}
         >
           <WindowHeader>
             <WindowTitle>About</WindowTitle>
             <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
-              <WindowAction aria-label="Maximize">□</WindowAction>
+              <WindowAction aria-label="Fullscreen">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
             </WindowControls>
           </WindowHeader>
@@ -226,14 +234,16 @@ export const WithSnapping: Story = {
         </Window>
 
         <Window
-          defaultPosition={{ x: 260, y: 140 }}
-          defaultSize={{ height: 320, width: 520 }}
+          defaultFraming={{
+            position: { x: 30, y: 16 },
+            size: { height: 50, width: 50 },
+          }}
         >
           <WindowHeader>
             <WindowTitle>Explorer</WindowTitle>
             <WindowControls>
               <WindowAction aria-label="Minimize">—</WindowAction>
-              <WindowAction aria-label="Maximize">□</WindowAction>
+              <WindowAction aria-label="Fullscreen">□</WindowAction>
               <WindowAction aria-label="Close">×</WindowAction>
             </WindowControls>
           </WindowHeader>
@@ -256,17 +266,19 @@ export const WithSnapping: Story = {
   ),
 };
 
-export const WithMaximize: Story = {
+export const WithFullscreen: Story = {
   render: () => {
-    const MaximizeHeader = () => {
-      const { handleDoubleClick } = useWindowMaximize();
+    const FullscreenHeader = () => {
+      const { handleDoubleClick } = useWindowFullscreen();
 
       return (
         <WindowHeader onDoubleClick={handleDoubleClick}>
-          <WindowTitle>Maximize me</WindowTitle>
+          <WindowTitle>Fullscreen me</WindowTitle>
           <WindowControls>
             <WindowAction aria-label="Minimize">—</WindowAction>
-            <WindowMaximizeButton aria-label="Maximize">□</WindowMaximizeButton>
+            <WindowFullscreenButton aria-label="Fullscreen">
+              □
+            </WindowFullscreenButton>
             <WindowAction aria-label="Close">×</WindowAction>
           </WindowControls>
         </WindowHeader>
@@ -276,13 +288,18 @@ export const WithMaximize: Story = {
     return (
       <WindowProvider>
         <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-          <Window defaultSize={{ height: 360, width: 520 }}>
-            <MaximizeHeader />
+          <Window
+            defaultFraming={{
+              position: { x: 12, y: 12 },
+              size: { height: 50, width: 60 },
+            }}
+          >
+            <FullscreenHeader />
             <WindowContent>
               <div className="space-y-2 text-sm">
                 <p className="font-medium">Double-click the header.</p>
                 <p className="text-muted-foreground">
-                  Clicking the maximize button toggles full screen.
+                  Clicking the fullscreen button toggles full screen.
                 </p>
               </div>
             </WindowContent>

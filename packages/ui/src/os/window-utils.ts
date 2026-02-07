@@ -11,7 +11,14 @@ export type WindowSize = {
   height: number;
 };
 
-export type WindowFraming = {
+export type WindowPercentFraming = {
+  unit: "percent";
+  position: WindowPosition;
+  size: WindowSize;
+};
+
+export type WindowPixelFraming = {
+  unit: "px";
   position: WindowPosition;
   size: WindowSize;
 };
@@ -35,6 +42,17 @@ export function getCenteredPosition(bounds: WindowSize, size: WindowSize) {
   return { x: Math.round(x), y: Math.round(y) };
 }
 
+export function getCenteredFraming(size: WindowSize): WindowPercentFraming {
+  return {
+    unit: "percent",
+    position: {
+      x: Math.max(0, 50 - size.width / 2),
+      y: Math.max(0, 50 - size.height / 2),
+    },
+    size,
+  };
+}
+
 export function getParentElement(rndRef: RefObject<Rnd | null>) {
   const instance = rndRef.current as RndInstance | null;
   const selfElement =
@@ -53,13 +71,14 @@ export function getPointerPosition(event: RndDraggableEvent | null) {
 }
 
 export function toPercentFraming(
-  framing: WindowFraming,
+  framing: WindowPixelFraming,
   bounds: WindowSize,
-): WindowFraming {
+): WindowPercentFraming {
   const width = bounds.width || 1;
   const height = bounds.height || 1;
 
   return {
+    unit: "percent",
     position: {
       x: (framing.position.x / width) * 100,
       y: (framing.position.y / height) * 100,
@@ -72,27 +91,28 @@ export function toPercentFraming(
 }
 
 export function toPixelFraming(
-  framing: WindowFraming,
+  framing: WindowPercentFraming,
   bounds: WindowSize,
-): WindowFraming {
+): WindowPixelFraming {
   return {
+    unit: "px",
     position: {
       x: (framing.position.x / 100) * bounds.width,
       y: (framing.position.y / 100) * bounds.height,
     },
     size: {
-      width: (framing.size.width / 100) * bounds.width,
-      height: (framing.size.height / 100) * bounds.height,
+      width: Math.max(1, (framing.size.width / 100) * bounds.width),
+      height: Math.max(1, (framing.size.height / 100) * bounds.height),
     },
   };
 }
 
 export function clampPercentFraming(
-  framing: WindowFraming,
+  framing: WindowPercentFraming,
   bounds: WindowSize,
   minSize: WindowSize,
   maxSize?: WindowSize,
-): WindowFraming {
+): WindowPercentFraming {
   if (bounds.width <= 0 || bounds.height <= 0) return framing;
 
   const maxWidth = maxSize?.width ?? bounds.width;
@@ -114,6 +134,7 @@ export function clampPercentFraming(
   const y = clampValue(framing.position.y, 0, maxY);
 
   return {
+    unit: "percent",
     position: { x, y },
     size: { width, height },
   };

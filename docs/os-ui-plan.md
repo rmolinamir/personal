@@ -7,15 +7,26 @@
 
 ## Mental model (aligned to real OSes)
 - App: a renderer/adapter (Explorer, MarkdownViewer, VideoPlayer, AIAgent, etc.).
-- Launchable: a file/folder/link/shortcut that selects an app and provides context.
-- Window: the container that hosts an app plus launchable context.
+- Launcher: a file/folder/link/shortcut that selects an app and provides context.
+- Window: the container that hosts an app plus launcher context.
 - Workspace: the desktop surface that shows launchers and owns the window stack.
 - Dock: simple shortcuts (not pinned/running state yet).
 
 ## Routing model (future)
-- Use TanStack routes as the source of truth for launchables.
+- Use TanStack routes as the source of truth for launchers.
 - Each route carries window metadata (title, icon, defaults, etc.).
 - Route <-> focused window syncing will be added after the window stack is stable.
+
+Route launches (no Workspace route scanning):
+- Each route is responsible for launching its own app on mount.
+- Visiting /about calls launch({ id: "about", ... }) from inside the /about route.
+- Visiting / does not launch anything; launchers drive navigation or direct launch.
+- Launch is idempotent: if the app is already running, do nothing (or restore/activate).
+- Closing a window removes the app instance; revisiting the route can launch again.
+
+Launcher types (naming TBD):
+- RouteLauncher: a link that navigates to a route which launches an app.
+- ActionLauncher: a button that calls launch() directly without route change.
 
 ## Window system (current implementation)
 - Windows are rendered with react-rnd for drag/resize.

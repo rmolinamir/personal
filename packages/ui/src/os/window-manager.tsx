@@ -31,9 +31,8 @@ export type WindowManagerContextValue = {
   };
 };
 
-const WindowManagerContext = React.createContext<WindowManagerContextValue | null>(
-  null,
-);
+const WindowManagerContext =
+  React.createContext<WindowManagerContextValue | null>(null);
 
 export type WindowManagerProviderProps = {
   children: React.ReactNode;
@@ -41,8 +40,8 @@ export type WindowManagerProviderProps = {
 };
 
 const defaultState: WindowManagerState = {
-  windows: [],
   focusedId: undefined,
+  windows: [],
   zIndexCounter: 10,
 };
 
@@ -57,10 +56,10 @@ function findTopWindow(windows: WindowEntry[]) {
   }, null);
 }
 
-const WindowManagerProvider = ({
+function WindowManagerProvider({
   children,
   initialZIndex,
-}: WindowManagerProviderProps) => {
+}: WindowManagerProviderProps) {
   const [state, setState] = React.useState<WindowManagerState>(() => ({
     ...defaultState,
     zIndexCounter: initialZIndex ?? defaultState.zIndexCounter,
@@ -74,22 +73,21 @@ const WindowManagerProvider = ({
         }
 
         const shouldFocus = Boolean(options?.autoFocus);
-        const nextZIndex =
-          options?.zIndex ?? getNextZIndex(prev.zIndexCounter);
+        const nextZIndex = options?.zIndex ?? getNextZIndex(prev.zIndexCounter);
 
         const windows = shouldFocus
           ? prev.windows.map((window) => ({ ...window, focused: false }))
           : prev.windows;
 
         const entry: WindowEntry = {
+          focused: shouldFocus,
           id,
           zIndex: nextZIndex,
-          focused: shouldFocus,
         };
 
         return {
-          windows: [...windows, entry],
           focusedId: shouldFocus ? id : prev.focusedId,
+          windows: [...windows, entry],
           zIndexCounter: Math.max(prev.zIndexCounter, nextZIndex),
         };
       });
@@ -113,8 +111,8 @@ const WindowManagerProvider = ({
 
       return {
         ...prev,
-        windows: updatedWindows,
         focusedId: nextFocusedId,
+        windows: updatedWindows,
       };
     });
   }, []);
@@ -135,13 +133,13 @@ const WindowManagerProvider = ({
               ...window,
               focused: false,
             })),
-            { id, focused: true, zIndex: nextZIndex },
+            { focused: true, id, zIndex: nextZIndex },
           ];
 
       return {
         ...prev,
-        windows,
         focusedId: id,
+        windows,
         zIndexCounter: nextZIndex,
       };
     });
@@ -157,8 +155,8 @@ const WindowManagerProvider = ({
       const windowEntry = state.windows.find((window) => window.id === id);
       return {
         focused: windowEntry?.focused ?? false,
-        zIndex: windowEntry?.zIndex ?? state.zIndexCounter,
         onFocus: () => focusWindow(id),
+        zIndex: windowEntry?.zIndex ?? state.zIndexCounter,
       };
     },
     [focusWindow, state.windows, state.zIndexCounter],
@@ -166,13 +164,13 @@ const WindowManagerProvider = ({
 
   const value = React.useMemo<WindowManagerContextValue>(
     () => ({
-      windows: state.windows,
       focusedId: state.focusedId,
-      registerWindow,
-      unregisterWindow,
       focusWindow,
       getWindow,
       getWindowProps,
+      registerWindow,
+      unregisterWindow,
+      windows: state.windows,
     }),
     [
       focusWindow,
@@ -190,12 +188,14 @@ const WindowManagerProvider = ({
       {children}
     </WindowManagerContext.Provider>
   );
-};
+}
 
 function useWindowManager() {
   const context = React.useContext(WindowManagerContext);
   if (!context) {
-    throw new Error("useWindowManager must be used within WindowManagerProvider");
+    throw new Error(
+      "useWindowManager must be used within WindowManagerProvider",
+    );
   }
   return context;
 }

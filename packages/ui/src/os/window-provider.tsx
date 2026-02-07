@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { WindowFraming } from "./window-utils";
+import type { WindowPercentFraming } from "./window-utils";
 
 export type ActiveWindow = {
   id: string;
@@ -13,9 +13,9 @@ export type WindowProviderState = {
 };
 
 type WindowData = {
-  framing?: WindowFraming;
-  isMaximized?: boolean;
-  previousFraming?: WindowFraming | null;
+  framing?: WindowPercentFraming;
+  isFullscreen?: boolean;
+  previousFraming?: WindowPercentFraming | null;
 };
 
 export type WindowContextValue = {
@@ -26,10 +26,10 @@ export type WindowContextValue = {
   unmountWindow: (id: string) => void;
   activateWindow: (id: string) => void;
   getWindow: (id: string) => ActiveWindow | undefined;
-  getFraming: (id: string) => WindowFraming | undefined;
-  setFraming: (id: string, framing: WindowFraming) => void;
-  toggleMaximize: (id: string) => void;
-  getIsMaximized: (id: string) => boolean;
+  getFraming: (id: string) => WindowPercentFraming | undefined;
+  setFraming: (id: string, framing: WindowPercentFraming) => void;
+  toggleFullscreen: (id: string) => void;
+  getIsFullscreen: (id: string) => boolean;
 };
 
 const WindowContext = React.createContext<WindowContextValue | null>(null);
@@ -50,7 +50,7 @@ export type WindowManagerProviderProps = {
   children: React.ReactNode;
 };
 
-const WindowProvider = ({ children }: WindowManagerProviderProps) => {
+function WindowProvider({ children }: WindowManagerProviderProps) {
   const [state, setState] = React.useState<WindowProviderState>(() => ({
     focusedId: undefined,
     stack: [],
@@ -130,30 +130,33 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
     [state.windows],
   );
 
-  const setFraming = React.useCallback((id: string, framing: WindowFraming) => {
-    setState((prev) => ({
-      ...prev,
-      windows: {
-        ...prev.windows,
-        [id]: {
-          ...prev.windows[id],
-          framing,
+  const setFraming = React.useCallback(
+    (id: string, framing: WindowPercentFraming) => {
+      setState((prev) => ({
+        ...prev,
+        windows: {
+          ...prev.windows,
+          [id]: {
+            ...prev.windows[id],
+            framing,
+          },
         },
-      },
-    }));
-  }, []);
+      }));
+    },
+    [],
+  );
 
-  const getIsMaximized = React.useCallback(
-    (id: string) => Boolean(state.windows[id]?.isMaximized),
+  const getIsFullscreen = React.useCallback(
+    (id: string) => Boolean(state.windows[id]?.isFullscreen),
     [state.windows],
   );
 
-  const toggleMaximize = React.useCallback((id: string) => {
+  const toggleFullscreen = React.useCallback((id: string) => {
     setState((prev) => {
       const windowData = prev.windows[id];
       if (!windowData?.framing) return prev;
 
-      if (windowData.isMaximized) {
+      if (windowData.isFullscreen) {
         const restoredFraming =
           windowData.previousFraming ?? windowData.framing;
         return {
@@ -163,7 +166,7 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
             [id]: {
               ...windowData,
               framing: restoredFraming,
-              isMaximized: false,
+              isFullscreen: false,
               previousFraming: null,
             },
           },
@@ -179,8 +182,9 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
             framing: {
               position: { x: 0, y: 0 },
               size: { height: 100, width: 100 },
+              unit: "percent",
             },
-            isMaximized: true,
+            isFullscreen: true,
             previousFraming: windowData.framing,
           },
         },
@@ -193,18 +197,18 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
       activateWindow,
       focusedId: state.focusedId,
       getFraming: getFraming,
-      getIsMaximized,
+      getIsFullscreen,
       getWindow,
       mountWindow,
       setFraming: setFraming,
       stack: state.stack,
-      toggleMaximize,
+      toggleFullscreen,
       unmountWindow,
       windows: state.windows,
     }),
     [
       activateWindow,
-      getIsMaximized,
+      getIsFullscreen,
       getFraming,
       getWindow,
       state.windows,
@@ -212,7 +216,7 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
       setFraming,
       state.focusedId,
       state.stack,
-      toggleMaximize,
+      toggleFullscreen,
       unmountWindow,
     ],
   );
@@ -220,7 +224,7 @@ const WindowProvider = ({ children }: WindowManagerProviderProps) => {
   return (
     <WindowContext.Provider value={value}>{children}</WindowContext.Provider>
   );
-};
+}
 
 function useWindowContext() {
   return React.useContext(WindowContext);
@@ -236,12 +240,12 @@ function useWindows() {
 
 export type WindowState = {
   isActive: boolean;
-  isMaximized: boolean;
+  isFullscreen: boolean;
   zIndex: number;
   activate: () => void;
-  framing?: WindowFraming;
-  setFraming: (framing: WindowFraming) => void;
-  toggleMaximize: () => void;
+  framing?: WindowPercentFraming;
+  setFraming: (framing: WindowPercentFraming) => void;
+  toggleFullscreen: () => void;
 };
 
 function useWindowState(id: string): WindowState {
@@ -268,9 +272,9 @@ function useWindowState(id: string): WindowState {
     activate: () => activateWindow(id),
     framing: manager.getFraming(id),
     isActive: manager.focusedId === id,
-    isMaximized: manager.getIsMaximized(id),
+    isFullscreen: manager.getIsFullscreen(id),
     setFraming: (framing) => manager.setFraming(id, framing),
-    toggleMaximize: () => manager.toggleMaximize(id),
+    toggleFullscreen: () => manager.toggleFullscreen(id),
     zIndex: activeWindow?.zIndex ?? 1,
   };
 }

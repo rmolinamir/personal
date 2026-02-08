@@ -7,7 +7,7 @@ import {
 } from "react-rnd";
 import { Card } from "../components/card";
 import { cn } from "../lib/utils";
-import { useWindowBounds } from "./window-hooks";
+import { useShell } from "./shell";
 import { useWindowManagerState } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
@@ -41,6 +41,7 @@ function useWindowController() {
 }
 
 export type WindowProps = React.ComponentProps<typeof Card> & {
+  id?: string;
   defaultFraming?: Omit<WindowPercentFraming, "unit">;
   minSize?: WindowSize;
   maxSize?: WindowSize;
@@ -51,6 +52,7 @@ export type WindowProps = React.ComponentProps<typeof Card> & {
 function Window({
   className,
   children,
+  id,
   defaultFraming: defaultPercentageFraming,
   minSize = fallbackMinSize,
   maxSize,
@@ -66,7 +68,8 @@ function Window({
         unit: "percent",
       } satisfies WindowPercentFraming)
     : undefined;
-  const windowId = React.useId();
+  const autoId = React.useId();
+  const windowId = id ?? autoId;
 
   const rndRef = React.useRef<Rnd>(null);
   const previousBoundsRef = React.useRef<WindowSize | null>(null);
@@ -84,7 +87,7 @@ function Window({
     toggleFullscreen,
     zIndex,
   } = useWindowManagerState(windowId);
-  const bounds = useWindowBounds(rndRef);
+  const { size: bounds, element } = useShell();
   const snap = useWindowSnap();
 
   const controller = React.useMemo<WindowControlsContextValue>(
@@ -330,7 +333,7 @@ function Window({
     <WindowControllerContext.Provider value={controller}>
       <Rnd
         ref={rndRef}
-        bounds="parent"
+        bounds={element ?? "parent"}
         disableDragging={!draggable || isFullscreen || isHidden}
         enableResizing={resizable && !isFullscreen && !isHidden}
         minWidth={minSize.width}

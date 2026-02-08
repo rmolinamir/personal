@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../lib/utils";
+import { useShell } from "./shell";
 import type {
   WindowPercentFraming,
   WindowPosition,
@@ -23,7 +24,9 @@ const WindowSnapContext = React.createContext<WindowSnapContextValue | null>(
   null,
 );
 
-export type WindowSnapProps = React.ComponentProps<"div">;
+export type WindowSnapProps = {
+  children?: React.ReactNode;
+};
 
 const edgeThreshold = 24;
 
@@ -43,47 +46,28 @@ function getSnapTargetFraming(target: SnapTarget): WindowPercentFraming | null {
   };
 }
 
-function WindowSnap({ className, children, ref, ...props }: WindowSnapProps) {
-  const snapRef = React.useRef<HTMLDivElement | null>(null);
-  const [boundsSize, setBoundsSize] = React.useState<WindowSize | null>(null);
+function WindowSnap({ children }: WindowSnapProps) {
+  const { element, size } = useShell();
   const [snapTarget, setSnapTarget] = React.useState<SnapTarget>(null);
-
-  React.useLayoutEffect(() => {
-    const element = snapRef.current;
-    if (!element) return undefined;
-
-    const updateBounds = () => {
-      const width = element.clientWidth;
-      const height = element.clientHeight;
-      if (width <= 0 || height <= 0) return;
-      setBoundsSize({ height, width });
-    };
-
-    updateBounds();
-    const observer = new ResizeObserver(updateBounds);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
 
   const handleDrag = React.useCallback(
     (payload: SnapPayload) => {
-      if (!boundsSize || !snapRef.current) return;
-      const rect = snapRef.current.getBoundingClientRect();
+      if (!size || !element) return;
+      const rect = element.getBoundingClientRect();
       setSnapTarget(getSnapTarget(payload, rect));
     },
-    [boundsSize],
+    [element, size],
   );
 
   const getSnapFraming = React.useCallback(
     (payload: SnapPayload) => {
-      if (!boundsSize || !snapRef.current) return null;
-      const rect = snapRef.current.getBoundingClientRect();
+      if (!size || !element) return null;
+      const rect = element.getBoundingClientRect();
       const target = getSnapTarget(payload, rect);
       setSnapTarget(target);
       return getSnapTargetFraming(target);
     },
-    [boundsSize],
+    [element, size],
   );
 
   const clearOverlay = React.useCallback(() => {
@@ -101,39 +85,23 @@ function WindowSnap({ className, children, ref, ...props }: WindowSnapProps) {
 
   return (
     <WindowSnapContext.Provider value={value}>
-      <div
-        ref={(node) => {
-          snapRef.current = node;
-          if (!ref) return;
-          if (typeof ref === "function") {
-            ref(node);
-          } else {
-            ref.current = node;
-          }
-        }}
-        className={cn("relative", className)}
-        {...props}
-      >
-        {children}
-        {snapTarget && (
-          <div className="pointer-events-none absolute inset-0 z-20">
-            <div
-              className={cn([
-                "absolute inset-y-0 w-1/2 rounded-2xl border-2 border-border/80 from-muted/60 via-muted/50 to-muted/30 shadow-inner",
-                {
-                  "left-0 bg-linear-to-r": snapTarget === "left",
-                  "right-0 bg-linear-to-l": snapTarget === "right",
-                },
-              ])}
-            />
-          </div>
-        )}
-      </div>
+      {children}
+      {snapTarget && (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div
+            className={cn([
+              "absolute inset-y-0 w-1/2 rounded-2xl border-2 border-border/80 from-muted/60 via-muted/50 to-muted/30 shadow-inner",
+              {
+                "left-0 bg-linear-to-r": snapTarget === "left",
+                "right-0 bg-linear-to-l": snapTarget === "right",
+              },
+            ])}
+          />
+        </div>
+      )}
     </WindowSnapContext.Provider>
   );
 }
-
-WindowSnap.displayName = "WindowSnap";
 
 function useWindowSnap() {
   return React.useContext(WindowSnapContext);

@@ -1,3 +1,4 @@
+import { Shell } from "@acme/ui/os/shell";
 import { Window } from "@acme/ui/os/window";
 import {
   useWindowFullscreen,
@@ -12,8 +13,7 @@ import {
   WindowHeader,
   WindowTitle,
 } from "@acme/ui/os/window-layout";
-import { useWindowManager, WindowManager } from "@acme/ui/os/window-manager";
-import { WindowSnap } from "@acme/ui/os/window-snap";
+import { useWindowManager } from "@acme/ui/os/window-manager";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -32,153 +32,62 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     return (
-      <WindowManager>
-        <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-          <Window>
-            <WindowHeader>
-              <WindowTitle>About</WindowTitle>
-            </WindowHeader>
-            <WindowContent>
-              <div className="space-y-3 text-sm">
-                <p className="font-medium">Robert Molina</p>
-                <p>
-                  Staff Software Engineer focused on building high-scale web
-                  experiences with modern React and Next.js.
-                </p>
-                <p className="text-muted-foreground">
-                  Drag the window by its header, resize from the edges, and
-                  customize content as needed.
-                </p>
-              </div>
-            </WindowContent>
-          </Window>
-        </div>
-      </WindowManager>
+      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+        <Window>
+          <WindowHeader>
+            <WindowTitle>About</WindowTitle>
+          </WindowHeader>
+          <WindowContent>
+            <div className="space-y-3 text-sm">
+              <p className="font-medium">Robert Molina</p>
+              <p>
+                Staff Software Engineer focused on building high-scale web
+                experiences with modern React and Next.js.
+              </p>
+              <p className="text-muted-foreground">
+                Drag the window by its header, resize from the edges, and
+                customize content as needed.
+              </p>
+            </div>
+          </WindowContent>
+        </Window>
+      </Shell>
     );
   },
 };
 
 export const WithDescription: Story = {
   render: () => (
-    <WindowManager>
-      <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-        <Window>
-          <WindowHeader>
-            <div className="space-y-0.5">
-              <WindowTitle>Explorer</WindowTitle>
-              <WindowCaption>~/Projects/website</WindowCaption>
+    <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+      <Window>
+        <WindowHeader>
+          <div className="space-y-0.5">
+            <WindowTitle>Explorer</WindowTitle>
+            <WindowCaption>~/Projects/website</WindowCaption>
+          </div>
+        </WindowHeader>
+        <WindowContent>
+          <div className="grid gap-3 text-sm">
+            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+              Folder view content goes here.
             </div>
-          </WindowHeader>
-          <WindowContent>
-            <div className="grid gap-3 text-sm">
-              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                Folder view content goes here.
-              </div>
-              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                You can reuse this for file previews or lists.
-              </div>
+            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+              You can reuse this for file previews or lists.
             </div>
-          </WindowContent>
-          <WindowFooter className="text-muted-foreground text-xs">
-            12 items · 3.4 MB
-          </WindowFooter>
-        </Window>
-      </div>
-    </WindowManager>
+          </div>
+        </WindowContent>
+        <WindowFooter className="text-muted-foreground text-xs">
+          12 items · 3.4 MB
+        </WindowFooter>
+      </Window>
+    </Shell>
   ),
 };
 
 export const MultiWindow: Story = {
   render: () => {
     return (
-      <WindowManager>
-        <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-          <Window
-            defaultFraming={{
-              position: { x: 8, y: 8 },
-              size: { height: 50, width: 50 },
-            }}
-          >
-            <WindowHeader>
-              <WindowTitle>About</WindowTitle>
-            </WindowHeader>
-            <WindowContent>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">Robert Molina</p>
-                <p className="text-muted-foreground">
-                  Focus a window by clicking its header.
-                </p>
-              </div>
-            </WindowContent>
-          </Window>
-
-          <Window
-            defaultFraming={{
-              position: { x: 28, y: 18 },
-              size: { height: 50, width: 50 },
-            }}
-          >
-            <WindowHeader>
-              <div className="space-y-0.5">
-                <WindowTitle>Explorer</WindowTitle>
-                <WindowCaption>~/Projects/website</WindowCaption>
-              </div>
-            </WindowHeader>
-            <WindowContent>
-              <div className="grid gap-3 text-sm">
-                <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                  This window is focused when it sits on top.
-                </div>
-                <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                  Drag each window independently.
-                </div>
-              </div>
-            </WindowContent>
-            <WindowFooter className="text-muted-foreground text-xs">
-              12 items · 3.4 MB
-            </WindowFooter>
-          </Window>
-        </div>
-      </WindowManager>
-    );
-  },
-};
-
-export const ConstrainedBounds: Story = {
-  render: () => {
-    return (
-      <WindowManager>
-        <div className="relative h-180 w-full overflow-hidden bg-muted/30">
-          <div className="flex h-14 items-center justify-between border-b bg-background/80 px-4 text-muted-foreground text-sm">
-            <span>Top Bar</span>
-            <span>Dock Area</span>
-          </div>
-          <div className="relative h-[calc(100%-3.5rem)] p-6">
-            <Window>
-              <WindowHeader>
-                <WindowTitle>Constrained Window</WindowTitle>
-              </WindowHeader>
-              <WindowContent>
-                <div className="space-y-2 text-sm">
-                  <p className="font-medium">Bounds: parent container</p>
-                  <p className="text-muted-foreground">
-                    Try dragging and resizing — the window stays inside the
-                    workspace area below the top bar.
-                  </p>
-                </div>
-              </WindowContent>
-            </Window>
-          </div>
-        </div>
-      </WindowManager>
-    );
-  },
-};
-
-export const WithSnapping: Story = {
-  render: () => (
-    <WindowManager>
-      <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window
           defaultFraming={{
             position: { x: 8, y: 8 },
@@ -190,9 +99,9 @@ export const WithSnapping: Story = {
           </WindowHeader>
           <WindowContent>
             <div className="space-y-2 text-sm">
-              <p className="font-medium">Snap Assist</p>
+              <p className="font-medium">Robert Molina</p>
               <p className="text-muted-foreground">
-                Drag a window to the left or right edge to preview snapping.
+                Focus a window by clicking its header.
               </p>
             </div>
           </WindowContent>
@@ -200,29 +109,110 @@ export const WithSnapping: Story = {
 
         <Window
           defaultFraming={{
-            position: { x: 30, y: 16 },
+            position: { x: 28, y: 18 },
             size: { height: 50, width: 50 },
           }}
         >
           <WindowHeader>
-            <WindowTitle>Explorer</WindowTitle>
+            <div className="space-y-0.5">
+              <WindowTitle>Explorer</WindowTitle>
+              <WindowCaption>~/Projects/website</WindowCaption>
+            </div>
           </WindowHeader>
           <WindowContent>
             <div className="grid gap-3 text-sm">
               <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                Snap to the right half.
+                This window is focused when it sits on top.
               </div>
               <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                Overlay appears on hover.
+                Drag each window independently.
               </div>
             </div>
           </WindowContent>
           <WindowFooter className="text-muted-foreground text-xs">
-            Drag to edges
+            12 items · 3.4 MB
           </WindowFooter>
         </Window>
-      </WindowSnap>
-    </WindowManager>
+      </Shell>
+    );
+  },
+};
+
+export const ConstrainedBounds: Story = {
+  render: () => {
+    return (
+      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30">
+        <div className="flex h-14 items-center justify-between border-b bg-background/80 px-4 text-muted-foreground text-sm">
+          <span>Top Bar</span>
+          <span>Dock Area</span>
+        </div>
+        <div className="relative h-[calc(100%-3.5rem)] p-6">
+          <Window>
+            <WindowHeader>
+              <WindowTitle>Constrained Window</WindowTitle>
+            </WindowHeader>
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Bounds: parent container</p>
+                <p className="text-muted-foreground">
+                  Try dragging and resizing — the window stays inside the
+                  workspace area below the top bar.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
+        </div>
+      </Shell>
+    );
+  },
+};
+
+export const WithSnapping: Story = {
+  render: () => (
+    <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+      <Window
+        defaultFraming={{
+          position: { x: 8, y: 8 },
+          size: { height: 50, width: 50 },
+        }}
+      >
+        <WindowHeader>
+          <WindowTitle>About</WindowTitle>
+        </WindowHeader>
+        <WindowContent>
+          <div className="space-y-2 text-sm">
+            <p className="font-medium">Snap Assist</p>
+            <p className="text-muted-foreground">
+              Drag a window to the left or right edge to preview snapping.
+            </p>
+          </div>
+        </WindowContent>
+      </Window>
+
+      <Window
+        defaultFraming={{
+          position: { x: 30, y: 16 },
+          size: { height: 50, width: 50 },
+        }}
+      >
+        <WindowHeader>
+          <WindowTitle>Explorer</WindowTitle>
+        </WindowHeader>
+        <WindowContent>
+          <div className="grid gap-3 text-sm">
+            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+              Snap to the right half.
+            </div>
+            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+              Overlay appears on hover.
+            </div>
+          </div>
+        </WindowContent>
+        <WindowFooter className="text-muted-foreground text-xs">
+          Drag to edges
+        </WindowFooter>
+      </Window>
+    </Shell>
   ),
 };
 
@@ -282,59 +272,55 @@ export const WithControls: Story = {
     };
 
     return (
-    <WindowManager>
-        <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-          <Dock />
-          <Window
-            defaultFraming={{
-              position: { x: 10, y: 12 },
-              size: { height: 45, width: 40 },
-            }}
-          >
-            <WindowControlsHeader />
-            <WindowContent>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">Double-click the header.</p>
-                <p className="text-muted-foreground">
-                  Use the hide button to move it to the dock.
-                </p>
-              </div>
-            </WindowContent>
-          </Window>
-          <Window
-            defaultFraming={{
-              position: { x: 58, y: 30 },
-              size: { height: 42, width: 38 },
-            }}
-          >
-            <WindowControlsHeader />
-            <WindowContent>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">Third window</p>
-                <p className="text-muted-foreground">
-                  Dock entries restore hidden windows.
-                </p>
-              </div>
-            </WindowContent>
-          </Window>
-          <Window
-            defaultFraming={{
-              position: { x: 34, y: 22 },
-              size: { height: 46, width: 42 },
-            }}
-          >
-            <WindowControlsHeader />
-            <WindowContent>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">Second window</p>
-                <p className="text-muted-foreground">
-                  Try hiding this one too.
-                </p>
-              </div>
-            </WindowContent>
-          </Window>
-        </WindowSnap>
-    </WindowManager>
+      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+        <Dock />
+        <Window
+          defaultFraming={{
+            position: { x: 10, y: 12 },
+            size: { height: 45, width: 40 },
+          }}
+        >
+          <WindowControlsHeader />
+          <WindowContent>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Double-click the header.</p>
+              <p className="text-muted-foreground">
+                Use the hide button to move it to the dock.
+              </p>
+            </div>
+          </WindowContent>
+        </Window>
+        <Window
+          defaultFraming={{
+            position: { x: 58, y: 30 },
+            size: { height: 42, width: 38 },
+          }}
+        >
+          <WindowControlsHeader />
+          <WindowContent>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Third window</p>
+              <p className="text-muted-foreground">
+                Dock entries restore hidden windows.
+              </p>
+            </div>
+          </WindowContent>
+        </Window>
+        <Window
+          defaultFraming={{
+            position: { x: 34, y: 22 },
+            size: { height: 46, width: 42 },
+          }}
+        >
+          <WindowControlsHeader />
+          <WindowContent>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Second window</p>
+              <p className="text-muted-foreground">Try hiding this one too.</p>
+            </div>
+          </WindowContent>
+        </Window>
+      </Shell>
     );
   },
 };

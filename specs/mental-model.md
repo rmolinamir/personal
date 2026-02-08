@@ -1,4 +1,4 @@
-# OS UI mental model and design plan
+# Mental Model
 
 ## Goals
 - Build an OS-themed portfolio UI inspired by PostHog.
@@ -30,6 +30,7 @@ Launcher types (naming TBD):
 
 ## Window system (current implementation)
 - Windows are rendered with react-rnd for drag/resize.
+- Shell owns the bounds container and exposes useShell() for RND bounds.
 - Uses shadcn Card and Button primitives for chrome and controls.
 - Window content is slotted via WindowContent.
 
@@ -51,8 +52,9 @@ Window components (exported from @acme/ui/os/window):
 
 Implementation details:
 - WindowManager: stack context with mount/unmount/focus/getWindow.
-- useWindowStack(id): hook that returns focused/zIndex/onFocus.
-- Window auto-registers with the stack and auto-generates its id via useId().
+- useWindowManager(id): hook that returns focused/zIndex/onFocus.
+- Window ids are explicit (app windows use appId); WindowManager does not generate ids.
+- WindowHeader toggles fullscreen on double-click by default.
 
 ## Controlled vs uncontrolled behavior
 - Focus/z-index are controlled by WindowManager when present.
@@ -61,14 +63,16 @@ Implementation details:
 - For controlled drag/resize: pass position/size and handle onPositionChange/onSizeChange.
 
 ## Relevant files
+- packages/ui/src/os/shell.tsx
 - packages/ui/src/os/window.tsx
 - packages/ui/src/os/window-manager.tsx
+- packages/ui/src/os/window-snap.tsx
 - apps/storybook/src/os/window.stories.tsx
-- apps/storybook/src/os/window-manager.stories.tsx
+- apps/storybook/src/os/shell.stories.tsx
+- apps/storybook/src/os/application.stories.tsx
 
 ## Next steps (planned)
-1) Workspace primitive: desktop canvas + bounds container + background.
-2) Launcher primitive: icon + label + double-click handler.
-3) Dock primitive: simple shortcuts.
-4) App adapters: Explorer, MarkdownViewer, VideoPlayer, AIAgent.
-5) TanStack route sync: focus <-> URL and auto-open on route.
+1) Launcher primitive: icon + label + double-click handler.
+2) Dock primitive: simple shortcuts.
+3) App adapters: Explorer, MarkdownViewer, VideoPlayer, AIAgent.
+4) TanStack route sync: focus <-> URL and auto-open on route.

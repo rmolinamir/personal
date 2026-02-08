@@ -1,11 +1,11 @@
-# OS App Launches
+# Application Management
 
 ## Purpose
 Define how apps are launched, how routes participate, and how launchers behave. This is separate from Window mechanics and keeps launches app-centric.
 
 ## Core principles
 - We launch apps, not windows.
-- Apps own their own windows and layout.
+- Apps own their own windows and layout (appId maps to window id).
 - WindowManager only bounds/focuses running windows; it does not decide what launches.
 - Closing a window removes the app instance and all its state.
 
@@ -14,6 +14,10 @@ Define how apps are launched, how routes participate, and how launchers behave. 
 - The Workspace does not scan routes for matches.
 - Launch is idempotent: if the app is already running, do nothing (or restore/activate if minimized).
 - Navigating between routes launches new apps but does not close existing ones.
+
+## Implementation split
+- defineApplication + useApplication live in packages/ui/src/os/application.tsx.
+- ApplicationManager + useApplicationManager live in packages/ui/src/os/application-manager.tsx.
 
 ## Launcher types (naming TBD)
 

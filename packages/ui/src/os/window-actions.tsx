@@ -1,8 +1,8 @@
-import * as React from "react";
+import type * as React from "react";
 import { Button } from "../components/button";
 import { CardAction } from "../components/card";
 import { cn } from "../lib/utils";
-import { useWindowController } from "./window";
+import { useWindow } from "./window";
 
 function WindowControls({
   className,
@@ -44,7 +44,7 @@ function WindowHideButton({
   ref,
   ...props
 }: React.ComponentProps<typeof WindowAction>) {
-  const controls = useWindowController();
+  const { toggleHidden } = useWindow();
 
   return (
     <WindowAction
@@ -53,7 +53,7 @@ function WindowHideButton({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
-        controls?.toggleHidden();
+        toggleHidden();
       }}
       {...props}
     />
@@ -65,7 +65,7 @@ function WindowFullscreenButton({
   ref,
   ...props
 }: React.ComponentProps<typeof WindowAction>) {
-  const controls = useWindowController();
+  const { toggleFullscreen } = useWindow();
 
   return (
     <WindowAction
@@ -74,30 +74,16 @@ function WindowFullscreenButton({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
-        controls?.toggleFullscreen();
+        toggleFullscreen();
       }}
       {...props}
     />
   );
 }
 
-function useWindowHide() {
-  const controls = useWindowController();
-
-  const toggleHidden = React.useCallback(() => {
-    controls?.toggleHidden();
-  }, [controls]);
-
-  return {
-    isHidden: controls?.isHidden ?? false,
-    toggleHidden,
-  };
-}
-
 export {
   WindowAction,
   WindowControls,
   WindowHideButton,
-  useWindowHide,
   WindowFullscreenButton,
 };

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "../components/card";
 import { cn } from "../lib/utils";
-import { useWindowController } from "./window";
+import { useWindow } from "./window";
 
 function WindowHeader({
   className,
@@ -15,14 +15,14 @@ function WindowHeader({
   onDoubleClick,
   ...props
 }: React.ComponentProps<typeof CardHeader>) {
-  const controller = useWindowController();
+  const { toggleFullscreen } = useWindow();
   const handleHeaderDoubleClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onDoubleClick?.(event);
       if (event.defaultPrevented) return;
-      controller?.toggleFullscreen();
+      toggleFullscreen();
     },
-    [controller, onDoubleClick],
+    [toggleFullscreen, onDoubleClick],
   );
 
   return (

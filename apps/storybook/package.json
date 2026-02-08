@@ -17,6 +17,7 @@
   "dependencies": {
     "@acme/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
+    "lucide-react": "^0.561.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.0.6",

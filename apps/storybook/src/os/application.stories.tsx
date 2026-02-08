@@ -1,3 +1,4 @@
+import { ActionLauncher } from "@acme/ui/os/action-launcher";
 import {
   type ApplicationDescriptor,
   defineApplication,
@@ -7,6 +8,7 @@ import {
   ApplicationManager,
   useApplicationManager,
 } from "@acme/ui/os/application-manager";
+import { LauncherIcon, LauncherLabel } from "@acme/ui/os/launcher";
 import { Shell } from "@acme/ui/os/shell";
 import { Window } from "@acme/ui/os/window";
 import {
@@ -146,7 +148,7 @@ type Story = StoryObj<typeof meta>;
 
 function LaunchPad() {
   const { listApplications } = useApplicationManager();
-  const { showWindow, activateWindow, getWindowData } = useWindowManager();
+  const { getWindowData } = useWindowManager();
   const apps = listApplications();
 
   return (
@@ -157,10 +159,6 @@ function LaunchPad() {
             key={app.id}
             application={app}
             isHidden={Boolean(getWindowData(app.id)?.isHidden)}
-            onRestore={() => {
-              showWindow(app.id);
-              activateWindow(app.id);
-            }}
           />
         ))}
       </div>
@@ -171,21 +169,17 @@ function LaunchPad() {
 function Desktop() {
   const { running, getApplication } = useApplicationManager();
 
-  return (
-    <>
-      {running.map((entry) => {
-        const app = getApplication(entry.appId);
-        if (!app) return null;
-        const AppComponent = app.component;
-        return <AppComponent key={entry.appId} appId={entry.appId} />;
-      })}
-    </>
-  );
+  return running.map((entry) => {
+    const app = getApplication(entry.appId);
+    if (!app) return null;
+    const AppComponent = app.component;
+    return <AppComponent key={entry.appId} appId={entry.appId} />;
+  });
 }
 
 function Taskbar() {
   const { running, getApplication } = useApplicationManager();
-  const { showWindow, activateWindow, getWindowData } = useWindowManager();
+  const { getWindowData } = useWindowManager();
 
   return (
     <>
@@ -199,10 +193,6 @@ function Taskbar() {
             key={entry.appId}
             application={app}
             isHidden={isHidden}
-            onRestore={() => {
-              showWindow(entry.appId);
-              activateWindow(entry.appId);
-            }}
           />
         );
       })}
@@ -213,41 +203,42 @@ function Taskbar() {
 type LaunchIconProps = {
   application: ApplicationDescriptor;
   isHidden: boolean;
-  onRestore: () => void;
 };
 
-function LaunchIcon({ application, isHidden, onRestore }: LaunchIconProps) {
-  const { launch } = application.useApplication();
+function LaunchIcon({ application, isHidden }: LaunchIconProps) {
+  const { activateWindow } = useWindowManager();
+  const status = isHidden ? "hidden" : "default";
+  const letter = application.title.trim().slice(0, 1) || "?";
 
   return (
-    <button
-      type="button"
-      className="group flex flex-col items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-left transition hover:border-white/30 hover:bg-white/10"
-      onClick={() => {
+    <ActionLauncher
+      application={application}
+      status={status}
+      className="text-white/90"
+      onClick={(event) => {
         if (isHidden) {
-          onRestore();
-          return;
+          event.preventDefault();
+          activateWindow(application.id);
         }
-        launch();
       }}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-white/20 via-white/10 to-white/5 font-semibold text-sm text-white shadow-lg ring-1 ring-white/20">
-        {application.title.slice(0, 1)}
-      </div>
-      <span className="font-medium text-white/90 text-xs">
+      <LauncherIcon className="bg-white/10 text-white ring-white/20">
+        {letter}
+      </LauncherIcon>
+      <LauncherLabel className="text-white/90">
         {application.title}
-      </span>
-    </button>
+      </LauncherLabel>
+    </ActionLauncher>
   );
 }
 
 type TaskbarItemProps = {
   application: ApplicationDescriptor;
   isHidden: boolean;
-  onRestore: () => void;
 };
 
-function TaskbarItem({ application, isHidden, onRestore }: TaskbarItemProps) {
+function TaskbarItem({ application, isHidden }: TaskbarItemProps) {
+  const { activateWindow } = useWindowManager();
   const { close, launch } = application.useApplication();
 
   return (
@@ -257,10 +248,10 @@ function TaskbarItem({ application, isHidden, onRestore }: TaskbarItemProps) {
         className="flex items-center gap-2 rounded-lg bg-white/15 px-2 py-1 font-medium text-white/90 text-xs hover:bg-white/25"
         onClick={() => {
           if (isHidden) {
-            onRestore();
-            return;
+            activateWindow(application.id);
+          } else {
+            launch();
           }
-          launch();
         }}
       >
         <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-white/20 font-semibold text-[10px]">

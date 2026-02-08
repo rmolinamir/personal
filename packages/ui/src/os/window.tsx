@@ -8,7 +8,7 @@ import {
 import { Card } from "../components/card";
 import { cn } from "../lib/utils";
 import { useShell } from "./shell";
-import { useWindowManagerState } from "./window-manager";
+import { useWindowManager } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
   clampPercentFraming,
@@ -18,27 +18,52 @@ import {
   toPixelFraming,
   type WindowPercentFraming,
   type WindowPixelFraming,
-  type WindowPosition,
   type WindowSize,
 } from "./window-utils";
 
-const fallbackMinSize: WindowSize = { height: 200, width: 280 };
-const fallbackFramingSize = { height: 70, width: 60 } satisfies WindowSize;
-const fallbackFraming = getCenteredFraming(fallbackFramingSize);
-
-type WindowControlsContextValue = {
-  isFullscreen: boolean;
-  isHidden: boolean;
+type WindowContextValue = {
   toggleHidden: () => void;
   toggleFullscreen: () => void;
 };
 
-const WindowControllerContext =
-  React.createContext<WindowControlsContextValue | null>(null);
+const WindowContext = React.createContext<WindowContextValue | null>(null);
 
-function useWindowController() {
-  return React.useContext(WindowControllerContext);
+type WindowProviderProps = {
+  id: string;
+  children: React.ReactNode;
+};
+
+function WindowProvider({ id, children }: WindowProviderProps) {
+  const manager = useWindowManager();
+
+  const toggleHidden = React.useCallback(() => {
+    if (manager.getWindowData(id)?.isHidden) {
+      manager.activateWindow(id);
+      return;
+    }
+    manager.hideWindow(id);
+  }, [manager, id]);
+
+  const toggleFullscreen = React.useCallback(() => {
+    manager.toggleFullscreen(id);
+  }, [manager, id]);
+
+  const value = React.useMemo(
+    () => ({
+      toggleFullscreen,
+      toggleHidden,
+    }),
+    [toggleHidden, toggleFullscreen],
+  );
+
+  return (
+    <WindowContext.Provider value={value}>{children}</WindowContext.Provider>
+  );
 }
+
+const fallbackMinSize: WindowSize = { height: 200, width: 280 };
+const fallbackFramingSize = { height: 70, width: 60 } satisfies WindowSize;
+const fallbackFraming = getCenteredFraming(fallbackFramingSize);
 
 export type WindowProps = React.ComponentProps<typeof Card> & {
   id?: string;
@@ -71,28 +96,44 @@ function Window({
   const autoId = React.useId();
   const windowId = id ?? autoId;
 
-  const rndRef = React.useRef<Rnd>(null);
-  const previousBoundsRef = React.useRef<WindowSize | null>(null);
-  const desiredPixelFramingRef = React.useRef<WindowPixelFraming | null>(null);
-  const dragStartPointerRef = React.useRef<WindowPosition | null>(null);
-
-  const {
-    activate,
-    framing,
-    isActive,
-    isFullscreen,
-    isHidden,
-    setFraming,
-    toggleHidden,
-    toggleFullscreen,
-    zIndex,
-  } = useWindowManagerState(windowId);
   const { size: bounds, element } = useShell();
+  const manager = useWindowManager();
   const snap = useWindowSnap();
 
-  const controller = React.useMemo<WindowControlsContextValue>(
-    () => ({ isFullscreen, isHidden, toggleFullscreen, toggleHidden }),
-    [isFullscreen, isHidden, toggleFullscreen, toggleHidden],
+  const previousBoundsRef = React.useRef<WindowSize | null>(null);
+  const lastUserPixelFramingRef = React.useRef<WindowPixelFraming | null>(null);
+
+  const windowData = manager.getWindowData(windowId);
+  const framing = windowData?.framing;
+  const isActive = manager.focusedId === windowId;
+  const isFullscreen = Boolean(windowData?.isFullscreen);
+  const isHidden = Boolean(windowData?.isHidden);
+  const zIndex = windowData?.zIndex ?? 1;
+
+  const currentPixelFraming = React.useMemo(() => {
+    if (!bounds || !framing) return null;
+    return toPixelFraming(framing, bounds);
+  }, [bounds, framing]);
+
+  const initialPixelFraming = React.useMemo(() => {
+    if (!bounds || !defaultFraming) return null;
+    return toPixelFraming(defaultFraming, bounds);
+  }, [bounds, defaultFraming]);
+
+  const fallbackPixelFraming = React.useMemo(() => {
+    if (!bounds) return null;
+    return toPixelFraming(fallbackFraming, bounds);
+  }, [bounds]);
+
+  const activateWindow = React.useCallback(() => {
+    manager.activateWindow(windowId);
+  }, [manager, windowId]);
+
+  const setFraming = React.useCallback(
+    (nextFraming: WindowPercentFraming) => {
+      manager.setFraming(windowId, nextFraming);
+    },
+    [manager, windowId],
   );
 
   const computeNextFraming = React.useCallback(
@@ -108,28 +149,12 @@ function Window({
     [bounds, maxSize, minSize],
   );
 
-  const pixelFraming = React.useMemo(() => {
-    if (!bounds || !framing) return null;
-    return toPixelFraming(framing, bounds);
-  }, [bounds, framing]);
-
-  const defaultPixelFraming = React.useMemo(() => {
-    if (!bounds || !defaultFraming) return null;
-    return toPixelFraming(defaultFraming, bounds);
-  }, [bounds, defaultFraming]);
-
-  const fallbackPixelFraming = React.useMemo(() => {
-    if (!bounds) return null;
-    return toPixelFraming(fallbackFraming, bounds);
-  }, [bounds]);
-
   const handleDragStop = React.useCallback<RndDragCallback>(
     (event, data) => {
       if (!bounds) return;
-      dragStartPointerRef.current = null;
       const currentSize =
-        pixelFraming?.size ??
-        defaultPixelFraming?.size ??
+        currentPixelFraming?.size ??
+        initialPixelFraming?.size ??
         fallbackPixelFraming?.size ??
         fallbackFraming.size;
       const snapPointer = getPointerPosition(event);
@@ -152,7 +177,7 @@ function Window({
         size: currentSize,
         unit: "px",
       };
-      desiredPixelFramingRef.current = desiredPixelFraming;
+      lastUserPixelFramingRef.current = desiredPixelFraming;
 
       const nextFraming = computeNextFraming(desiredPixelFraming);
       if (nextFraming) {
@@ -162,9 +187,9 @@ function Window({
     },
     [
       bounds,
-      defaultPixelFraming,
+      initialPixelFraming,
       fallbackPixelFraming,
-      pixelFraming,
+      currentPixelFraming,
       setFraming,
       snap,
       computeNextFraming,
@@ -175,8 +200,8 @@ function Window({
     (event) => {
       if (!bounds || isFullscreen) return;
       const currentSize =
-        pixelFraming?.size ??
-        defaultPixelFraming?.size ??
+        currentPixelFraming?.size ??
+        initialPixelFraming?.size ??
         fallbackPixelFraming?.size ??
         fallbackFraming.size;
       const snapPointer = getPointerPosition(event);
@@ -189,21 +214,17 @@ function Window({
     },
     [
       bounds,
-      defaultPixelFraming,
+      initialPixelFraming,
       fallbackPixelFraming,
       isFullscreen,
-      pixelFraming,
+      currentPixelFraming,
       snap,
     ],
   );
 
-  const handleDragStart = React.useCallback<RndDragCallback>(
-    (event) => {
-      dragStartPointerRef.current = getPointerPosition(event);
-      activate();
-    },
-    [activate],
-  );
+  const handleDragStart = React.useCallback<RndDragCallback>(() => {
+    activateWindow();
+  }, [activateWindow]);
 
   const handleResizeStop = React.useCallback<RndResizeCallback>(
     (_event, _direction, refElement, _delta, nextPosition) => {
@@ -217,7 +238,7 @@ function Window({
         size: nextSize,
         unit: "px",
       };
-      desiredPixelFramingRef.current = desiredPixelFraming;
+      lastUserPixelFramingRef.current = desiredPixelFraming;
 
       const nextFraming = computeNextFraming(desiredPixelFraming);
       if (nextFraming) {
@@ -228,12 +249,25 @@ function Window({
   );
 
   const handleResizeStart = React.useCallback<RndResizeStartCallback>(() => {
-    activate();
-  }, [activate]);
+    activateWindow();
+  }, [activateWindow]);
 
   const handleMouseDown = React.useCallback(() => {
-    activate();
-  }, [activate]);
+    activateWindow();
+  }, [activateWindow]);
+
+  const mountWindow = React.useEffectEvent((nextId: string) => {
+    manager.mountWindow(nextId);
+  });
+  const unmountWindow = React.useEffectEvent((nextId: string) => {
+    manager.unmountWindow(nextId);
+  });
+
+  // Mount and unmount the window when the windowId changes
+  React.useEffect(() => {
+    mountWindow(windowId);
+    return () => unmountWindow(windowId);
+  }, [windowId]);
 
   // Initialize the frame once we know bounds
   React.useEffect(() => {
@@ -263,9 +297,9 @@ function Window({
 
     if (boundsDecreased || boundsIncreased) {
       // Use the last user-driven pixel frame as the target
-      const desiredPixelFraming = desiredPixelFramingRef.current ??
-        pixelFraming ??
-        defaultPixelFraming ??
+       const desiredPixelFraming = lastUserPixelFramingRef.current ??
+        currentPixelFraming ??
+        initialPixelFraming ??
         fallbackPixelFraming ?? {
           position: { x: 0, y: 0 },
           size: fallbackFraming.size,
@@ -324,15 +358,14 @@ function Window({
     isFullscreen,
     minSize,
     setFraming,
-    pixelFraming,
-    defaultPixelFraming,
+    currentPixelFraming,
+    initialPixelFraming,
     fallbackPixelFraming,
   ]);
 
   return (
-    <WindowControllerContext.Provider value={controller}>
+    <WindowProvider id={windowId}>
       <Rnd
-        ref={rndRef}
         bounds={element ?? "parent"}
         disableDragging={!draggable || isFullscreen || isHidden}
         enableResizing={resizable && !isFullscreen && !isHidden}
@@ -341,8 +374,8 @@ function Window({
         maxWidth={maxSize?.width}
         maxHeight={maxSize?.height}
         default={undefined}
-        position={pixelFraming?.position}
-        size={pixelFraming?.size}
+        position={currentPixelFraming?.position}
+        size={currentPixelFraming?.size}
         style={{
           maxHeight: "100%",
           maxWidth: "100%",
@@ -378,15 +411,22 @@ function Window({
           {children}
         </Card>
       </Rnd>
-    </WindowControllerContext.Provider>
+    </WindowProvider>
   );
 }
 
-export { Window, useWindowController };
+function useWindow() {
+  const context = React.useContext(WindowContext);
+  if (!context) {
+    throw new Error("useWindow must be used within a WindowContext.Provider");
+  }
+  return context;
+}
+
+export { Window, useWindow };
 
 export type {
   WindowPercentFraming,
   WindowPixelFraming,
-  WindowPosition,
   WindowSize,
 } from "./window-utils";

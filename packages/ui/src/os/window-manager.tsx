@@ -19,18 +19,16 @@ type WindowManagerState = {
 export type WindowManagerContextValue = {
   windows: WindowInstance[];
   focusedId?: string;
+  getWindowData: (id: string) => WindowInstance | undefined;
+  getFraming: (id: string) => WindowPercentFraming | undefined;
+  getIsFullscreen: (id: string) => boolean;
+  getIsHidden: (id: string) => boolean;
   mountWindow: (id: string) => void;
   unmountWindow: (id: string) => void;
   activateWindow: (id: string) => void;
   hideWindow: (id: string) => void;
-  showWindow: (id: string) => void;
-  getWindow: (id: string) => WindowInstance | undefined;
-  getWindowData: (id: string) => WindowInstance | undefined;
-  getFraming: (id: string) => WindowPercentFraming | undefined;
   setFraming: (id: string, framing: WindowPercentFraming) => void;
   toggleFullscreen: (id: string) => void;
-  getIsFullscreen: (id: string) => boolean;
-  getIsHidden: (id: string) => boolean;
 };
 
 const WindowManagerContext =
@@ -62,6 +60,26 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
     map: {},
     windows: [],
   }));
+
+  const getWindowData = React.useCallback(
+    (id: string) => state.map[id],
+    [state.map],
+  );
+
+  const getFraming = React.useCallback(
+    (id: string) => getWindowData(id)?.framing,
+    [getWindowData],
+  );
+
+  const getIsFullscreen = React.useCallback(
+    (id: string) => Boolean(getWindowData(id)?.isFullscreen),
+    [getWindowData],
+  );
+
+  const getIsHidden = React.useCallback(
+    (id: string) => Boolean(getWindowData(id)?.isHidden),
+    [getWindowData],
+  );
 
   const mountWindow = React.useCallback((id: string) => {
     setState((prev) => {
@@ -169,39 +187,6 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
     });
   }, []);
 
-  const showWindow = React.useCallback((id: string) => {
-    setState((prev) => {
-      const windowData = prev.map[id];
-      if (!windowData) return prev;
-
-      return {
-        ...prev,
-        map: {
-          ...prev.map,
-          [id]: {
-            ...windowData,
-            isHidden: false,
-          },
-        },
-      };
-    });
-  }, []);
-
-  const getWindow = React.useCallback(
-    (id: string) => state.windows.find((window) => window.id === id),
-    [state.windows],
-  );
-
-  const getWindowData = React.useCallback(
-    (id: string) => state.map[id],
-    [state.map],
-  );
-
-  const getFraming = React.useCallback(
-    (id: string) => state.map[id]?.framing,
-    [state.map],
-  );
-
   const setFraming = React.useCallback(
     (id: string, framing: WindowPercentFraming) => {
       setState((prev) => ({
@@ -216,16 +201,6 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
       }));
     },
     [],
-  );
-
-  const getIsFullscreen = React.useCallback(
-    (id: string) => Boolean(state.map[id]?.isFullscreen),
-    [state.map],
-  );
-
-  const getIsHidden = React.useCallback(
-    (id: string) => Boolean(state.map[id]?.isHidden),
-    [state.map],
   );
 
   const toggleFullscreen = React.useCallback((id: string) => {
@@ -271,36 +246,32 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
 
   const value = React.useMemo<WindowManagerContextValue>(
     () => ({
-      activateWindow,
       focusedId: state.focusedId,
-      getFraming: getFraming,
+      getWindowData,
+      getFraming,
       getIsFullscreen,
       getIsHidden,
-      getWindow,
-      getWindowData,
-      hideWindow,
       mountWindow,
-      setFraming: setFraming,
-      showWindow,
-      toggleFullscreen,
       unmountWindow,
+      activateWindow,
+      hideWindow,
+      setFraming: setFraming,
+      toggleFullscreen,
       windows: state.windows,
     }),
     [
-      activateWindow,
+      getWindowData,
+      getFraming,
       getIsFullscreen,
       getIsHidden,
-      getFraming,
-      getWindow,
-      getWindowData,
-      hideWindow,
       mountWindow,
-      showWindow,
+      unmountWindow,
+      activateWindow,
+      hideWindow,
       setFraming,
       state.focusedId,
       state.windows,
       toggleFullscreen,
-      unmountWindow,
     ],
   );
 
@@ -319,63 +290,4 @@ function useWindowManager() {
   return context;
 }
 
-export type WindowState = {
-  isActive: boolean;
-  isFullscreen: boolean;
-  isHidden: boolean;
-  zIndex: number;
-  activate: () => void;
-  framing?: WindowPercentFraming;
-  setFraming: (framing: WindowPercentFraming) => void;
-  hide: () => void;
-  show: () => void;
-  toggleHidden: () => void;
-  toggleFullscreen: () => void;
-};
-
-function useWindowManagerState(id: string): WindowState {
-  const manager = useWindowManager();
-
-  const mountWindow = React.useEffectEvent((windowId: string) => {
-    manager.mountWindow(windowId);
-  });
-  const unmountWindow = React.useEffectEvent((windowId: string) => {
-    manager.unmountWindow(windowId);
-  });
-  const activateWindow = React.useEffectEvent((windowId: string) => {
-    manager.activateWindow(windowId);
-  });
-
-  React.useEffect(() => {
-    mountWindow(id);
-    return () => unmountWindow(id);
-  }, [id]);
-
-  const activeWindow = manager.getWindow(id);
-
-  return {
-    activate: () => activateWindow(id),
-    framing: manager.getFraming(id),
-    hide: () => manager.hideWindow(id),
-    isActive: manager.focusedId === id,
-    isFullscreen: manager.getIsFullscreen(id),
-    isHidden: manager.getIsHidden(id),
-    setFraming: (framing) => manager.setFraming(id, framing),
-    show: () => {
-      manager.showWindow(id);
-      manager.activateWindow(id);
-    },
-    toggleFullscreen: () => manager.toggleFullscreen(id),
-    toggleHidden: () => {
-      if (manager.getIsHidden(id)) {
-        manager.showWindow(id);
-        manager.activateWindow(id);
-        return;
-      }
-      manager.hideWindow(id);
-    },
-    zIndex: activeWindow?.zIndex ?? 1,
-  };
-}
-
-export { WindowManagerProvider, useWindowManagerState, useWindowManager };
+export { WindowManagerProvider, useWindowManager };

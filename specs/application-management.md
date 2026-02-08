@@ -20,6 +20,10 @@ Define how apps are launched, how routes participate, and how launchers behave. 
 - ApplicationManager + useApplicationManager live in packages/ui/src/os/application-manager.tsx.
 
 ## Launcher types (naming TBD)
+Base launcher is presentational; routing or launch behavior is composed externally.
+
+Current UI helper
+- ActionLauncher: wraps a Launcher and triggers application.launch() when clicked.
 
 ### RouteLauncher
 For navigation-driven launches. Clicking navigates to a route that triggers launch.

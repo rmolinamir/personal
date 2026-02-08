@@ -63,16 +63,17 @@ Implementation details:
 - For controlled drag/resize: pass position/size and handle onPositionChange/onSizeChange.
 
 ## Relevant files
+- packages/ui/src/os/launcher.tsx
 - packages/ui/src/os/shell.tsx
 - packages/ui/src/os/window.tsx
 - packages/ui/src/os/window-manager.tsx
 - packages/ui/src/os/window-snap.tsx
 - apps/storybook/src/os/window.stories.tsx
+- apps/storybook/src/os/launcher.stories.tsx
 - apps/storybook/src/os/shell.stories.tsx
 - apps/storybook/src/os/application.stories.tsx
 
 ## Next steps (planned)
-1) Launcher primitive: icon + label + double-click handler.
-2) Dock primitive: simple shortcuts.
-3) App adapters: Explorer, MarkdownViewer, VideoPlayer, AIAgent.
-4) TanStack route sync: focus <-> URL and auto-open on route.
+1) Dock primitive: simple shortcuts.
+2) App adapters: Explorer, MarkdownViewer, VideoPlayer, AIAgent.
+3) TanStack route sync: focus <-> URL and auto-open on route.

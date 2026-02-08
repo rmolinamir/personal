@@ -11,3 +11,4 @@ viewports
 vite
 nowrap
 disabledpointer
+rgba

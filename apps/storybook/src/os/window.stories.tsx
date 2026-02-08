@@ -13,6 +13,7 @@ import {
   WindowTitle,
 } from "@acme/ui/os/window-layout";
 import { useWindowManager } from "@acme/ui/os/window-manager";
+import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -169,57 +170,58 @@ export const ConstrainedBounds: Story = {
 export const WithSnapping: Story = {
   render: () => (
     <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-      <Window
-        defaultFraming={{
-          position: { x: 8, y: 8 },
-          size: { height: 50, width: 50 },
-        }}
-      >
-        <WindowHeader>
-          <WindowTitle>About</WindowTitle>
-        </WindowHeader>
-        <WindowContent>
-          <div className="space-y-2 text-sm">
-            <p className="font-medium">Snap Assist</p>
-            <p className="text-muted-foreground">
-              Drag a window to the left or right edge to preview snapping.
-            </p>
-          </div>
-        </WindowContent>
-      </Window>
+      <WindowSnap>
+        <Window
+          defaultFraming={{
+            position: { x: 8, y: 8 },
+            size: { height: 50, width: 50 },
+          }}
+        >
+          <WindowHeader>
+            <WindowTitle>About</WindowTitle>
+          </WindowHeader>
+          <WindowContent>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Snap Assist</p>
+              <p className="text-muted-foreground">
+                Drag a window to the left or right edge to preview snapping.
+              </p>
+            </div>
+          </WindowContent>
+        </Window>
 
-      <Window
-        defaultFraming={{
-          position: { x: 30, y: 16 },
-          size: { height: 50, width: 50 },
-        }}
-      >
-        <WindowHeader>
-          <WindowTitle>Explorer</WindowTitle>
-        </WindowHeader>
-        <WindowContent>
-          <div className="grid gap-3 text-sm">
-            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-              Snap to the right half.
+        <Window
+          defaultFraming={{
+            position: { x: 30, y: 16 },
+            size: { height: 50, width: 50 },
+          }}
+        >
+          <WindowHeader>
+            <WindowTitle>Explorer</WindowTitle>
+          </WindowHeader>
+          <WindowContent>
+            <div className="grid gap-3 text-sm">
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                Snap to the right half.
+              </div>
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                Overlay appears on hover.
+              </div>
             </div>
-            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-              Overlay appears on hover.
-            </div>
-          </div>
-        </WindowContent>
-        <WindowFooter className="text-muted-foreground text-xs">
-          Drag to edges
-        </WindowFooter>
-      </Window>
+          </WindowContent>
+          <WindowFooter className="text-muted-foreground text-xs">
+            Drag to edges
+          </WindowFooter>
+        </Window>
+      </WindowSnap>
     </Shell>
   ),
 };
 
 export const WithControls: Story = {
   render: () => {
-    const Dock = () => {
-      const { windows, showWindow, activateWindow, getWindowData } =
-        useWindowManager();
+      const Dock = () => {
+        const { windows, activateWindow, getWindowData } = useWindowManager();
 
       const hiddenWindows = windows.filter(
         (window) => getWindowData(window.id)?.isHidden,
@@ -237,7 +239,6 @@ export const WithControls: Story = {
                 key={window.id}
                 className="rounded-md border border-border/80 bg-muted/60 px-2 py-1 text-xs"
                 onClick={() => {
-                  showWindow(window.id);
                   activateWindow(window.id);
                 }}
               >

@@ -10,7 +10,7 @@ export type WindowInstance = {
   previousFraming?: WindowPercentFraming | null;
 };
 
-export type WindowManagerState = {
+type WindowManagerState = {
   windows: WindowInstance[];
   map: Record<string, WindowInstance>;
   focusedId?: string;
@@ -33,9 +33,8 @@ export type WindowManagerContextValue = {
   getIsHidden: (id: string) => boolean;
 };
 
-const WindowManagerContext = React.createContext<
-  WindowManagerContextValue | null
->(null);
+const WindowManagerContext =
+  React.createContext<WindowManagerContextValue | null>(null);
 
 function findTopWindow(
   windows: WindowInstance[],
@@ -53,11 +52,11 @@ function findTopWindow(
   return top;
 }
 
-export type WindowManagerProps = {
+type WindowManagerProps = {
   children: React.ReactNode;
 };
 
-function WindowManager({ children }: WindowManagerProps) {
+function WindowManagerProvider({ children }: WindowManagerProps) {
   const [state, setState] = React.useState<WindowManagerState>(() => ({
     focusedId: undefined,
     map: {},
@@ -379,4 +378,4 @@ function useWindowManagerState(id: string): WindowState {
   };
 }
 
-export { WindowManager, useWindowManagerState, useWindowManager };
+export { WindowManagerProvider, useWindowManagerState, useWindowManager };

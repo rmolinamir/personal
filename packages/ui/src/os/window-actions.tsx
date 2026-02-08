@@ -94,34 +94,10 @@ function useWindowHide() {
   };
 }
 
-function useWindowFullscreen() {
-  const controls = useWindowController();
-
-  const handleDoubleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!controls) return;
-      if (event.currentTarget !== event.target) return;
-      controls.toggleFullscreen();
-    },
-    [controls],
-  );
-
-  const toggleFullscreen = React.useCallback(() => {
-    controls?.toggleFullscreen();
-  }, [controls]);
-
-  return {
-    handleDoubleClick: handleDoubleClick,
-    isFullscreen: controls?.isFullscreen ?? false,
-    toggleFullscreen,
-  };
-}
-
 export {
   WindowAction,
   WindowControls,
   WindowHideButton,
   useWindowHide,
   WindowFullscreenButton,
-  useWindowFullscreen,
 };

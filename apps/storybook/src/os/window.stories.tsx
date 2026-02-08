@@ -1,7 +1,6 @@
 import { Shell } from "@acme/ui/os/shell";
 import { Window } from "@acme/ui/os/window";
 import {
-  useWindowFullscreen,
   WindowControls,
   WindowFullscreenButton,
   WindowHideButton,
@@ -250,26 +249,22 @@ export const WithControls: Story = {
       );
     };
 
-    const WindowControlsHeader = () => {
-      const { handleDoubleClick } = useWindowFullscreen();
-
-      return (
-        <WindowHeader onDoubleClick={handleDoubleClick}>
-          <div className="space-y-0.5">
-            <WindowTitle>Window Controls</WindowTitle>
-            <WindowCaption>
-              Click on the controls to interact with the window.
-            </WindowCaption>
-          </div>
-          <WindowControls>
-            <WindowHideButton aria-label="Hide">—</WindowHideButton>
-            <WindowFullscreenButton aria-label="Fullscreen">
-              □
-            </WindowFullscreenButton>
-          </WindowControls>
-        </WindowHeader>
-      );
-    };
+    const WindowControlsHeader = () => (
+      <WindowHeader>
+        <div className="space-y-0.5">
+          <WindowTitle>Window Controls</WindowTitle>
+          <WindowCaption>
+            Click on the controls to interact with the window.
+          </WindowCaption>
+        </div>
+        <WindowControls>
+          <WindowHideButton aria-label="Hide">—</WindowHideButton>
+          <WindowFullscreenButton aria-label="Fullscreen">
+            □
+          </WindowFullscreenButton>
+        </WindowControls>
+      </WindowHeader>
+    );
 
     return (
       <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">

@@ -1,4 +1,4 @@
-import type * as React from "react";
+import * as React from "react";
 import {
   CardContent,
   CardDescription,
@@ -7,16 +7,29 @@ import {
   CardTitle,
 } from "../components/card";
 import { cn } from "../lib/utils";
+import { useWindowController } from "./window";
 
 function WindowHeader({
   className,
   ref,
+  onDoubleClick,
   ...props
 }: React.ComponentProps<typeof CardHeader>) {
+  const controller = useWindowController();
+  const handleHeaderDoubleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      onDoubleClick?.(event);
+      if (event.defaultPrevented) return;
+      controller?.toggleFullscreen();
+    },
+    [controller, onDoubleClick],
+  );
+
   return (
     <CardHeader
       ref={ref}
       data-slot="window-header"
+      onDoubleClick={handleHeaderDoubleClick}
       className={cn(
         "flex select-none flex-row items-center justify-between gap-3",
         "border-border/80 border-b bg-muted/60 px-3 py-2!",

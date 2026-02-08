@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "../lib/utils";
-import { WindowManager } from "./window-manager";
+import { WindowManagerProvider } from "./window-manager";
 import type { WindowSize } from "./window-utils";
 
 type ShellContextValue = {
@@ -57,11 +57,11 @@ function Shell({ className, children, ref, ...props }: ShellProps) {
 
   return (
     <ShellContext.Provider value={value}>
-      <WindowManager>
+      <WindowManagerProvider>
         <div ref={handleRef} className={cn("relative", className)} {...props}>
           {children}
         </div>
-      </WindowManager>
+      </WindowManagerProvider>
     </ShellContext.Provider>
   );
 }

@@ -12,7 +12,7 @@ import {
   WindowHeader,
   WindowTitle,
 } from "@acme/ui/os/window-layout";
-import { useWindows, WindowProvider } from "@acme/ui/os/window-provider";
+import { useWindowManager, WindowManager } from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     return (
-      <WindowProvider>
+      <WindowManager>
         <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
           <Window>
             <WindowHeader>
@@ -53,14 +53,14 @@ export const Default: Story = {
             </WindowContent>
           </Window>
         </div>
-      </WindowProvider>
+      </WindowManager>
     );
   },
 };
 
 export const WithDescription: Story = {
   render: () => (
-    <WindowProvider>
+    <WindowManager>
       <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window>
           <WindowHeader>
@@ -84,14 +84,14 @@ export const WithDescription: Story = {
           </WindowFooter>
         </Window>
       </div>
-    </WindowProvider>
+    </WindowManager>
   ),
 };
 
 export const MultiWindow: Story = {
   render: () => {
     return (
-      <WindowProvider>
+      <WindowManager>
         <div className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
           <Window
             defaultFraming={{
@@ -139,7 +139,7 @@ export const MultiWindow: Story = {
             </WindowFooter>
           </Window>
         </div>
-      </WindowProvider>
+      </WindowManager>
     );
   },
 };
@@ -147,7 +147,7 @@ export const MultiWindow: Story = {
 export const ConstrainedBounds: Story = {
   render: () => {
     return (
-      <WindowProvider>
+      <WindowManager>
         <div className="relative h-180 w-full overflow-hidden bg-muted/30">
           <div className="flex h-14 items-center justify-between border-b bg-background/80 px-4 text-muted-foreground text-sm">
             <span>Top Bar</span>
@@ -170,14 +170,14 @@ export const ConstrainedBounds: Story = {
             </Window>
           </div>
         </div>
-      </WindowProvider>
+      </WindowManager>
     );
   },
 };
 
 export const WithSnapping: Story = {
   render: () => (
-    <WindowProvider>
+    <WindowManager>
       <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
         <Window
           defaultFraming={{
@@ -222,7 +222,7 @@ export const WithSnapping: Story = {
           </WindowFooter>
         </Window>
       </WindowSnap>
-    </WindowProvider>
+    </WindowManager>
   ),
 };
 
@@ -230,7 +230,7 @@ export const WithControls: Story = {
   render: () => {
     const Dock = () => {
       const { windows, showWindow, activateWindow, getWindowData } =
-        useWindows();
+        useWindowManager();
 
       const hiddenWindows = windows.filter(
         (window) => getWindowData(window.id)?.isHidden,
@@ -282,7 +282,7 @@ export const WithControls: Story = {
     };
 
     return (
-      <WindowProvider>
+    <WindowManager>
         <WindowSnap className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
           <Dock />
           <Window
@@ -334,7 +334,7 @@ export const WithControls: Story = {
             </WindowContent>
           </Window>
         </WindowSnap>
-      </WindowProvider>
+    </WindowManager>
     );
   },
 };

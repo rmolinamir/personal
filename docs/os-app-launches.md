@@ -6,7 +6,7 @@ Define how apps are launched, how routes participate, and how launchers behave. 
 ## Core principles
 - We launch apps, not windows.
 - Apps own their own windows and layout.
-- WindowProvider only bounds/focuses running windows; it does not decide what launches.
+- WindowManager only bounds/focuses running windows; it does not decide what launches.
 - Closing a window removes the app instance and all its state.
 
 ## Launch model

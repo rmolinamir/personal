@@ -8,7 +8,7 @@ import {
 import { Card } from "../components/card";
 import { cn } from "../lib/utils";
 import { useWindowBounds } from "./window-hooks";
-import { useWindowState } from "./window-provider";
+import { useWindowManagerState } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
   clampPercentFraming,
@@ -83,7 +83,7 @@ function Window({
     toggleHidden,
     toggleFullscreen,
     zIndex,
-  } = useWindowState(windowId);
+  } = useWindowManagerState(windowId);
   const bounds = useWindowBounds(rndRef);
   const snap = useWindowSnap();
 

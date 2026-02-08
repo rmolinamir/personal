@@ -50,12 +50,12 @@ Window components (exported from @acme/ui/os/window):
 - Unmounting a focused window focuses the current top window if any.
 
 Implementation details:
-- WindowManagerProvider: stack context with mount/unmount/focus/getWindow.
+- WindowManager: stack context with mount/unmount/focus/getWindow.
 - useWindowStack(id): hook that returns focused/zIndex/onFocus.
 - Window auto-registers with the stack and auto-generates its id via useId().
 
 ## Controlled vs uncontrolled behavior
-- Focus/z-index are controlled by WindowManagerProvider when present.
+- Focus/z-index are controlled by WindowManager when present.
 - Outside the provider, Window uses focused/zIndex props (no internal focus state).
 - Drag/resize are uncontrolled by default via react-rnd default position/size.
 - For controlled drag/resize: pass position/size and handle onPositionChange/onSizeChange.

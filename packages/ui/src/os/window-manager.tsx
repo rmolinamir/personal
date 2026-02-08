@@ -10,13 +10,13 @@ export type WindowInstance = {
   previousFraming?: WindowPercentFraming | null;
 };
 
-export type WindowProviderState = {
+export type WindowManagerState = {
   windows: WindowInstance[];
   map: Record<string, WindowInstance>;
   focusedId?: string;
 };
 
-export type WindowContextValue = {
+export type WindowManagerContextValue = {
   windows: WindowInstance[];
   focusedId?: string;
   mountWindow: (id: string) => void;
@@ -33,7 +33,9 @@ export type WindowContextValue = {
   getIsHidden: (id: string) => boolean;
 };
 
-const WindowContext = React.createContext<WindowContextValue | null>(null);
+const WindowManagerContext = React.createContext<
+  WindowManagerContextValue | null
+>(null);
 
 function findTopWindow(
   windows: WindowInstance[],
@@ -51,12 +53,12 @@ function findTopWindow(
   return top;
 }
 
-export type WindowProviderProps = {
+export type WindowManagerProps = {
   children: React.ReactNode;
 };
 
-function WindowProvider({ children }: WindowProviderProps) {
-  const [state, setState] = React.useState<WindowProviderState>(() => ({
+function WindowManager({ children }: WindowManagerProps) {
+  const [state, setState] = React.useState<WindowManagerState>(() => ({
     focusedId: undefined,
     map: {},
     windows: [],
@@ -268,7 +270,7 @@ function WindowProvider({ children }: WindowProviderProps) {
     });
   }, []);
 
-  const value = React.useMemo<WindowContextValue>(
+  const value = React.useMemo<WindowManagerContextValue>(
     () => ({
       activateWindow,
       focusedId: state.focusedId,
@@ -304,14 +306,16 @@ function WindowProvider({ children }: WindowProviderProps) {
   );
 
   return (
-    <WindowContext.Provider value={value}>{children}</WindowContext.Provider>
+    <WindowManagerContext.Provider value={value}>
+      {children}
+    </WindowManagerContext.Provider>
   );
 }
 
-function useWindows() {
-  const context = React.useContext(WindowContext);
+function useWindowManager() {
+  const context = React.useContext(WindowManagerContext);
   if (!context) {
-    throw new Error("useWindows must be used within WindowProvider");
+    throw new Error("useWindowManager must be used within WindowManager");
   }
   return context;
 }
@@ -330,17 +334,17 @@ export type WindowState = {
   toggleFullscreen: () => void;
 };
 
-function useWindowState(id: string): WindowState {
-  const provider = useWindows();
+function useWindowManagerState(id: string): WindowState {
+  const manager = useWindowManager();
 
   const mountWindow = React.useEffectEvent((windowId: string) => {
-    provider.mountWindow(windowId);
+    manager.mountWindow(windowId);
   });
   const unmountWindow = React.useEffectEvent((windowId: string) => {
-    provider.unmountWindow(windowId);
+    manager.unmountWindow(windowId);
   });
   const activateWindow = React.useEffectEvent((windowId: string) => {
-    provider.activateWindow(windowId);
+    manager.activateWindow(windowId);
   });
 
   React.useEffect(() => {
@@ -348,31 +352,31 @@ function useWindowState(id: string): WindowState {
     return () => unmountWindow(id);
   }, [id]);
 
-  const activeWindow = provider.getWindow(id);
+  const activeWindow = manager.getWindow(id);
 
   return {
     activate: () => activateWindow(id),
-    framing: provider.getFraming(id),
-    hide: () => provider.hideWindow(id),
-    isActive: provider.focusedId === id,
-    isFullscreen: provider.getIsFullscreen(id),
-    isHidden: provider.getIsHidden(id),
-    setFraming: (framing) => provider.setFraming(id, framing),
+    framing: manager.getFraming(id),
+    hide: () => manager.hideWindow(id),
+    isActive: manager.focusedId === id,
+    isFullscreen: manager.getIsFullscreen(id),
+    isHidden: manager.getIsHidden(id),
+    setFraming: (framing) => manager.setFraming(id, framing),
     show: () => {
-      provider.showWindow(id);
-      provider.activateWindow(id);
+      manager.showWindow(id);
+      manager.activateWindow(id);
     },
-    toggleFullscreen: () => provider.toggleFullscreen(id),
+    toggleFullscreen: () => manager.toggleFullscreen(id),
     toggleHidden: () => {
-      if (provider.getIsHidden(id)) {
-        provider.showWindow(id);
-        provider.activateWindow(id);
+      if (manager.getIsHidden(id)) {
+        manager.showWindow(id);
+        manager.activateWindow(id);
         return;
       }
-      provider.hideWindow(id);
+      manager.hideWindow(id);
     },
     zIndex: activeWindow?.zIndex ?? 1,
   };
 }
 
-export { WindowProvider, useWindowState, useWindows };
+export { WindowManager, useWindowManagerState, useWindowManager };

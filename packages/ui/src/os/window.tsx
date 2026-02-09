@@ -12,13 +12,13 @@ import { useWindowManager } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
   clampPercentFraming,
-  getCenteredFraming,
   getPointerPosition,
   toPercentFraming,
   toPixelFraming,
   type WindowPercentFraming,
   type WindowPixelFraming,
   type WindowSize,
+  withCenteredFraming,
 } from "./window-utils";
 
 type WindowContextValue = {
@@ -63,7 +63,7 @@ function WindowProvider({ id, children }: WindowProviderProps) {
 
 const fallbackMinSize: WindowSize = { height: 200, width: 280 };
 const fallbackFramingSize = { height: 70, width: 60 } satisfies WindowSize;
-const fallbackFraming = getCenteredFraming(fallbackFramingSize);
+const fallbackFraming = withCenteredFraming(fallbackFramingSize);
 
 export type WindowProps = React.ComponentProps<typeof Card> & {
   id?: string;
@@ -297,7 +297,7 @@ function Window({
 
     if (boundsDecreased || boundsIncreased) {
       // Use the last user-driven pixel frame as the target
-       const desiredPixelFraming = lastUserPixelFramingRef.current ??
+      const desiredPixelFraming = lastUserPixelFramingRef.current ??
         currentPixelFraming ??
         initialPixelFraming ??
         fallbackPixelFraming ?? {
@@ -423,7 +423,7 @@ function useWindow() {
   return context;
 }
 
-export { Window, useWindow };
+export { Window, useWindow, withCenteredFraming };
 
 export type {
   WindowPercentFraming,

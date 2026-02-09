@@ -7,7 +7,11 @@ export type ActionLauncherProps = Omit<LauncherProps, "onClick"> & {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-function ActionLauncher({ application, onClick, ...props }: ActionLauncherProps) {
+function ActionLauncher({
+  application,
+  onClick,
+  ...props
+}: ActionLauncherProps) {
   const { launch } = application.useApplication();
 
   const handleClick = React.useCallback<

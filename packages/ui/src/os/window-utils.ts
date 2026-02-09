@@ -42,14 +42,14 @@ export function getCenteredPosition(bounds: WindowSize, size: WindowSize) {
   return { x: Math.round(x), y: Math.round(y) };
 }
 
-export function getCenteredFraming(size: WindowSize): WindowPercentFraming {
+export function withCenteredFraming(size: WindowSize): WindowPercentFraming {
   return {
-    unit: "percent",
     position: {
       x: Math.max(0, 50 - size.width / 2),
       y: Math.max(0, 50 - size.height / 2),
     },
     size,
+    unit: "percent",
   };
 }
 
@@ -78,15 +78,15 @@ export function toPercentFraming(
   const height = bounds.height || 1;
 
   return {
-    unit: "percent",
     position: {
       x: (framing.position.x / width) * 100,
       y: (framing.position.y / height) * 100,
     },
     size: {
-      width: (framing.size.width / width) * 100,
       height: (framing.size.height / height) * 100,
+      width: (framing.size.width / width) * 100,
     },
+    unit: "percent",
   };
 }
 
@@ -95,15 +95,15 @@ export function toPixelFraming(
   bounds: WindowSize,
 ): WindowPixelFraming {
   return {
-    unit: "px",
     position: {
       x: (framing.position.x / 100) * bounds.width,
       y: (framing.position.y / 100) * bounds.height,
     },
     size: {
-      width: Math.max(1, (framing.size.width / 100) * bounds.width),
       height: Math.max(1, (framing.size.height / 100) * bounds.height),
+      width: Math.max(1, (framing.size.width / 100) * bounds.width),
     },
+    unit: "px",
   };
 }
 
@@ -122,7 +122,11 @@ export function clampPercentFraming(
   const maxWidthPercent = (maxWidth / bounds.width) * 100;
   const maxHeightPercent = (maxHeight / bounds.height) * 100;
 
-  const width = clampValue(framing.size.width, minWidthPercent, maxWidthPercent);
+  const width = clampValue(
+    framing.size.width,
+    minWidthPercent,
+    maxWidthPercent,
+  );
   const height = clampValue(
     framing.size.height,
     minHeightPercent,
@@ -134,8 +138,8 @@ export function clampPercentFraming(
   const y = clampValue(framing.position.y, 0, maxY);
 
   return {
-    unit: "percent",
     position: { x, y },
-    size: { width, height },
+    size: { height, width },
+    unit: "percent",
   };
 }

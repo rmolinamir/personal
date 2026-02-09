@@ -12,3 +12,5 @@ vite
 nowrap
 disabledpointer
 rgba
+offcanvas
+pointerdown

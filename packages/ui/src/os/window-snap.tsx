@@ -14,20 +14,6 @@ type SnapPayload = {
   size: WindowSize;
 };
 
-type WindowSnapContextValue = {
-  handleDrag: (payload: SnapPayload) => void;
-  getSnapFraming: (payload: SnapPayload) => WindowPercentFraming | null;
-  clearOverlay: () => void;
-};
-
-const WindowSnapContext = React.createContext<WindowSnapContextValue | null>(
-  null,
-);
-
-export type WindowSnapProps = {
-  children?: React.ReactNode;
-};
-
 const edgeThreshold = 24;
 
 function getSnapTarget(payload: SnapPayload, rect: DOMRect): SnapTarget {
@@ -45,6 +31,19 @@ function getSnapTargetFraming(target: SnapTarget): WindowPercentFraming | null {
     unit: "percent",
   };
 }
+type WindowSnapContextValue = {
+  handleDrag: (payload: SnapPayload) => void;
+  getSnapFraming: (payload: SnapPayload) => WindowPercentFraming | null;
+  clearOverlay: () => void;
+};
+
+const WindowSnapContext = React.createContext<WindowSnapContextValue | null>(
+  null,
+);
+
+export type WindowSnapProps = {
+  children?: React.ReactNode;
+};
 
 function WindowSnap({ children }: WindowSnapProps) {
   const { element, size } = useShell();

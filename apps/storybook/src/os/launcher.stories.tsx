@@ -18,11 +18,13 @@ import {
   UserPlus,
 } from "lucide-react";
 import * as React from "react";
+import { PurpleWallpaper } from "../scenes/desktop/purple-wallpaper";
 
 const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  tags: ["autodocs"],
   title: "OS/Launcher",
 } satisfies Meta;
 
@@ -30,7 +32,76 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const demoThumb =
+export const Default: Story = {
+  render: () => {
+    const [activeId, setActiveId] = React.useState("about");
+    const [hiddenId, setHiddenId] = React.useState("notes");
+
+    return (
+      <Shell>
+        <PurpleWallpaper className="p-10">
+          <div className="relative">
+            <div className="text-white/80 text-xs uppercase tracking-[0.25em]">
+              Launchpad
+            </div>
+            <div className="mt-6 grid w-full max-w-2xl auto-cols-[120px] grid-flow-col grid-rows-3 gap-4">
+              {shortcuts.map((shortcut) => {
+                const isHidden = shortcut.id === hiddenId;
+                const status = isHidden
+                  ? "hidden"
+                  : shortcut.id === activeId
+                    ? "running"
+                    : "default";
+
+                return (
+                  <Launcher
+                    key={shortcut.id}
+                    status={status}
+                    size="lg"
+                    className="text-white/90"
+                    onClick={() => {
+                      if (isHidden) {
+                        setHiddenId("");
+                        return;
+                      }
+                      setActiveId(shortcut.id);
+                    }}
+                  >
+                    <LauncherIcon
+                      className={cn(
+                        "shadow-lg ring-white/30",
+                        shortcut.frameClassName,
+                      )}
+                    >
+                      {shortcut.iconUrl ? (
+                        <img
+                          src={shortcut.iconUrl}
+                          alt={shortcut.iconAlt ?? ""}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        shortcut.icon
+                      )}
+                    </LauncherIcon>
+                    <LauncherLabel className="text-white/90">
+                      {shortcut.label}
+                    </LauncherLabel>
+                    <LauncherDescription className="text-white/60">
+                      {shortcut.description}
+                    </LauncherDescription>
+                  </Launcher>
+                );
+              })}
+            </div>
+          </div>
+        </PurpleWallpaper>
+      </Shell>
+    );
+  },
+};
+
+const demoMovieThumbnail =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230ea5e9'/><rect x='6' y='8' width='52' height='36' rx='8' fill='%23025669'/><circle cx='22' cy='26' r='8' fill='%23f8fafc'/><path d='M36 24l10 6-10 6z' fill='%23f8fafc'/><path d='M10 52h44' stroke='%23f8fafc' stroke-width='6' stroke-linecap='round'/></svg>";
 
 const shortcuts = [
@@ -71,7 +142,7 @@ const shortcuts = [
     frameClassName:
       "bg-linear-to-br from-rose-200/90 via-rose-100/80 to-rose-50/70 text-rose-900 ring-rose-200/80",
     iconAlt: "Demo thumbnail",
-    iconUrl: demoThumb,
+    iconUrl: demoMovieThumbnail,
     id: "demo",
     label: "demo.mov",
   },
@@ -84,7 +155,7 @@ const shortcuts = [
     label: "Docs",
   },
   {
-    description: "Helpdesk",
+    description: "Help Desk",
     frameClassName:
       "bg-linear-to-br from-teal-200/90 via-teal-100/80 to-teal-50/70 text-teal-900 ring-teal-200/80",
     icon: <MessageCircle className="h-6 w-6" />,
@@ -108,73 +179,3 @@ const shortcuts = [
     label: "Changelog",
   },
 ];
-
-export const Default: Story = {
-  render: () => {
-    const [activeId, setActiveId] = React.useState("about");
-    const [hiddenId, setHiddenId] = React.useState("notes");
-
-    return (
-      <Shell className="relative h-full w-full overflow-hidden bg-linear-to-br from-slate-900 via-indigo-900 to-slate-950 p-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_65%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(15,23,42,0.45),transparent_65%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
-        <div className="relative">
-          <div className="text-white/80 text-xs uppercase tracking-[0.25em]">
-            Launchpad
-          </div>
-          <div className="mt-6 grid w-full max-w-2xl auto-cols-[120px] grid-flow-col grid-rows-3 gap-4">
-            {shortcuts.map((shortcut) => {
-              const isHidden = shortcut.id === hiddenId;
-              const status = isHidden
-                ? "hidden"
-                : shortcut.id === activeId
-                  ? "running"
-                  : "default";
-
-              return (
-                <Launcher
-                  key={shortcut.id}
-                  status={status}
-                  size="lg"
-                  className="text-white/90"
-                  onClick={() => {
-                    if (isHidden) {
-                      setHiddenId("");
-                      return;
-                    }
-                    setActiveId(shortcut.id);
-                  }}
-                >
-                  <LauncherIcon
-                    className={cn(
-                      "shadow-lg ring-white/30",
-                      shortcut.frameClassName,
-                    )}
-                  >
-                    {shortcut.iconUrl ? (
-                      <img
-                        src={shortcut.iconUrl}
-                        alt={shortcut.iconAlt ?? ""}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      shortcut.icon
-                    )}
-                  </LauncherIcon>
-                  <LauncherLabel className="text-white/90">
-                    {shortcut.label}
-                  </LauncherLabel>
-                  <LauncherDescription className="text-white/60">
-                    {shortcut.description}
-                  </LauncherDescription>
-                </Launcher>
-              );
-            })}
-          </div>
-        </div>
-      </Shell>
-    );
-  },
-};

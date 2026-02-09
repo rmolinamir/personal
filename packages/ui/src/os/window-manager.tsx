@@ -246,17 +246,17 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
 
   const value = React.useMemo<WindowManagerContextValue>(
     () => ({
+      activateWindow,
       focusedId: state.focusedId,
-      getWindowData,
       getFraming,
       getIsFullscreen,
       getIsHidden,
-      mountWindow,
-      unmountWindow,
-      activateWindow,
+      getWindowData,
       hideWindow,
+      mountWindow,
       setFraming: setFraming,
       toggleFullscreen,
+      unmountWindow,
       windows: state.windows,
     }),
     [

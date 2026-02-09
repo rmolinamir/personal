@@ -20,7 +20,10 @@ export type ApplicationManagerProps = {
   children: React.ReactNode;
 };
 
-function ApplicationManager({ applications, children }: ApplicationManagerProps) {
+function ApplicationManager({
+  applications,
+  children,
+}: ApplicationManagerProps) {
   const [running, setRunning] = React.useState<RunningApplication[]>([]);
   const registry = React.useMemo(() => {
     const entries = applications.map((app) => [app.id, app] as const);
@@ -55,7 +58,9 @@ function ApplicationManager({ applications, children }: ApplicationManagerProps)
 function useApplicationManager() {
   const context = React.useContext(ApplicationManagerContext);
   if (!context) {
-    throw new Error("useApplicationManager must be used within ApplicationManager");
+    throw new Error(
+      "useApplicationManager must be used within ApplicationManager",
+    );
   }
 
   const getApplication = React.useCallback(

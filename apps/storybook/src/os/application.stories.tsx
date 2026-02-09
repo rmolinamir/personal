@@ -22,12 +22,85 @@ import {
   WindowHeader,
   WindowTitle,
 } from "@acme/ui/os/window-layout";
-import { useWindowManager } from "@acme/ui/os/window-manager";
+import {
+  useWindowManager,
+  WindowManagerProvider,
+} from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
+import { PurpleWallpaper } from "../scenes/desktop/purple-wallpaper";
 
-function AppWindowControls() {
+const meta = {
+  parameters: {
+    layout: "fullscreen",
+  },
+  tags: ["autodocs"],
+  title: "OS/Applications",
+} satisfies Meta;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  render: () => {
+    const [isActivated, setIsActivated] = React.useState(false);
+
+    React.useEffect(() => {
+      let buffer = "";
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key.length !== 1) return;
+        buffer = `${buffer}${event.key}`.slice(-24);
+        const normalized = buffer.toLowerCase();
+        if (normalized.includes("doughnut")) {
+          setIsActivated(true);
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
+
+    return (
+      <ApplicationManager applications={[AboutApplication, NotesApplication]}>
+        <WindowManagerProvider>
+          <Shell>
+            <PurpleWallpaper className="h-full p-6">
+              <WindowSnap>
+                <div className="select-none font-semibold text-sm text-white tracking-wide">
+                  Win-doughs 11
+                </div>
+                {!isActivated && (
+                  <div className="pointer-events-none absolute top-4 right-6 select-none text-white/70">
+                    <div className="font-medium text-[13px]">
+                      Activate Win-dough
+                    </div>
+                    <div className="text-[11px] text-white/35">
+                      Type <code>`doughnut`</code> to activate Win-dough.
+                    </div>
+                  </div>
+                )}
+                <div className="mt-6">
+                  <LaunchPad />
+                </div>
+                <Applications />
+                <div className="absolute bottom-4 left-1/2 flex h-12 w-[min(760px,92%)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
+                  <div className="flex flex-1 items-center gap-2">
+                    <Taskbar />
+                  </div>
+                  <div className="text-white/70 text-xs">10:24</div>
+                </div>
+              </WindowSnap>
+            </PurpleWallpaper>
+          </Shell>
+        </WindowManagerProvider>
+      </ApplicationManager>
+    );
+  },
+};
+
+function ApplicationControls() {
   const { close } = useApplication();
 
   return (
@@ -42,7 +115,7 @@ function AppWindowControls() {
 }
 
 // Pretend code-splitting is happening here
-const AboutAppContent = React.lazy(() =>
+const AboutContent = React.lazy(() =>
   Promise.resolve({
     default: () => (
       <div className="space-y-2 text-sm">
@@ -55,41 +128,39 @@ const AboutAppContent = React.lazy(() =>
   }),
 );
 
-const AboutAppComponent = ({ appId }: { appId: string }) => (
-  <Window
-    id={appId}
-    defaultFraming={{
-      position: { x: 12, y: 12 },
-      size: { height: 46, width: 45 },
-    }}
-  >
-    <WindowHeader>
-      <WindowTitle>About</WindowTitle>
-      <AppWindowControls />
-    </WindowHeader>
-    <WindowContent>
-      <React.Suspense
-        fallback={
-          <div className="space-y-2 text-sm">
-            <div className="h-4 w-32 rounded bg-muted/60" />
-            <div className="h-3 w-48 rounded bg-muted/50" />
-            <div className="h-3 w-40 rounded bg-muted/50" />
-          </div>
-        }
-      >
-        <AboutAppContent />
-      </React.Suspense>
-    </WindowContent>
-  </Window>
-);
-
 const AboutApplication = defineApplication("about-application")({
-  component: AboutAppComponent,
+  component: ({ appId }: { appId: string }) => (
+    <Window
+      id={appId}
+      defaultFraming={{
+        position: { x: 12, y: 12 },
+        size: { height: 46, width: 45 },
+      }}
+    >
+      <WindowHeader>
+        <WindowTitle>About</WindowTitle>
+        <ApplicationControls />
+      </WindowHeader>
+      <WindowContent>
+        <React.Suspense
+          fallback={
+            <div className="space-y-2 text-sm">
+              <div className="h-4 w-32 rounded bg-muted/60" />
+              <div className="h-3 w-48 rounded bg-muted/50" />
+              <div className="h-3 w-40 rounded bg-muted/50" />
+            </div>
+          }
+        >
+          <AboutContent />
+        </React.Suspense>
+      </WindowContent>
+    </Window>
+  ),
   title: "About",
 });
 
 // Pretend code-splitting is happening here
-const NotesAppContent = React.lazy(() =>
+const NotesContent = React.lazy(() =>
   Promise.resolve({
     default: () => (
       <div className="space-y-2 text-sm">
@@ -102,49 +173,36 @@ const NotesAppContent = React.lazy(() =>
   }),
 );
 
-const NotesAppComponent = ({ appId }: { appId: string }) => (
-  <Window
-    id={appId}
-    defaultFraming={{
-      position: { x: 42, y: 18 },
-      size: { height: 48, width: 42 },
-    }}
-  >
-    <WindowHeader>
-      <WindowTitle>Notes</WindowTitle>
-      <AppWindowControls />
-    </WindowHeader>
-    <WindowContent>
-      <React.Suspense
-        fallback={
-          <div className="space-y-2 text-sm">
-            <div className="h-4 w-28 rounded bg-muted/60" />
-            <div className="h-3 w-52 rounded bg-muted/50" />
-            <div className="h-3 w-44 rounded bg-muted/50" />
-          </div>
-        }
-      >
-        <NotesAppContent />
-      </React.Suspense>
-    </WindowContent>
-  </Window>
-);
-
 const NotesApplication = defineApplication("notes-application")({
-  component: NotesAppComponent,
+  component: ({ appId }: { appId: string }) => (
+    <Window
+      id={appId}
+      defaultFraming={{
+        position: { x: 42, y: 18 },
+        size: { height: 48, width: 42 },
+      }}
+    >
+      <WindowHeader>
+        <WindowTitle>Notes</WindowTitle>
+        <ApplicationControls />
+      </WindowHeader>
+      <WindowContent>
+        <React.Suspense
+          fallback={
+            <div className="space-y-2 text-sm">
+              <div className="h-4 w-28 rounded bg-muted/60" />
+              <div className="h-3 w-52 rounded bg-muted/50" />
+              <div className="h-3 w-44 rounded bg-muted/50" />
+            </div>
+          }
+        >
+          <NotesContent />
+        </React.Suspense>
+      </WindowContent>
+    </Window>
+  ),
   title: "Notes",
 });
-
-const meta = {
-  parameters: {
-    layout: "fullscreen",
-  },
-  title: "OS/Applications",
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
 
 function LaunchPad() {
   const { listApplications } = useApplicationManager();
@@ -155,7 +213,7 @@ function LaunchPad() {
     <div className="flex flex-col gap-4">
       <div className="grid w-full max-w-sm auto-cols-[96px] grid-flow-col grid-rows-4 gap-4">
         {apps.map((app) => (
-          <LaunchIcon
+          <ApplicationLauncher
             key={app.id}
             application={app}
             isHidden={Boolean(getWindowData(app.id)?.isHidden)}
@@ -166,7 +224,7 @@ function LaunchPad() {
   );
 }
 
-function Desktop() {
+function Applications() {
   const { running, getApplication } = useApplicationManager();
 
   return running.map((entry) => {
@@ -177,35 +235,15 @@ function Desktop() {
   });
 }
 
-function Taskbar() {
-  const { running, getApplication } = useApplicationManager();
-  const { getWindowData } = useWindowManager();
-
-  return (
-    <>
-      {running.map((entry) => {
-        const app = getApplication(entry.appId);
-        if (!app) return null;
-        const windowData = getWindowData(entry.appId);
-        const isHidden = windowData?.isHidden ?? false;
-        return (
-          <TaskbarItem
-            key={entry.appId}
-            application={app}
-            isHidden={isHidden}
-          />
-        );
-      })}
-    </>
-  );
-}
-
-type LaunchIconProps = {
+type ApplicationLauncherProps = {
   application: ApplicationDescriptor;
   isHidden: boolean;
 };
 
-function LaunchIcon({ application, isHidden }: LaunchIconProps) {
+function ApplicationLauncher({
+  application,
+  isHidden,
+}: ApplicationLauncherProps) {
   const { activateWindow } = useWindowManager();
   const status = isHidden ? "hidden" : "default";
   const letter = application.title.trim().slice(0, 1) || "?";
@@ -229,6 +267,29 @@ function LaunchIcon({ application, isHidden }: LaunchIconProps) {
         {application.title}
       </LauncherLabel>
     </ActionLauncher>
+  );
+}
+
+function Taskbar() {
+  const { running, getApplication } = useApplicationManager();
+  const { getWindowData } = useWindowManager();
+
+  return (
+    <>
+      {running.map((entry) => {
+        const app = getApplication(entry.appId);
+        if (!app) return null;
+        const windowData = getWindowData(entry.appId);
+        const isHidden = windowData?.isHidden ?? false;
+        return (
+          <TaskbarItem
+            key={entry.appId}
+            application={app}
+            isHidden={isHidden}
+          />
+        );
+      })}
+    </>
   );
 }
 
@@ -270,58 +331,3 @@ function TaskbarItem({ application, isHidden }: TaskbarItemProps) {
     </div>
   );
 }
-
-export const Default: Story = {
-  render: () => {
-    const [isActivated, setIsActivated] = React.useState(false);
-
-    React.useEffect(() => {
-      let buffer = "";
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key.length !== 1) return;
-        buffer = `${buffer}${event.key}`.slice(-24);
-        const normalized = buffer.toLowerCase();
-        if (normalized.includes("doughnut")) {
-          setIsActivated(true);
-        }
-      };
-
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
-
-    return (
-      <ApplicationManager applications={[AboutApplication, NotesApplication]}>
-        <Shell className="relative h-full w-full overflow-hidden bg-linear-to-br from-slate-900 via-indigo-900 to-slate-950 p-6">
-          <WindowSnap>
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_55%)]" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[48px_48px]" />
-            <div className="select-none font-semibold text-sm text-white tracking-wide">
-              Win-doughs 11
-            </div>
-            {!isActivated && (
-              <div className="pointer-events-none absolute top-4 right-6 select-none text-white/70">
-                <div className="font-medium text-[13px]">
-                  Activate Win-dough
-                </div>
-                <div className="text-[11px] text-white/35">
-                  Type <code>`doughnut`</code> to activate Win-dough.
-                </div>
-              </div>
-            )}
-            <div className="mt-6">
-              <LaunchPad />
-            </div>
-            <Desktop />
-            <div className="absolute bottom-4 left-1/2 flex h-12 w-[min(760px,92%)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
-              <div className="flex flex-1 items-center gap-2">
-                <Taskbar />
-              </div>
-              <div className="text-white/70 text-xs">10:24</div>
-            </div>
-          </WindowSnap>
-        </Shell>
-      </ApplicationManager>
-    );
-  },
-};

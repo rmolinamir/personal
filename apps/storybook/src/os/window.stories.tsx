@@ -12,9 +12,10 @@ import {
   WindowHeader,
   WindowTitle,
 } from "@acme/ui/os/window-layout";
-import { useWindowManager } from "@acme/ui/os/window-manager";
+import { WindowManagerProvider } from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { FloatingHiddenWindows } from "../scenes/taskbar/floating-hidden-windows";
 
 const meta = {
   component: Window,
@@ -29,9 +30,28 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+function WindowControlsHeader() {
+  return (
+    <WindowHeader>
+      <div className="space-y-0.5">
+        <WindowTitle>Window Controls</WindowTitle>
+        <WindowCaption>
+          Click on the controls to interact with the window.
+        </WindowCaption>
+      </div>
+      <WindowControls>
+        <WindowHideButton aria-label="Hide">—</WindowHideButton>
+        <WindowFullscreenButton aria-label="Fullscreen">
+          □
+        </WindowFullscreenButton>
+      </WindowControls>
+    </WindowHeader>
+  );
+}
+
 export const Default: Story = {
-  render: () => {
-    return (
+  render: () => (
+    <WindowManagerProvider>
       <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window>
           <WindowHeader>
@@ -52,41 +72,43 @@ export const Default: Story = {
           </WindowContent>
         </Window>
       </Shell>
-    );
-  },
+    </WindowManagerProvider>
+  ),
 };
 
 export const WithDescription: Story = {
   render: () => (
-    <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
-      <Window>
-        <WindowHeader>
-          <div className="space-y-0.5">
-            <WindowTitle>Explorer</WindowTitle>
-            <WindowCaption>~/Projects/website</WindowCaption>
-          </div>
-        </WindowHeader>
-        <WindowContent>
-          <div className="grid gap-3 text-sm">
-            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-              Folder view content goes here.
+    <WindowManagerProvider>
+      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+        <Window>
+          <WindowHeader>
+            <div className="space-y-0.5">
+              <WindowTitle>Explorer</WindowTitle>
+              <WindowCaption>~/Projects/website</WindowCaption>
             </div>
-            <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-              You can reuse this for file previews or lists.
+          </WindowHeader>
+          <WindowContent>
+            <div className="grid gap-3 text-sm">
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                Folder view content goes here.
+              </div>
+              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                You can reuse this for file previews or lists.
+              </div>
             </div>
-          </div>
-        </WindowContent>
-        <WindowFooter className="text-muted-foreground text-xs">
-          12 items · 3.4 MB
-        </WindowFooter>
-      </Window>
-    </Shell>
+          </WindowContent>
+          <WindowFooter className="text-muted-foreground text-xs">
+            12 items · 3.4 MB
+          </WindowFooter>
+        </Window>
+      </Shell>
+    </WindowManagerProvider>
   ),
 };
 
 export const MultiWindow: Story = {
-  render: () => {
-    return (
+  render: () => (
+    <WindowManagerProvider>
       <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window
           defaultFraming={{
@@ -134,13 +156,13 @@ export const MultiWindow: Story = {
           </WindowFooter>
         </Window>
       </Shell>
-    );
-  },
+    </WindowManagerProvider>
+  ),
 };
 
 export const ConstrainedBounds: Story = {
-  render: () => {
-    return (
+  render: () => (
+    <WindowManagerProvider>
       <Shell className="relative h-180 w-full overflow-hidden bg-muted/30">
         <div className="flex h-14 items-center justify-between border-b bg-background/80 px-4 text-muted-foreground text-sm">
           <span>Top Bar</span>
@@ -163,113 +185,68 @@ export const ConstrainedBounds: Story = {
           </Window>
         </div>
       </Shell>
-    );
-  },
+    </WindowManagerProvider>
+  ),
 };
 
 export const WithSnapping: Story = {
   render: () => (
-    <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-      <WindowSnap>
-        <Window
-          defaultFraming={{
-            position: { x: 8, y: 8 },
-            size: { height: 50, width: 50 },
-          }}
-        >
-          <WindowHeader>
-            <WindowTitle>About</WindowTitle>
-          </WindowHeader>
-          <WindowContent>
-            <div className="space-y-2 text-sm">
-              <p className="font-medium">Snap Assist</p>
-              <p className="text-muted-foreground">
-                Drag a window to the left or right edge to preview snapping.
-              </p>
-            </div>
-          </WindowContent>
-        </Window>
+    <WindowManagerProvider>
+      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+        <WindowSnap>
+          <Window
+            defaultFraming={{
+              position: { x: 8, y: 8 },
+              size: { height: 50, width: 50 },
+            }}
+          >
+            <WindowHeader>
+              <WindowTitle>About</WindowTitle>
+            </WindowHeader>
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Snap Assist</p>
+                <p className="text-muted-foreground">
+                  Drag a window to the left or right edge to preview snapping.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
 
-        <Window
-          defaultFraming={{
-            position: { x: 30, y: 16 },
-            size: { height: 50, width: 50 },
-          }}
-        >
-          <WindowHeader>
-            <WindowTitle>Explorer</WindowTitle>
-          </WindowHeader>
-          <WindowContent>
-            <div className="grid gap-3 text-sm">
-              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                Snap to the right half.
+          <Window
+            defaultFraming={{
+              position: { x: 30, y: 16 },
+              size: { height: 50, width: 50 },
+            }}
+          >
+            <WindowHeader>
+              <WindowTitle>Explorer</WindowTitle>
+            </WindowHeader>
+            <WindowContent>
+              <div className="grid gap-3 text-sm">
+                <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                  Snap to the right half.
+                </div>
+                <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
+                  Overlay appears on hover.
+                </div>
               </div>
-              <div className="rounded-lg border border-muted-foreground/40 border-dashed px-3 py-4">
-                Overlay appears on hover.
-              </div>
-            </div>
-          </WindowContent>
-          <WindowFooter className="text-muted-foreground text-xs">
-            Drag to edges
-          </WindowFooter>
-        </Window>
-      </WindowSnap>
-    </Shell>
+            </WindowContent>
+            <WindowFooter className="text-muted-foreground text-xs">
+              Drag to edges
+            </WindowFooter>
+          </Window>
+        </WindowSnap>
+      </Shell>
+    </WindowManagerProvider>
   ),
 };
 
 export const WithControls: Story = {
-  render: () => {
-      const Dock = () => {
-        const { windows, activateWindow, getWindowData } = useWindowManager();
-
-      const hiddenWindows = windows.filter(
-        (window) => getWindowData(window.id)?.isHidden,
-      );
-
-      if (hiddenWindows.length === 0) return null;
-
-      return (
-        <div className="absolute bottom-4 left-4 z-30 rounded-xl border bg-background/90 px-3 py-2 text-xs shadow-lg">
-          <div className="text-muted-foreground">Hidden windows</div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {hiddenWindows.map((window) => (
-              <button
-                type="button"
-                key={window.id}
-                className="rounded-md border border-border/80 bg-muted/60 px-2 py-1 text-xs"
-                onClick={() => {
-                  activateWindow(window.id);
-                }}
-              >
-                Show
-              </button>
-            ))}
-          </div>
-        </div>
-      );
-    };
-
-    const WindowControlsHeader = () => (
-      <WindowHeader>
-        <div className="space-y-0.5">
-          <WindowTitle>Window Controls</WindowTitle>
-          <WindowCaption>
-            Click on the controls to interact with the window.
-          </WindowCaption>
-        </div>
-        <WindowControls>
-          <WindowHideButton aria-label="Hide">—</WindowHideButton>
-          <WindowFullscreenButton aria-label="Fullscreen">
-            □
-          </WindowFullscreenButton>
-        </WindowControls>
-      </WindowHeader>
-    );
-
-    return (
+  render: () => (
+    <WindowManagerProvider>
       <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-        <Dock />
+        <FloatingHiddenWindows />
         <Window
           defaultFraming={{
             position: { x: 10, y: 12 },
@@ -317,6 +294,6 @@ export const WithControls: Story = {
           </WindowContent>
         </Window>
       </Shell>
-    );
-  },
+    </WindowManagerProvider>
+  ),
 };

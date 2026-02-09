@@ -1,20 +1,14 @@
 import * as React from "react";
 import { useApplicationManager } from "./application-manager";
 
-export type ApplicationComponentProps = {
-  appId: string;
-};
-
 export type ApplicationComponent =
-  | React.ComponentType<ApplicationComponentProps>
-  | React.LazyExoticComponent<React.ComponentType<ApplicationComponentProps>>;
+  | React.ComponentType
+  | React.LazyExoticComponent<React.ComponentType>;
 
 export type ApplicationDefinition = {
   component: ApplicationComponent;
-  fallback?:
-    | React.ReactNode
-    | ((props: ApplicationComponentProps) => React.ReactNode);
   title: string;
+  fallback?: React.ComponentType;
   icon?: React.ReactNode;
 };
 
@@ -72,14 +66,17 @@ function defineApplication(id: string) {
       };
     }
 
-    function WrappedComponent(
-      props: React.ComponentProps<typeof definition.component>,
-    ) {
+    function WrappedComponent() {
+      const Component = definition.component;
+      const Fallback = definition.fallback;
+
       return (
         <ApplicationProvider
           value={{ appId: id, icon: definition.icon, title: definition.title }}
         >
-          {React.createElement(definition.component, props)}
+          <React.Suspense fallback={Fallback ? <Fallback /> : undefined}>
+            <Component />
+          </React.Suspense>
         </ApplicationProvider>
       );
     }

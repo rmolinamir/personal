@@ -1,114 +1,94 @@
 import * as React from "react";
 import { useApplicationManager } from "./application-manager";
+import { useWindowManager } from "./window-manager";
 
-export type ApplicationComponent =
+type ApplicationDefinition = {
+  component: ApplicationComponent;
+  fallback?: React.ComponentType;
+  metadata: ApplicationMetadata;
+};
+
+type ApplicationMetadata = {
+  title: string;
+};
+
+type ApplicationComponent =
   | React.ComponentType
   | React.LazyExoticComponent<React.ComponentType>;
 
-export type ApplicationDefinition = {
-  component: ApplicationComponent;
-  title: string;
-  fallback?: React.ComponentType;
-  icon?: React.ReactNode;
-};
-
-export type ApplicationInstance = {
-  appId: string;
-  title: string;
-  icon?: React.ReactNode;
-  launch: () => void;
-  close: () => void;
-};
-
-export type ApplicationDescriptor = ApplicationDefinition & {
+type ApplicationInstance = {
   id: string;
-  useApplication: () => ApplicationInstance;
+  metadata: ApplicationMetadata;
 };
 
-type ApplicationContextValue = {
-  appId: string;
-  title: string;
-  icon?: React.ReactNode;
-};
-
-const ApplicationContext = React.createContext<ApplicationContextValue | null>(
+const ApplicationContext = React.createContext<ApplicationInstance | null>(
   null,
 );
 
-function ApplicationProvider({
-  value,
-  children,
-}: {
-  value: ApplicationContextValue;
-  children: React.ReactNode;
-}) {
-  return (
-    <ApplicationContext.Provider value={value}>
-      {children}
-    </ApplicationContext.Provider>
-  );
-}
-
-function defineApplication(id: string) {
-  return function define(
-    definition: ApplicationDefinition,
-  ): ApplicationDescriptor {
-    function useApplication(): Omit<ApplicationInstance, "icon"> {
-      const manager = useApplicationManager();
-      const launch = React.useCallback(() => manager.launch(id), [manager]);
-      const close = React.useCallback(() => manager.close(id), [manager]);
-
-      return {
-        appId: id,
-        close,
-        launch,
-        title: definition.title,
-      };
-    }
-
-    function WrappedComponent() {
-      const Component = definition.component;
-      const Fallback = definition.fallback;
-
-      return (
-        <ApplicationProvider
-          value={{ appId: id, icon: definition.icon, title: definition.title }}
-        >
-          <React.Suspense fallback={Fallback ? <Fallback /> : undefined}>
-            <Component />
-          </React.Suspense>
-        </ApplicationProvider>
-      );
-    }
-    const componentDisplayName =
-      "displayName" in definition.component
-        ? definition.component.displayName
-        : definition.component.name;
-    WrappedComponent.displayName = `Wrapped${componentDisplayName}`;
+function defineApplication(applicationId: string) {
+  return function define<T extends ApplicationDefinition>(definition: T) {
+    const Component = definition.component;
+    const Fallback = definition.fallback;
+    const application: ApplicationInstance = {
+      id: applicationId,
+      metadata: definition.metadata,
+    };
 
     return {
-      id,
-      ...definition,
-      component: WrappedComponent,
-      useApplication,
+      Component: () => {
+        const { isRunning } = useApplicationManager();
+
+        if (!isRunning(application)) {
+          return null;
+        }
+
+        return (
+          <ApplicationContext.Provider value={application}>
+            <React.Suspense fallback={Fallback ? <Fallback /> : undefined}>
+              <Component />
+            </React.Suspense>
+          </ApplicationContext.Provider>
+        );
+      },
+      getId: () => application.id,
+      getMetadata: () => application.metadata,
+      useWindowLauncher: () => {
+        const { launch, isRunning } = useApplicationManager();
+        const { activateWindow } = useWindowManager();
+        return React.useCallback(() => {
+          if (isRunning(application)) activateWindow(application.id);
+          else launch(application);
+        }, [isRunning, activateWindow, launch]);
+      },
     };
   };
 }
 
-function useApplication(): ApplicationInstance {
-  const context = React.useContext(ApplicationContext);
-  if (!context) {
+function useApplication() {
+  const application = React.useContext(ApplicationContext);
+  if (!application) {
     throw new Error("useApplication must be used within an application");
   }
   const manager = useApplicationManager();
 
   return {
-    appId: context.appId,
-    close: () => manager.close(context.appId),
-    icon: context.icon,
-    launch: () => manager.launch(context.appId),
-    title: context.title,
+    ...application,
+    close: () => manager.close(application),
+    launch: () => manager.launch(application),
   };
 }
 
-export { defineApplication, useApplication };
+/**
+ * @returns Returns the application ID if the hook is used within an application context.
+ */
+function useApplicationId(): string | undefined {
+  const context = React.useContext(ApplicationContext);
+  return context?.id;
+}
+
+export {
+  defineApplication,
+  useApplication,
+  useApplicationId,
+  type ApplicationInstance,
+};

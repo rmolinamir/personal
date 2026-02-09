@@ -1,15 +1,9 @@
-import { ActionLauncher } from "@acme/ui/os/action-launcher";
+import { defineApplication, useApplication } from "@acme/ui/os/application";
 import {
-  type ApplicationDescriptor,
-  defineApplication,
-  useApplication,
-} from "@acme/ui/os/application";
-import {
-  ApplicationManager,
+  ApplicationManagerProvider,
   useApplicationManager,
 } from "@acme/ui/os/application-manager";
-import { LauncherIcon, LauncherLabel } from "@acme/ui/os/launcher";
-import { Shell } from "@acme/ui/os/shell";
+import { Launcher, LauncherIcon, LauncherLabel } from "@acme/ui/os/launcher";
 import { Window } from "@acme/ui/os/window";
 import {
   WindowAction,
@@ -17,6 +11,7 @@ import {
   WindowFullscreenButton,
   WindowHideButton,
 } from "@acme/ui/os/window-actions";
+import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import {
   WindowContent,
   WindowHeader,
@@ -28,6 +23,7 @@ import {
 } from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Notebook, User } from "lucide-react";
 import * as React from "react";
 import { PurpleWallpaper } from "../scenes/desktop/purple-wallpaper";
 
@@ -63,16 +59,21 @@ export const Default: Story = {
     }, []);
 
     return (
-      <ApplicationManager applications={[AboutApplication, NotesApplication]}>
+      <ApplicationManagerProvider>
         <WindowManagerProvider>
-          <Shell>
-            <PurpleWallpaper className="h-full p-6">
+          <PurpleWallpaper className="flex h-svh flex-col">
+            <WindowBoundary className="h-full">
               <WindowSnap>
-                <div className="select-none font-semibold text-sm text-white tracking-wide">
+                {/* Applications layer. */}
+                <AboutApplication.Component />
+                <NotesApplication.Component />
+
+                {/* Desktop layer. */}
+                <div className="m-6 select-none font-semibold text-sm text-white tracking-wide">
                   Win-doughs 11
                 </div>
                 {!isActivated && (
-                  <div className="pointer-events-none absolute top-4 right-6 select-none text-white/70">
+                  <div className="pointer-events-none absolute top-6 right-6 select-none text-white/70">
                     <div className="font-medium text-[13px]">
                       Activate Win-dough
                     </div>
@@ -81,21 +82,23 @@ export const Default: Story = {
                     </div>
                   </div>
                 )}
-                <div className="mt-6">
-                  <LaunchPad />
-                </div>
-                <Applications />
-                <div className="absolute bottom-4 left-1/2 flex h-12 w-[min(760px,92%)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
-                  <div className="flex flex-1 items-center gap-2">
-                    <Taskbar />
-                  </div>
-                  <div className="text-white/70 text-xs">10:24</div>
+                <div className="m-6">
+                  <AboutApplicationLauncher />
+                  <NotesApplicationLauncher />
                 </div>
               </WindowSnap>
-            </PurpleWallpaper>
-          </Shell>
+            </WindowBoundary>
+            <div className="m-4">
+              <nav className="flex h-12 w-full items-center gap-3 border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
+                <div className="flex flex-1 items-center gap-2">
+                  <ApplicationTaskbarItems />
+                </div>
+                <div className="text-white/70 text-xs">10:24</div>
+              </nav>
+            </div>
+          </PurpleWallpaper>
         </WindowManagerProvider>
-      </ApplicationManager>
+      </ApplicationManagerProvider>
     );
   },
 };
@@ -129,9 +132,8 @@ const AboutContent = React.lazy(() =>
 );
 
 const AboutApplication = defineApplication("about-application")({
-  component: ({ appId }: { appId: string }) => (
+  component: () => (
     <Window
-      id={appId}
       defaultFraming={{
         position: { x: 12, y: 12 },
         size: { height: 46, width: 45 },
@@ -156,8 +158,31 @@ const AboutApplication = defineApplication("about-application")({
       </WindowContent>
     </Window>
   ),
-  title: "About",
+  metadata: {
+    title: "About",
+  },
 });
+
+function AboutApplicationLauncher() {
+  const launch = AboutApplication.useWindowLauncher();
+
+  return (
+    <Launcher
+      className="text-white/90"
+      onClick={(event) => {
+        event.preventDefault();
+        launch();
+      }}
+    >
+      <LauncherIcon className="bg-white/10 text-white ring-white/20">
+        <User />
+      </LauncherIcon>
+      <LauncherLabel className="text-white/90">
+        {AboutApplication.getMetadata().title}
+      </LauncherLabel>
+    </Launcher>
+  );
+}
 
 // Pretend code-splitting is happening here
 const NotesContent = React.lazy(() =>
@@ -174,9 +199,8 @@ const NotesContent = React.lazy(() =>
 );
 
 const NotesApplication = defineApplication("notes-application")({
-  component: ({ appId }: { appId: string }) => (
+  component: () => (
     <Window
-      id={appId}
       defaultFraming={{
         position: { x: 42, y: 18 },
         size: { height: 48, width: 42 },
@@ -201,133 +225,64 @@ const NotesApplication = defineApplication("notes-application")({
       </WindowContent>
     </Window>
   ),
-  title: "Notes",
+  metadata: {
+    title: "Notes",
+  },
 });
 
-function LaunchPad() {
-  const { listApplications } = useApplicationManager();
-  const { getWindowData } = useWindowManager();
-  const apps = listApplications();
+function NotesApplicationLauncher() {
+  const launch = NotesApplication.useWindowLauncher();
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid w-full max-w-sm auto-cols-[96px] grid-flow-col grid-rows-4 gap-4">
-        {apps.map((app) => (
-          <ApplicationLauncher
-            key={app.id}
-            application={app}
-            isHidden={Boolean(getWindowData(app.id)?.isHidden)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Applications() {
-  const { running, getApplication } = useApplicationManager();
-
-  return running.map((entry) => {
-    const app = getApplication(entry.appId);
-    if (!app) return null;
-    const AppComponent = app.component;
-    return <AppComponent key={entry.appId} appId={entry.appId} />;
-  });
-}
-
-type ApplicationLauncherProps = {
-  application: ApplicationDescriptor;
-  isHidden: boolean;
-};
-
-function ApplicationLauncher({
-  application,
-  isHidden,
-}: ApplicationLauncherProps) {
-  const { activateWindow } = useWindowManager();
-  const status = isHidden ? "hidden" : "default";
-  const letter = application.title.trim().slice(0, 1) || "?";
-
-  return (
-    <ActionLauncher
-      application={application}
-      status={status}
+    <Launcher
       className="text-white/90"
       onClick={(event) => {
-        if (isHidden) {
-          event.preventDefault();
-          activateWindow(application.id);
-        }
+        event.preventDefault();
+        launch();
       }}
     >
       <LauncherIcon className="bg-white/10 text-white ring-white/20">
-        {letter}
+        <Notebook />
       </LauncherIcon>
       <LauncherLabel className="text-white/90">
-        {application.title}
+        {NotesApplication.getMetadata().title}
       </LauncherLabel>
-    </ActionLauncher>
+    </Launcher>
   );
 }
 
-function Taskbar() {
-  const { running, getApplication } = useApplicationManager();
-  const { getWindowData } = useWindowManager();
-
-  return (
-    <>
-      {running.map((entry) => {
-        const app = getApplication(entry.appId);
-        if (!app) return null;
-        const windowData = getWindowData(entry.appId);
-        const isHidden = windowData?.isHidden ?? false;
-        return (
-          <TaskbarItem
-            key={entry.appId}
-            application={app}
-            isHidden={isHidden}
-          />
-        );
-      })}
-    </>
-  );
-}
-
-type TaskbarItemProps = {
-  application: ApplicationDescriptor;
-  isHidden: boolean;
-};
-
-function TaskbarItem({ application, isHidden }: TaskbarItemProps) {
+function ApplicationTaskbarItems() {
+  const { runningApplications, close, launch } = useApplicationManager();
   const { activateWindow } = useWindowManager();
-  const { close, launch } = application.useApplication();
 
-  return (
-    <div className="relative flex h-8 items-center gap-1 rounded-xl bg-white/5 px-2 py-1 text-white/90 text-xs">
-      <button
-        type="button"
-        className="flex items-center gap-2 rounded-lg bg-white/15 px-2 py-1 font-medium text-white/90 text-xs hover:bg-white/25"
-        onClick={() => {
-          if (isHidden) {
+  return runningApplications.map((application) => {
+    return (
+      <div
+        key={application.id}
+        className="relative flex h-8 items-center gap-1 rounded-xl bg-white/5 px-2 py-1 text-white/90 text-xs"
+      >
+        <button
+          type="button"
+          className="flex items-center gap-2 rounded-lg bg-white/15 px-2 py-1 font-medium text-white/90 text-xs hover:bg-white/25"
+          onClick={() => {
             activateWindow(application.id);
-          } else {
-            launch();
-          }
-        }}
-      >
-        <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-white/20 font-semibold text-[10px]">
-          {application.title.slice(0, 1)}
-        </span>
-        {application.title}
-      </button>
-      <button
-        type="button"
-        className="absolute -top-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/80 font-semibold text-[11px] text-slate-900 shadow-sm ring-1 ring-white/60 hover:bg-white"
-        onClick={close}
-        aria-label={`Close ${application.title}`}
-      >
-        ×
-      </button>
-    </div>
-  );
+            launch(application);
+          }}
+        >
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-white/20 font-semibold text-[10px]">
+            {application.metadata.title.slice(0, 1)}
+          </span>
+          {application.metadata.title}
+        </button>
+        <button
+          type="button"
+          className="absolute -top-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/80 font-semibold text-[11px] text-slate-900 shadow-sm ring-1 ring-white/60 hover:bg-white"
+          onClick={() => close(application)}
+          aria-label={`Close ${application.metadata.title}`}
+        >
+          ×
+        </button>
+      </div>
+    );
+  });
 }

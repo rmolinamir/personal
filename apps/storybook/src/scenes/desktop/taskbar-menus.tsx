@@ -8,19 +8,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@acme/ui/components/dropdown-menu";
-import { DockItem } from "@acme/ui/os/dock";
+import { TaskbarItem } from "@acme/ui/os/taskbar";
 import { Database, LayoutGrid, Search, Settings, Zap } from "lucide-react";
 
 function ProductMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <DockItem
+        <TaskbarItem
           variant="label"
           className="text-slate-700 hover:bg-black/5 data-[active=true]:bg-black/5"
         >
           Orbit Desk
-        </DockItem>
+        </TaskbarItem>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"
@@ -68,12 +68,12 @@ function MoreMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <DockItem
+        <TaskbarItem
           variant="label"
           className="text-slate-700 hover:bg-black/5 data-[active=true]:bg-black/5"
         >
           Extras
-        </DockItem>
+        </TaskbarItem>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"

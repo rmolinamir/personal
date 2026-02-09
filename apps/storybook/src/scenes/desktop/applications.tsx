@@ -1,5 +1,10 @@
 import { defineApplication, useApplication } from "@acme/ui/os/application";
-import { useApplicationManager } from "@acme/ui/os/application-manager";
+import {
+  Launcher,
+  LauncherDescription,
+  LauncherIcon,
+  LauncherLabel,
+} from "@acme/ui/os/launcher";
 import { Window, withCenteredFraming } from "@acme/ui/os/window";
 import {
   WindowAction,
@@ -13,11 +18,11 @@ import {
   WindowTitle,
 } from "@acme/ui/os/window-layout";
 import { Minus, Square, X } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 
 const MailApplication = defineApplication("mail")({
-  component: ({ appId }: { appId: string }) => (
-    <ApplicationWindow appId={appId} title="Mail">
+  component: () => (
+    <ApplicationWindow title="Mail">
       <div className="space-y-3 text-sm">
         <p className="font-medium">Inbox zero-ish</p>
         <p className="text-muted-foreground">
@@ -30,31 +35,83 @@ const MailApplication = defineApplication("mail")({
       </div>
     </ApplicationWindow>
   ),
-  title: "Mail",
+  metadata: {
+    title: "Mail",
+  },
 });
 
+function MailApplicationLauncher() {
+  const launch = MailApplication.useWindowLauncher();
+
+  return (
+    <Launcher
+      className="h-35 w-25 items-center justify-center text-slate-700"
+      onClick={(event) => {
+        event.preventDefault();
+        launch();
+      }}
+    >
+      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+        {MailApplication.getMetadata().title.slice(0, 1)}
+      </LauncherIcon>
+      <LauncherLabel className="text-slate-800">
+        {MailApplication.getMetadata().title.toLowerCase()}.mdx
+      </LauncherLabel>
+      <LauncherDescription className="text-slate-500">
+        Tap to open
+      </LauncherDescription>
+    </Launcher>
+  );
+}
+
 const NotesApplication = defineApplication("notes")({
-  component: ({ appId }: { appId: string }) => (
-    <ApplicationWindow appId={appId} title="Notes">
+  component: () => (
+    <ApplicationWindow title="Notes">
       <div className="space-y-2 text-sm">
         <p className="font-medium">Ideas in progress</p>
         <p className="text-muted-foreground">
           Three drafts synced from mobile.
         </p>
         <ul className="space-y-1 text-muted-foreground text-xs">
-          <li>- Dock animations</li>
+          <li>- Taskbar animations</li>
           <li>- Sidebar routing</li>
           <li>- Menu polish</li>
         </ul>
       </div>
     </ApplicationWindow>
   ),
-  title: "Notes",
+  metadata: {
+    title: "Notes",
+  },
 });
 
+function NotesApplicationLauncher() {
+  const launch = NotesApplication.useWindowLauncher();
+
+  return (
+    <Launcher
+      className="h-35 w-25 items-center justify-center text-slate-700"
+      onClick={(event) => {
+        event.preventDefault();
+        launch();
+      }}
+    >
+      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+        {NotesApplication.getMetadata().title.slice(0, 1)}
+      </LauncherIcon>
+      <LauncherLabel className="text-slate-800">
+        {NotesApplication.getMetadata().title.toLowerCase()}.mdx
+      </LauncherLabel>
+      <LauncherDescription className="text-slate-500">
+        Tap to open
+      </LauncherDescription>
+    </Launcher>
+  );
+}
+
 const InsightsApplication = defineApplication("insights")({
-  component: ({ appId }: { appId: string }) => (
-    <ApplicationWindow appId={appId} title="Insights">
+  component: () => (
+    <ApplicationWindow title="Insights">
       <div className="space-y-2 text-sm">
         <p className="font-medium">Pulse check</p>
         <p className="text-muted-foreground">
@@ -66,21 +123,44 @@ const InsightsApplication = defineApplication("insights")({
       </div>
     </ApplicationWindow>
   ),
-  title: "Insights",
+  metadata: {
+    title: "Insights",
+  },
 });
 
+function InsightsApplicationLauncher() {
+  const launch = InsightsApplication.useWindowLauncher();
+
+  return (
+    <Launcher
+      className="h-35 w-25 items-center justify-center text-slate-700"
+      onClick={(event) => {
+        event.preventDefault();
+        launch();
+      }}
+    >
+      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+        {InsightsApplication.getMetadata().title.slice(0, 1)}
+      </LauncherIcon>
+      <LauncherLabel className="text-slate-800">
+        {InsightsApplication.getMetadata().title.toLowerCase()}.mdx
+      </LauncherLabel>
+      <LauncherDescription className="text-slate-500">
+        Tap to open
+      </LauncherDescription>
+    </Launcher>
+  );
+}
+
 type ApplicationWindowProps = {
-  appId: string;
   title: string;
   children: React.ReactNode;
 };
 
-function ApplicationWindow({ appId, title, children }: ApplicationWindowProps) {
+function ApplicationWindow({ title, children }: ApplicationWindowProps) {
   const { close } = useApplication();
-
   return (
     <Window
-      id={appId}
       defaultFraming={withCenteredFraming({
         height: 90,
         width: 90,
@@ -112,33 +192,11 @@ function ApplicationWindow({ appId, title, children }: ApplicationWindowProps) {
   );
 }
 
-function Applications() {
-  const { running, getApplication } = useApplicationManager();
-
-  return running.map((entry) => {
-    const app = getApplication(entry.appId);
-    if (!app) return null;
-    const Component = app.component;
-    return <Component key={entry.appId} appId={entry.appId} />;
-  });
-}
-
-function DockStartupApps({ ids }: { ids: string[] }) {
-  const { launch } = useApplicationManager();
-
-  React.useEffect(() => {
-    for (const id of ids) {
-      launch(id);
-    }
-  }, [ids, launch]);
-
-  return null;
-}
-
 export {
-  Applications,
-  DockStartupApps,
   MailApplication,
   NotesApplication,
   InsightsApplication,
+  MailApplicationLauncher,
+  NotesApplicationLauncher,
+  InsightsApplicationLauncher,
 };

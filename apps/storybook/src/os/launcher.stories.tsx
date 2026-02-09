@@ -5,7 +5,7 @@ import {
   LauncherIcon,
   LauncherLabel,
 } from "@acme/ui/os/launcher";
-import { Shell } from "@acme/ui/os/shell";
+import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   BookOpen,
@@ -34,11 +34,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
-    const [activeId, setActiveId] = React.useState("about");
     const [hiddenId, setHiddenId] = React.useState("notes");
 
     return (
-      <Shell>
+      <WindowBoundary>
         <PurpleWallpaper className="p-10">
           <div className="relative">
             <div className="text-white/80 text-xs uppercase tracking-[0.25em]">
@@ -47,16 +46,9 @@ export const Default: Story = {
             <div className="mt-6 grid w-full max-w-2xl auto-cols-[120px] grid-flow-col grid-rows-3 gap-4">
               {shortcuts.map((shortcut) => {
                 const isHidden = shortcut.id === hiddenId;
-                const status = isHidden
-                  ? "hidden"
-                  : shortcut.id === activeId
-                    ? "running"
-                    : "default";
-
                 return (
                   <Launcher
                     key={shortcut.id}
-                    status={status}
                     size="lg"
                     className="text-white/90"
                     onClick={() => {
@@ -64,7 +56,6 @@ export const Default: Story = {
                         setHiddenId("");
                         return;
                       }
-                      setActiveId(shortcut.id);
                     }}
                   >
                     <LauncherIcon
@@ -96,7 +87,7 @@ export const Default: Story = {
             </div>
           </div>
         </PurpleWallpaper>
-      </Shell>
+      </WindowBoundary>
     );
   },
 };

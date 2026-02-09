@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "../lib/utils";
-import { useShell } from "./shell";
+import { useWindowBoundary } from "./window-boundary";
 import type {
   WindowPercentFraming,
   WindowPosition,
@@ -46,7 +46,7 @@ export type WindowSnapProps = {
 };
 
 function WindowSnap({ children }: WindowSnapProps) {
-  const { element, size } = useShell();
+  const { element, size } = useWindowBoundary();
   const [snapTarget, setSnapTarget] = React.useState<SnapTarget>(null);
 
   const handleDrag = React.useCallback(

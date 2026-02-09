@@ -2,16 +2,22 @@ import * as React from "react";
 import { cn } from "../lib/utils";
 import type { WindowSize } from "./window-utils";
 
-type ShellContextValue = {
+type WindowBoundaryContextValue = {
   element: HTMLDivElement | null;
   size: WindowSize | null;
 };
 
-const ShellContext = React.createContext<ShellContextValue | null>(null);
+const WindowBoundaryContext =
+  React.createContext<WindowBoundaryContextValue | null>(null);
 
-export type ShellProps = React.ComponentProps<"div">;
+type WindowBoundaryProps = React.ComponentProps<"div">;
 
-function Shell({ className, children, ref, ...props }: ShellProps) {
+function WindowBoundary({
+  className,
+  children,
+  ref,
+  ...props
+}: WindowBoundaryProps) {
   const [element, setElement] = React.useState<HTMLDivElement | null>(null);
   const [size, setSize] = React.useState<WindowSize | null>(null);
 
@@ -49,26 +55,26 @@ function Shell({ className, children, ref, ...props }: ShellProps) {
     return () => observer.disconnect();
   }, [element]);
 
-  const value = React.useMemo<ShellContextValue>(
+  const value = React.useMemo<WindowBoundaryContextValue>(
     () => ({ element, size }),
     [element, size],
   );
 
   return (
-    <ShellContext.Provider value={value}>
+    <WindowBoundaryContext.Provider value={value}>
       <div ref={handleRef} className={cn("relative", className)} {...props}>
         {children}
       </div>
-    </ShellContext.Provider>
+    </WindowBoundaryContext.Provider>
   );
 }
 
-function useShell() {
-  const context = React.useContext(ShellContext);
+function useWindowBoundary() {
+  const context = React.useContext(WindowBoundaryContext);
   if (!context) {
     throw new Error("useShell must be used within Shell");
   }
   return context;
 }
 
-export { Shell, useShell };
+export { WindowBoundary, useWindowBoundary };

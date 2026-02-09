@@ -1,10 +1,10 @@
-import { Shell } from "@acme/ui/os/shell";
 import { Window } from "@acme/ui/os/window";
 import {
   WindowControls,
   WindowFullscreenButton,
   WindowHideButton,
 } from "@acme/ui/os/window-actions";
+import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import {
   WindowCaption,
   WindowContent,
@@ -52,7 +52,7 @@ function WindowControlsHeader() {
 export const Default: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+      <WindowBoundary className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window>
           <WindowHeader>
             <WindowTitle>About</WindowTitle>
@@ -71,7 +71,59 @@ export const Default: Story = {
             </div>
           </WindowContent>
         </Window>
-      </Shell>
+      </WindowBoundary>
+    </WindowManagerProvider>
+  ),
+};
+
+export const FixedShell: Story = {
+  render: () => (
+    <div className="bg-blue-100 p-6">
+      <WindowManagerProvider>
+        <WindowBoundary className="relative m-6 h-70 w-120 overflow-hidden border border-red-500 bg-green-200">
+          <WindowSnap>
+            <Window>
+              <WindowHeader>
+                <WindowTitle>Fixed Shell</WindowTitle>
+              </WindowHeader>
+              <WindowContent>
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium">Fixed height shell</p>
+                  <p className="text-muted-foreground">
+                    Windows are bound to this shell.
+                  </p>
+                </div>
+              </WindowContent>
+            </Window>
+          </WindowSnap>
+        </WindowBoundary>
+      </WindowManagerProvider>
+    </div>
+  ),
+};
+
+export const FluidShell: Story = {
+  render: () => (
+    <WindowManagerProvider>
+      <div className="h-180 w-full">
+        <WindowBoundary className="relative h-full w-full overflow-hidden bg-muted/30 p-6">
+          <WindowSnap>
+            <Window>
+              <WindowHeader>
+                <WindowTitle>Fluid Shell</WindowTitle>
+              </WindowHeader>
+              <WindowContent>
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium">Percent-based shell</p>
+                  <p className="text-muted-foreground">
+                    Shell fills its parent container.
+                  </p>
+                </div>
+              </WindowContent>
+            </Window>
+          </WindowSnap>
+        </WindowBoundary>
+      </div>
     </WindowManagerProvider>
   ),
 };
@@ -79,7 +131,7 @@ export const Default: Story = {
 export const WithDescription: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+      <WindowBoundary className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window>
           <WindowHeader>
             <div className="space-y-0.5">
@@ -101,7 +153,7 @@ export const WithDescription: Story = {
             12 items · 3.4 MB
           </WindowFooter>
         </Window>
-      </Shell>
+      </WindowBoundary>
     </WindowManagerProvider>
   ),
 };
@@ -109,7 +161,7 @@ export const WithDescription: Story = {
 export const MultiWindow: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
+      <WindowBoundary className="relative h-160 w-full overflow-hidden bg-muted/30 p-6">
         <Window
           defaultFraming={{
             position: { x: 8, y: 8 },
@@ -155,7 +207,7 @@ export const MultiWindow: Story = {
             12 items · 3.4 MB
           </WindowFooter>
         </Window>
-      </Shell>
+      </WindowBoundary>
     </WindowManagerProvider>
   ),
 };
@@ -163,10 +215,10 @@ export const MultiWindow: Story = {
 export const ConstrainedBounds: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30">
+      <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30">
         <div className="flex h-14 items-center justify-between border-b bg-background/80 px-4 text-muted-foreground text-sm">
           <span>Top Bar</span>
-          <span>Dock Area</span>
+          <span>Taskbar Area</span>
         </div>
         <div className="relative h-[calc(100%-3.5rem)] p-6">
           <Window>
@@ -184,7 +236,7 @@ export const ConstrainedBounds: Story = {
             </WindowContent>
           </Window>
         </div>
-      </Shell>
+      </WindowBoundary>
     </WindowManagerProvider>
   ),
 };
@@ -192,7 +244,7 @@ export const ConstrainedBounds: Story = {
 export const WithSnapping: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+      <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
         <WindowSnap>
           <Window
             defaultFraming={{
@@ -237,7 +289,7 @@ export const WithSnapping: Story = {
             </WindowFooter>
           </Window>
         </WindowSnap>
-      </Shell>
+      </WindowBoundary>
     </WindowManagerProvider>
   ),
 };
@@ -245,7 +297,7 @@ export const WithSnapping: Story = {
 export const WithControls: Story = {
   render: () => (
     <WindowManagerProvider>
-      <Shell className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+      <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
         <FloatingHiddenWindows />
         <Window
           defaultFraming={{
@@ -258,7 +310,7 @@ export const WithControls: Story = {
             <div className="space-y-2 text-sm">
               <p className="font-medium">Double-click the header.</p>
               <p className="text-muted-foreground">
-                Use the hide button to move it to the dock.
+                Use the hide button to move it to the taskbar.
               </p>
             </div>
           </WindowContent>
@@ -274,7 +326,7 @@ export const WithControls: Story = {
             <div className="space-y-2 text-sm">
               <p className="font-medium">Third window</p>
               <p className="text-muted-foreground">
-                Dock entries restore hidden windows.
+                Taskbar entries restore hidden windows.
               </p>
             </div>
           </WindowContent>
@@ -293,7 +345,7 @@ export const WithControls: Story = {
             </div>
           </WindowContent>
         </Window>
-      </Shell>
+      </WindowBoundary>
     </WindowManagerProvider>
   ),
 };

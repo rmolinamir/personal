@@ -5,7 +5,7 @@ Define how apps are launched, how routes participate, and how launchers behave. 
 
 ## Core principles
 - We launch apps, not windows.
-- Apps own their own windows and layout (appId maps to window id).
+- Apps own their own windows and layout (applicationId maps to window id).
 - WindowManager only bounds/focuses running windows; it does not decide what launches.
 - Closing a window removes the app instance and all its state.
 
@@ -17,7 +17,7 @@ Define how apps are launched, how routes participate, and how launchers behave. 
 
 ## Implementation split
 - defineApplication + useApplication live in packages/ui/src/os/application.tsx.
-- ApplicationManager + useApplicationManager live in packages/ui/src/os/application-manager.tsx.
+- ApplicationManagerProvider + useApplicationManager live in packages/ui/src/os/application-manager.tsx.
 
 ## Launcher types (naming TBD)
 Base launcher is presentational; routing or launch behavior is composed externally.

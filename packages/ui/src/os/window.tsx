@@ -7,7 +7,8 @@ import {
 } from "react-rnd";
 import { Card } from "../components/card";
 import { cn } from "../lib/utils";
-import { useShell } from "./shell";
+import { useApplicationId } from "./application";
+import { useWindowBoundary } from "./window-boundary";
 import { useWindowManager } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
@@ -94,9 +95,10 @@ function Window({
       } satisfies WindowPercentFraming)
     : undefined;
   const autoId = React.useId();
-  const windowId = id ?? autoId;
+  const applicationId = useApplicationId();
+  const windowId = id ?? applicationId ?? autoId;
 
-  const { size: bounds, element } = useShell();
+  const { size: bounds, element } = useWindowBoundary();
   const manager = useWindowManager();
   const snap = useWindowSnap();
 

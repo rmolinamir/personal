@@ -2,7 +2,7 @@
 
 ## Goals
 - Build an OS-themed portfolio UI inspired by PostHog.
-- Desktop surface with launchers, draggable/resizable windows, and a simple dock.
+- Desktop surface with launchers, draggable/resizable windows, and a simple taskbar.
 - URL reflects focused window later (TanStack route sync), but we are focusing on window mechanics first.
 
 ## Mental model (aligned to real OSes)
@@ -10,7 +10,7 @@
 - Launcher: a file/folder/link/shortcut that selects an app and provides context.
 - Window: the container that hosts an app plus launcher context.
 - Workspace: the desktop surface that shows launchers and owns the window stack.
-- Dock: simple shortcuts (not pinned/running state yet).
+- Taskbar: simple shortcuts (not pinned/running state yet).
 
 ## Routing model (future)
 - Use TanStack routes as the source of truth for launchers.
@@ -53,7 +53,7 @@ Window components (exported from @acme/ui/os/window):
 Implementation details:
 - WindowManager: stack context with mount/unmount/focus/getWindow.
 - useWindowManager(id): hook that returns focused/zIndex/onFocus.
-- Window ids are explicit (app windows use appId); WindowManager does not generate ids.
+- Window ids are explicit (app windows use applicationId); WindowManager does not generate ids.
 - WindowHeader toggles fullscreen on double-click by default.
 
 ## Controlled vs uncontrolled behavior
@@ -74,6 +74,6 @@ Implementation details:
 - apps/storybook/src/os/application.stories.tsx
 
 ## Next steps (planned)
-1) Dock primitive: simple shortcuts.
+1) Taskbar primitive: simple shortcuts.
 2) App adapters: Explorer, MarkdownViewer, VideoPlayer, AIAgent.
 3) TanStack route sync: focus <-> URL and auto-open on route.

@@ -16,18 +16,32 @@ function WindowHeader({
   ...props
 }: React.ComponentProps<typeof CardHeader>) {
   const { toggleFullscreen } = useWindow();
+  const [element, setElement] = React.useState<HTMLDivElement | null>(null);
   const handleHeaderDoubleClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onDoubleClick?.(event);
       if (event.defaultPrevented) return;
-      toggleFullscreen();
+      if (event.target === element) toggleFullscreen();
     },
-    [toggleFullscreen, onDoubleClick],
+    [element, toggleFullscreen, onDoubleClick],
+  );
+
+  const handleRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      setElement(node);
+      if (!ref) return;
+      if (typeof ref === "function") {
+        ref(node);
+      } else {
+        ref.current = node;
+      }
+    },
+    [ref],
   );
 
   return (
     <CardHeader
-      ref={ref}
+      ref={handleRef}
       data-slot="window-header"
       onDoubleClick={handleHeaderDoubleClick}
       className={cn(

@@ -2,6 +2,7 @@ import type * as React from "react";
 import { Button } from "../components/button";
 import { CardAction } from "../components/card";
 import { cn } from "../lib/utils";
+import { useApplication } from "./application";
 import { useWindow } from "./window";
 
 function WindowControls({
@@ -81,9 +82,31 @@ function WindowFullscreenButton({
   );
 }
 
+function WindowCloseButton({
+  onClick,
+  ref,
+  ...props
+}: React.ComponentProps<typeof WindowAction>) {
+  const { close } = useApplication();
+
+  return (
+    <WindowAction
+      ref={ref}
+      data-window-fullscreen
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        close();
+      }}
+      {...props}
+    />
+  );
+}
+
 export {
   WindowAction,
   WindowControls,
   WindowHideButton,
   WindowFullscreenButton,
+  WindowCloseButton,
 };

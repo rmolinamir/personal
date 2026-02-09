@@ -1,28 +1,34 @@
 import { SidebarProvider } from "@acme/ui/components/sidebar";
-import { ApplicationManager } from "@acme/ui/os/application-manager";
-import { Dock, DockIcon, DockItem, DockSection } from "@acme/ui/os/dock";
-import { Shell } from "@acme/ui/os/shell";
+import { ApplicationManagerProvider } from "@acme/ui/os/application-manager";
+import {
+  Taskbar,
+  TaskbarIcon,
+  TaskbarItem,
+  TaskbarSection,
+} from "@acme/ui/os/taskbar";
+import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import { WindowManagerProvider } from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { PanelRightOpen } from "lucide-react";
 import * as React from "react";
-import { ApplicationLaunchers } from "../scenes/desktop/application-launchers";
 import { ApplicationManagerSidebar } from "../scenes/desktop/application-manager-sidebar";
 import {
-  Applications,
   InsightsApplication,
+  InsightsApplicationLauncher,
   MailApplication,
+  MailApplicationLauncher,
   NotesApplication,
+  NotesApplicationLauncher,
 } from "../scenes/desktop/applications";
-import { MoreMenu, ProductMenu } from "../scenes/desktop/dock-menus";
+import { MoreMenu, ProductMenu } from "../scenes/desktop/taskbar-menus";
 
 const meta = {
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-  title: "OS/Dock",
+  title: "OS/Taskbar",
 } satisfies Meta;
 
 export default meta;
@@ -60,45 +66,47 @@ export const Default: Story = {
         style={{ "--sidebar-width": "22rem" } as React.CSSProperties}
       >
         <WindowManagerProvider>
-          <ApplicationManager
-            applications={[
-              MailApplication,
-              NotesApplication,
-              InsightsApplication,
-            ]}
-          >
+          <ApplicationManagerProvider>
             <div className="flex h-full min-h-svh w-full flex-col bg-[#e9e2d2]">
-              <Shell className="h-full w-full flex-1">
+              <WindowBoundary className="h-full w-full flex-1">
                 <WindowSnap>
+                  {/* Application layer. */}
+                  <MailApplication.Component />
+                  <NotesApplication.Component />
+                  <InsightsApplication.Component />
+
+                  {/* Desktop layer. */}
                   <div ref={panelRef}>
                     <ApplicationManagerSidebar />
                   </div>
-                  <ApplicationLaunchers className="pointer-events-auto m-4" />
-                  <Applications />
+                  <div className="m-4">
+                    <MailApplicationLauncher />
+                    <NotesApplicationLauncher />
+                    <InsightsApplicationLauncher />
+                  </div>
                 </WindowSnap>
-              </Shell>
+              </WindowBoundary>
 
-              <Dock
-                className="mx-4 my-2 rounded-full border border-black/10 text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.25)]"
-                position="bottom"
-              >
-                <DockSection
+              <Taskbar className="mx-4 my-2 rounded-full border border-black/10 text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.25)]">
+                <TaskbarSection
                   align="start"
                   className="gap-1 text-slate-700 text-sm"
                   grow
                 >
-                  <DockItem
+                  <TaskbarItem
                     variant="icon"
                     className="text-slate-700 hover:bg-black/5"
                   >
-                    <DockIcon className="bg-slate-900 text-white">OS</DockIcon>
-                  </DockItem>
+                    <TaskbarIcon className="bg-slate-900 text-white">
+                      OS
+                    </TaskbarIcon>
+                  </TaskbarItem>
                   <ProductMenu />
                   <MoreMenu />
-                </DockSection>
+                </TaskbarSection>
 
-                <DockSection>
-                  <DockItem
+                <TaskbarSection>
+                  <TaskbarItem
                     variant="icon"
                     aria-label="Window manager"
                     active={sidebarOpen}
@@ -107,11 +115,11 @@ export const Default: Story = {
                     ref={toggleRef}
                   >
                     <PanelRightOpen className="size-4" />
-                  </DockItem>
-                </DockSection>
-              </Dock>
+                  </TaskbarItem>
+                </TaskbarSection>
+              </Taskbar>
             </div>
-          </ApplicationManager>
+          </ApplicationManagerProvider>
         </WindowManagerProvider>
       </SidebarProvider>
     );

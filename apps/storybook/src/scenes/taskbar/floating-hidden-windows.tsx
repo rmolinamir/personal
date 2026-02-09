@@ -1,11 +1,11 @@
 import { cn } from "@acme/ui/lib/utils";
 import { useWindowManager } from "@acme/ui/os/window-manager";
 
-type HiddenWindowsDockProps = {
+type HiddenWindowsTaskbarProps = {
   className?: string;
 };
 
-function FloatingHiddenWindows({ className }: HiddenWindowsDockProps) {
+function FloatingHiddenWindows({ className }: HiddenWindowsTaskbarProps) {
   const { windows, activateWindow, getWindowData } = useWindowManager();
   const hiddenWindows = windows.filter(
     (window) => getWindowData(window.id)?.isHidden,

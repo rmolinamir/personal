@@ -1,51 +1,59 @@
 import * as React from "react";
-import type { ApplicationDescriptor } from "./application";
-
-type RunningApplication = {
-  appId: string;
-};
+import type { ApplicationInstance } from "./application";
 
 type ApplicationManagerContextValue = {
-  registry: Record<string, ApplicationDescriptor>;
-  running: RunningApplication[];
-  launch: (appId: string) => void;
-  close: (appId: string) => void;
+  close: (application: ApplicationInstance) => void;
+  closeAll: () => void;
+  isRunning: (application: ApplicationInstance) => boolean;
+  launch: (application: ApplicationInstance) => void;
+  runningApplications: ApplicationInstance[];
 };
 
 const ApplicationManagerContext =
   React.createContext<ApplicationManagerContextValue | null>(null);
 
-export type ApplicationManagerProps = {
-  applications: ApplicationDescriptor[];
+type ApplicationManagerProps = {
   children: React.ReactNode;
 };
 
-function ApplicationManager({
-  applications,
-  children,
-}: ApplicationManagerProps) {
-  const [running, setRunning] = React.useState<RunningApplication[]>([]);
-  const registry = React.useMemo(() => {
-    const entries = applications.map((app) => [app.id, app] as const);
-    return Object.fromEntries(entries) as Record<string, ApplicationDescriptor>;
-  }, [applications]);
+function ApplicationManagerProvider({ children }: ApplicationManagerProps) {
+  const [runningApplications, setApplications] = React.useState<
+    ApplicationInstance[]
+  >([]);
 
-  const launch = React.useCallback((appId: string) => {
-    setRunning((prev) => {
-      if (prev.some((app) => app.appId === appId)) {
+  const close = React.useCallback((application: ApplicationInstance) => {
+    setApplications((prev) => prev.filter((app) => app !== application));
+  }, []);
+
+  const closeAll = React.useCallback(() => {
+    setApplications([]);
+  }, []);
+
+  const isRunning = React.useCallback(
+    (application: ApplicationInstance) => {
+      return runningApplications.includes(application);
+    },
+    [runningApplications],
+  );
+
+  const launch = React.useCallback((application: ApplicationInstance) => {
+    setApplications((prev) => {
+      if (prev.includes(application)) {
         return prev;
       }
-      return [...prev, { appId }];
+      return [...prev, application];
     });
   }, []);
 
-  const close = React.useCallback((appId: string) => {
-    setRunning((prev) => prev.filter((app) => app.appId !== appId));
-  }, []);
-
   const value = React.useMemo<ApplicationManagerContextValue>(
-    () => ({ close, launch, registry, running }),
-    [close, launch, registry, running],
+    () => ({
+      close,
+      closeAll,
+      isRunning,
+      launch,
+      runningApplications,
+    }),
+    [close, closeAll, launch, isRunning, runningApplications],
   );
 
   return (
@@ -59,27 +67,10 @@ function useApplicationManager() {
   const context = React.useContext(ApplicationManagerContext);
   if (!context) {
     throw new Error(
-      "useApplicationManager must be used within ApplicationManager",
+      "useApplicationManager must be used within ApplicationManagerProvider",
     );
   }
-
-  const getApplication = React.useCallback(
-    (id: string) => context.registry[id],
-    [context.registry],
-  );
-
-  const listApplications = React.useCallback(
-    () => Object.values(context.registry),
-    [context.registry],
-  );
-
-  return {
-    close: context.close,
-    getApplication,
-    launch: context.launch,
-    listApplications,
-    running: context.running,
-  };
+  return context;
 }
 
-export { ApplicationManager, useApplicationManager };
+export { ApplicationManagerProvider, useApplicationManager };

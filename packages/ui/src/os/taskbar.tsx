@@ -1,27 +1,18 @@
 import * as React from "react";
 import { cn } from "../lib/utils";
 
-export type DockBarSize = "sm" | "md";
+export type TaskbarBarSize = "sm" | "md";
 
-export type DockPosition = "bottom" | "top";
-
-export type DockProps = React.ComponentPropsWithoutRef<"div"> & {
-  position?: DockPosition;
-  size?: DockBarSize;
+export type TaskbarProps = React.ComponentPropsWithoutRef<"nav"> & {
+  size?: TaskbarBarSize;
 };
 
-function Dock({
-  position = "bottom",
-  size = "md",
-  className,
-  ...props
-}: DockProps) {
+function Taskbar({ size = "md", className, ...props }: TaskbarProps) {
   return (
-    <div
-      data-position={position}
+    <nav
       data-size={size}
       className={cn(
-        "pointer-events-auto flex items-center gap-3 rounded-2xl border border-border/40 bg-background/90 px-4 text-foreground shadow-lg backdrop-blur-md",
+        "flex items-center gap-3 border border-border/40 bg-background/90 text-foreground backdrop-blur-md",
         "data-[size=sm]:h-10 data-[size=sm]:px-3",
         "data-[size=md]:h-12",
         className,
@@ -31,19 +22,19 @@ function Dock({
   );
 }
 
-export type DockSectionAlign = "start" | "center" | "end";
+export type TaskbarSectionAlign = "start" | "center" | "end";
 
-export type DockSectionProps = React.ComponentPropsWithoutRef<"div"> & {
-  align?: DockSectionAlign;
+export type TaskbarSectionProps = React.ComponentPropsWithoutRef<"div"> & {
+  align?: TaskbarSectionAlign;
   grow?: boolean;
 };
 
-function DockSection({
+function TaskbarSection({
   align = "start",
   grow = false,
   className,
   ...props
-}: DockSectionProps) {
+}: TaskbarSectionProps) {
   return (
     <div
       data-align={align}
@@ -60,9 +51,9 @@ function DockSection({
   );
 }
 
-export type DockDividerProps = React.ComponentPropsWithoutRef<"span">;
+export type TaskbarDividerProps = React.ComponentPropsWithoutRef<"span">;
 
-function DockDivider({ className, ...props }: DockDividerProps) {
+function TaskbarDivider({ className, ...props }: TaskbarDividerProps) {
   return (
     <span
       aria-hidden
@@ -72,14 +63,14 @@ function DockDivider({ className, ...props }: DockDividerProps) {
   );
 }
 
-export type DockItemVariant = "icon" | "label" | "pill";
+export type TaskbarItemVariant = "icon" | "label" | "pill";
 
-export type DockItemProps = React.ComponentPropsWithoutRef<"button"> & {
-  variant?: DockItemVariant;
+export type TaskbarItemProps = React.ComponentPropsWithoutRef<"button"> & {
+  variant?: TaskbarItemVariant;
   active?: boolean;
 };
 
-const DockItem = React.forwardRef<HTMLButtonElement, DockItemProps>(
+const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
   (
     { variant = "label", active = false, className, type = "button", ...props },
     ref,
@@ -102,11 +93,11 @@ const DockItem = React.forwardRef<HTMLButtonElement, DockItemProps>(
     />
   ),
 );
-DockItem.displayName = "DockItem";
+TaskbarItem.displayName = "TaskbarItem";
 
-export type DockIconProps = React.ComponentPropsWithoutRef<"span">;
+export type TaskbarIconProps = React.ComponentPropsWithoutRef<"span">;
 
-function DockIcon({ className, ...props }: DockIconProps) {
+function TaskbarIcon({ className, ...props }: TaskbarIconProps) {
   return (
     <span
       className={cn(
@@ -118,4 +109,4 @@ function DockIcon({ className, ...props }: DockIconProps) {
   );
 }
 
-export { Dock, DockDivider, DockIcon, DockItem, DockSection };
+export { Taskbar, TaskbarDivider, TaskbarIcon, TaskbarItem, TaskbarSection };

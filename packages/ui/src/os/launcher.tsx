@@ -1,30 +1,20 @@
 import type * as React from "react";
 import { cn } from "../lib/utils";
 
-export type LauncherStatus = "default" | "running" | "hidden";
 export type LauncherSize = "sm" | "md" | "lg";
 
 export type LauncherProps = React.ComponentPropsWithoutRef<"button"> & {
-  status?: LauncherStatus;
   size?: LauncherSize;
 };
 
-function Launcher({
-  status = "default",
-  size = "md",
-  className,
-  ...props
-}: LauncherProps) {
+function Launcher({ size = "md", className, ...props }: LauncherProps) {
   return (
     <button
       type="button"
-      data-status={status}
       data-size={size}
       className={cn(
         "group flex flex-col items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-center transition",
         "hover:border-border/60 hover:bg-muted/40",
-        "data-[status=running]:border-border/60 data-[status=running]:bg-muted/40",
-        "data-[status=hidden]:opacity-70",
         className,
       )}
       {...props}

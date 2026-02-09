@@ -10,10 +10,19 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@acme/ui/components/sidebar";
+import { cn } from "@acme/ui/lib/utils";
 import { useApplicationManager } from "@acme/ui/os/application-manager";
 import { useWindowManager } from "@acme/ui/os/window-manager";
 
-function ApplicationManagerSidebar() {
+type ApplicationManagerSidebarProps = React.ComponentProps<typeof Sidebar>;
+
+function ApplicationManagerSidebar({
+  side = "right",
+  variant = "floating",
+  collapsible = "offcanvas",
+  className,
+  ...props
+}: ApplicationManagerSidebarProps) {
   const { runningApplications, closeAll } = useApplicationManager();
   const { activateWindow } = useWindowManager();
 
@@ -22,17 +31,20 @@ function ApplicationManagerSidebar() {
       side="right"
       variant="floating"
       collapsible="offcanvas"
-      className="inset-y-auto top-24 bottom-24 h-[calc(100svh-12rem)]"
+      className={cn(
+        "inset-y-auto top-24 bottom-24 h-[calc(100svh-12rem)]",
+        className,
+      )}
+      style={{ "--sidebar-width": "22rem" } as React.CSSProperties}
+      {...props}
     >
       <SidebarHeader>
         <div className="flex items-center justify-between">
-          <div className="font-semibold text-base">Active windows</div>
+          <div className="font-semibold text-base">Applications</div>
           <button
             type="button"
             className="text-muted-foreground text-sm hover:text-foreground"
-            onClick={() => {
-              closeAll();
-            }}
+            onClick={() => closeAll()}
           >
             Close all
           </button>
@@ -47,7 +59,7 @@ function ApplicationManagerSidebar() {
               {runningApplications.length === 0 ? (
                 <SidebarMenuItem>
                   <SidebarMenuButton className="text-muted-foreground">
-                    No active windows
+                    No running apps
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ) : (
@@ -60,7 +72,7 @@ function ApplicationManagerSidebar() {
                         }}
                       >
                         <span className="font-medium">
-                          {application.metadata.title.toLowerCase()}.mdx
+                          application.metadata.title.toLowerCase()
                         </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

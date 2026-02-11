@@ -18,10 +18,10 @@ export const {
   }),
   launcher: () => (
     <LauncherContent>
-      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+      <LauncherIcon>
         <User />
       </LauncherIcon>
-      <LauncherLabel className="text-slate-800">about.mdx</LauncherLabel>
+      <LauncherLabel>about.mdx</LauncherLabel>
     </LauncherContent>
   ),
   metadata: {

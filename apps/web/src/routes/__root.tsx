@@ -36,7 +36,7 @@ export const Route = createRootRoute({
     ],
   }),
   notFoundComponent: () => (
-    <div className="h-svh w-svh bg-blue-600 text-white">
+    <div className="flex h-svh w-svh items-center justify-center bg-primary text-primary-foreground">
       TODO: BLUE SCREEN OF DEATH
     </div>
   ),

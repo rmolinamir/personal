@@ -63,12 +63,15 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
             <WindowHeader>
               <WindowTitle>{metadata.title}</WindowTitle>
               <WindowControls>
-                <WindowHideButton aria-label="Hide" className="text-slate-500">
+                <WindowHideButton
+                  aria-label="Hide"
+                  className="text-muted-foreground"
+                >
                   <Minus className="size-4" />
                 </WindowHideButton>
                 <WindowFullscreenButton
                   aria-label="Fullscreen"
-                  className="text-slate-500"
+                  className="text-muted-foreground"
                 >
                   <Square className="size-3.5" />
                 </WindowFullscreenButton>
@@ -79,7 +82,7 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
                     });
                   }}
                   aria-label="Close"
-                  className="text-slate-500"
+                  className="text-muted-foreground"
                 >
                   <X className="size-4" />
                 </WindowCloseButton>

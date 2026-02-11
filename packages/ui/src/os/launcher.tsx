@@ -16,16 +16,16 @@ function Launcher({
   ...props
 }: LauncherProps) {
   const Comp = asChild ? Slot.Root : "button";
+  const componentProps = asChild ? props : { type: "button", ...props };
   return (
     <Comp
-      type="button"
       data-size={size}
       className={cn(
         "group border border-transparent px-3 py-2 transition",
         "hover:border-border/60 hover:bg-muted/40",
         className,
       )}
-      {...props}
+      {...componentProps}
     />
   );
 }

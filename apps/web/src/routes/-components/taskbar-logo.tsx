@@ -7,8 +7,8 @@ export function TaskbarLogo({ className, ...props }: TaskbarLogoProps) {
     <svg
       className={cn("h-6 w-6", className)}
       viewBox="0 0 433 289"
-      fill="#2A2A2A"
-      stroke="#2A2A2A"
+      fill="currentColor"
+      stroke="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >

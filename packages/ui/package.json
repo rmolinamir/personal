@@ -13,6 +13,7 @@
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
     "./lib/*": "./src/lib/*.ts",
     "./os/*": "./src/os/*.tsx",
     "./styles.css": "./src/styles.css"

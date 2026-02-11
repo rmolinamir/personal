@@ -20,6 +20,7 @@ export type WindowManagerContextValue = {
   windows: WindowInstance[];
   focusedId?: string;
   getWindowData: (id: string) => WindowInstance | undefined;
+  getTopWindow: () => WindowInstance | undefined;
   getFraming: (id: string) => WindowPercentFraming | undefined;
   getIsFullscreen: (id: string) => boolean;
   getIsHidden: (id: string) => boolean;
@@ -41,13 +42,14 @@ function findTopWindow(
   let top: WindowInstance | null = null;
 
   for (const window of windows) {
-    if (map[window.id]?.isHidden) continue;
-    if (!top || window.zIndex > top.zIndex) {
-      top = window;
+    const windowData = map[window.id] ?? window;
+    if (windowData.isHidden) continue;
+    if (!top || windowData.zIndex > top.zIndex) {
+      top = windowData;
     }
   }
 
-  return top;
+  return top ?? undefined;
 }
 
 type WindowManagerProps = {
@@ -79,6 +81,11 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
   const getIsHidden = React.useCallback(
     (id: string) => Boolean(getWindowData(id)?.isHidden),
     [getWindowData],
+  );
+
+  const getTopWindow = React.useCallback(
+    () => findTopWindow(state.windows, state.map),
+    [state.map, state.windows],
   );
 
   const mountWindow = React.useCallback((id: string) => {
@@ -115,8 +122,7 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
       }
 
       // If the window being unmounted is the focused window, also focus the next window
-      const nextFocused = findTopWindow(windows, map);
-      const nextFocusedId = nextFocused?.id;
+      const nextFocusedId = findTopWindow(windows, map)?.id;
       return {
         ...prev,
         focusedId: nextFocusedId,
@@ -251,6 +257,7 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
       getFraming,
       getIsFullscreen,
       getIsHidden,
+      getTopWindow,
       getWindowData,
       hideWindow,
       mountWindow,
@@ -268,6 +275,7 @@ function WindowManagerProvider({ children }: WindowManagerProps) {
       unmountWindow,
       activateWindow,
       hideWindow,
+      getTopWindow,
       setFraming,
       state.focusedId,
       state.windows,
@@ -290,4 +298,8 @@ function useWindowManager() {
   return context;
 }
 
-export { WindowManagerProvider, useWindowManager };
+export {
+  WindowManagerProvider,
+  useWindowManager,
+  findTopWindow as getTopWindow,
+};

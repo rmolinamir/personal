@@ -52,13 +52,20 @@ function defineApplication(applicationId: string) {
       },
       getId: () => application.id,
       getMetadata: () => application.metadata,
-      useWindowLauncher: () => {
+      useApplication: () => {
         const { launch, isRunning } = useApplicationManager();
         const { activateWindow } = useWindowManager();
-        return React.useCallback(() => {
+
+        const launchWindow = React.useCallback(() => {
           if (isRunning(application)) activateWindow(application.id);
           else launch(application);
         }, [isRunning, activateWindow, launch]);
+
+        return {
+          application,
+          isRunning: isRunning(application),
+          launchWindow,
+        };
       },
     };
   };
@@ -72,8 +79,9 @@ function useApplication() {
   const manager = useApplicationManager();
 
   return {
-    ...application,
+    application,
     close: () => manager.close(application),
+    isRunning: manager.isRunning(application),
     launch: () => manager.launch(application),
   };
 }
@@ -90,5 +98,6 @@ export {
   defineApplication,
   useApplication,
   useApplicationId,
+  type ApplicationDefinition,
   type ApplicationInstance,
 };

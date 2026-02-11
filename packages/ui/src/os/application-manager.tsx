@@ -6,7 +6,7 @@ type ApplicationManagerContextValue = {
   closeAll: () => void;
   isRunning: (application: ApplicationInstance) => boolean;
   launch: (application: ApplicationInstance) => void;
-  runningApplications: ApplicationInstance[];
+  runningApplications: ReadonlyArray<ApplicationInstance>;
 };
 
 const ApplicationManagerContext =
@@ -17,31 +17,34 @@ type ApplicationManagerProps = {
 };
 
 function ApplicationManagerProvider({ children }: ApplicationManagerProps) {
-  const [runningApplications, setApplications] = React.useState<
-    ApplicationInstance[]
-  >([]);
+  const [runningApplications, setApplications] = React.useState(
+    new Map<ApplicationInstance["id"], ApplicationInstance>(),
+  );
 
   const close = React.useCallback((application: ApplicationInstance) => {
-    setApplications((prev) => prev.filter((app) => app !== application));
+    setApplications((prev) => {
+      prev.delete(application.id);
+      return new Map(prev);
+    });
   }, []);
 
   const closeAll = React.useCallback(() => {
-    setApplications([]);
+    setApplications(new Map());
   }, []);
 
   const isRunning = React.useCallback(
     (application: ApplicationInstance) => {
-      return runningApplications.includes(application);
+      return runningApplications.has(application.id);
     },
     [runningApplications],
   );
 
   const launch = React.useCallback((application: ApplicationInstance) => {
     setApplications((prev) => {
-      if (prev.includes(application)) {
+      if (prev.has(application.id)) {
         return prev;
       }
-      return [...prev, application];
+      return new Map(prev).set(application.id, application);
     });
   }, []);
 
@@ -51,7 +54,7 @@ function ApplicationManagerProvider({ children }: ApplicationManagerProps) {
       closeAll,
       isRunning,
       launch,
-      runningApplications,
+      runningApplications: Array.from(runningApplications.values()),
     }),
     [close, closeAll, launch, isRunning, runningApplications],
   );

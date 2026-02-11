@@ -15,6 +15,7 @@ type SnapPayload = {
 };
 
 const edgeThreshold = 24;
+const minSnapBounds: WindowSize = { height: 540, width: 720 };
 
 function getSnapTarget(payload: SnapPayload, rect: DOMRect): SnapTarget {
   const pointerX = payload.pointer.x;
@@ -23,8 +24,17 @@ function getSnapTarget(payload: SnapPayload, rect: DOMRect): SnapTarget {
   return null;
 }
 
-function getSnapTargetFraming(target: SnapTarget): WindowPercentFraming | null {
+function getSnapTargetFraming(
+  target: SnapTarget,
+  bounds: WindowSize,
+): WindowPercentFraming | null {
   if (!target) return null;
+  if (
+    bounds.width < minSnapBounds.width ||
+    bounds.height < minSnapBounds.height
+  ) {
+    return null;
+  }
   return {
     position: { x: target === "left" ? 0 : 50, y: 0 },
     size: { height: 100, width: 50 },
@@ -53,7 +63,9 @@ function WindowSnap({ children }: WindowSnapProps) {
     (payload: SnapPayload) => {
       if (!size || !element) return;
       const rect = element.getBoundingClientRect();
-      setSnapTarget(getSnapTarget(payload, rect));
+      const target = getSnapTarget(payload, rect);
+      const framing = target ? getSnapTargetFraming(target, size) : null;
+      setSnapTarget(framing ? target : null);
     },
     [element, size],
   );
@@ -63,8 +75,9 @@ function WindowSnap({ children }: WindowSnapProps) {
       if (!size || !element) return null;
       const rect = element.getBoundingClientRect();
       const target = getSnapTarget(payload, rect);
-      setSnapTarget(target);
-      return getSnapTargetFraming(target);
+      const framing = target ? getSnapTargetFraming(target, size) : null;
+      setSnapTarget(framing ? target : null);
+      return framing;
     },
     [element, size],
   );
@@ -89,7 +102,7 @@ function WindowSnap({ children }: WindowSnapProps) {
         <div className="pointer-events-none absolute inset-0 z-20">
           <div
             className={cn([
-              "absolute inset-y-0 w-1/2 rounded-2xl border-2 border-border/80 from-muted/60 via-muted/50 to-muted/30 shadow-inner",
+              "absolute inset-y-0 w-1/2 border border-border/80 from-muted/60 via-muted/50 to-muted/30 shadow-inner",
               {
                 "left-0 bg-linear-to-r": snapTarget === "left",
                 "right-0 bg-linear-to-l": snapTarget === "right",

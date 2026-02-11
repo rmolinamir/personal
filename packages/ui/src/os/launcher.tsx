@@ -1,22 +1,41 @@
+import { Slot } from "radix-ui";
 import type * as React from "react";
 import { cn } from "../lib/utils";
 
 export type LauncherSize = "sm" | "md" | "lg";
 
 export type LauncherProps = React.ComponentPropsWithoutRef<"button"> & {
+  asChild?: boolean;
   size?: LauncherSize;
 };
 
-function Launcher({ size = "md", className, ...props }: LauncherProps) {
+function Launcher({
+  size = "md",
+  className,
+  asChild,
+  ...props
+}: LauncherProps) {
+  const Comp = asChild ? Slot.Root : "button";
   return (
-    <button
+    <Comp
       type="button"
       data-size={size}
       className={cn(
-        "group flex flex-col items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-center transition",
+        "group border border-transparent px-3 py-2 transition",
         "hover:border-border/60 hover:bg-muted/40",
         className,
       )}
+      {...props}
+    />
+  );
+}
+
+export type LauncherContentProps = React.ComponentPropsWithoutRef<"div">;
+
+function LauncherContent({ className, ...props }: LauncherContentProps) {
+  return (
+    <div
+      className={cn("flex flex-col items-center gap-2 text-center", className)}
       {...props}
     />
   );
@@ -28,7 +47,7 @@ function LauncherIcon({ className, ...props }: LauncherIconProps) {
   return (
     <span
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-2xl bg-muted/60 text-muted-foreground shadow-sm ring-1 ring-border/40",
+        "flex items-center justify-center overflow-hidden bg-muted/60 text-muted-foreground shadow-sm ring-1 ring-border/40",
         "select-none transition group-hover:shadow-md",
         "[&>img]:pointer-events-none [&>img]:select-none [&>svg]:pointer-events-none [&>svg]:select-none",
         "group-data-[size=sm]:h-10 group-data-[size=sm]:w-10",
@@ -75,4 +94,10 @@ function LauncherDescription({
   );
 }
 
-export { Launcher, LauncherDescription, LauncherIcon, LauncherLabel };
+export {
+  Launcher,
+  LauncherContent,
+  LauncherDescription,
+  LauncherIcon,
+  LauncherLabel,
+};

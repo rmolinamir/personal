@@ -13,8 +13,8 @@ function Taskbar({ size = "md", className, ...props }: TaskbarProps) {
       data-size={size}
       className={cn(
         "flex items-center gap-3 border border-border/40 bg-background/90 text-foreground backdrop-blur-md",
-        "data-[size=sm]:h-10 data-[size=sm]:px-3",
-        "data-[size=md]:h-12",
+        "data-[size=sm]:h-7 data-[size=sm]:px-3",
+        "data-[size=md]:h-9",
         className,
       )}
       {...props}
@@ -84,9 +84,9 @@ const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
         "flex items-center justify-center gap-2 rounded-xl text-sm transition",
         "hover:bg-muted/60 data-[active=true]:bg-muted/70",
         "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
-        "data-[variant=icon]:h-9 data-[variant=icon]:w-9",
-        "data-[variant=label]:h-9 data-[variant=label]:px-3",
-        "data-[variant=pill]:h-8 data-[variant=pill]:px-2",
+        "data-[variant=icon]:h7 data-[variant=icon]:w-9",
+        "data-[variant=label]:h-7 data-[variant=label]:px-3",
+        "data-[variant=pill]:h-6 data-[variant=pill]:px-2",
         className,
       )}
       {...props}
@@ -95,18 +95,4 @@ const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
 );
 TaskbarItem.displayName = "TaskbarItem";
 
-export type TaskbarIconProps = React.ComponentPropsWithoutRef<"span">;
-
-function TaskbarIcon({ className, ...props }: TaskbarIconProps) {
-  return (
-    <span
-      className={cn(
-        "flex size-6 items-center justify-center rounded-lg bg-muted/70 font-semibold text-[11px] text-foreground",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export { Taskbar, TaskbarDivider, TaskbarIcon, TaskbarItem, TaskbarSection };
+export { Taskbar, TaskbarDivider, TaskbarItem, TaskbarSection };

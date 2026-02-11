@@ -32,6 +32,18 @@ export type RndInstance = Rnd & {
 
 export type RndDraggableEvent = Parameters<RndDragCallback>[0];
 
+type CascadingWindowFramingOptions = {
+  baseFraming?: WindowPercentFraming;
+  bounds: WindowSize;
+  minSize?: WindowSize;
+  offset?: number;
+  origin?: WindowPosition;
+  originMode?: "center" | "random" | "custom";
+  randomOriginRef?: { current: WindowPosition | null };
+  topWindowFraming?: WindowPercentFraming | null;
+  size?: WindowSize;
+};
+
 export function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -42,7 +54,9 @@ export function getCenteredPosition(bounds: WindowSize, size: WindowSize) {
   return { x: Math.round(x), y: Math.round(y) };
 }
 
-export function withCenteredFraming(size: WindowSize): WindowPercentFraming {
+export function getCenteredWindowFraming(
+  size: WindowSize,
+): WindowPercentFraming {
   return {
     position: {
       x: Math.max(0, 50 - size.width / 2),
@@ -105,6 +119,94 @@ export function toPixelFraming(
     },
     unit: "px",
   };
+}
+
+export function getCascadingWindowFraming(
+  options: CascadingWindowFramingOptions,
+): WindowPercentFraming {
+  const baseFraming =
+    options.baseFraming ??
+    (options.size
+      ? getCenteredWindowFraming(options.size)
+      : getCenteredWindowFraming({ height: 90, width: 90 }));
+  const bounds = options.bounds;
+  const offset = options.offset ?? 12;
+  const minSize = options.minSize ?? { height: 0, width: 0 };
+  const originMode =
+    options.originMode ?? (options.origin ? "custom" : "center");
+
+  const anchorFraming = options.topWindowFraming ?? baseFraming;
+  const anchorPixelFraming = toPixelFraming(anchorFraming, bounds);
+
+  if (
+    bounds.width <= anchorPixelFraming.size.width ||
+    bounds.height <= anchorPixelFraming.size.height
+  ) {
+    return baseFraming;
+  }
+
+  const maxX = bounds.width - anchorPixelFraming.size.width;
+  const maxY = bounds.height - anchorPixelFraming.size.height;
+
+  const basePixelFraming = toPixelFraming(baseFraming, bounds);
+  const centerOrigin = basePixelFraming.position;
+
+  const resolveOrigin = () => {
+    if (originMode === "custom" && options.origin) {
+      return {
+        x: (options.origin.x / 100) * bounds.width,
+        y: (options.origin.y / 100) * bounds.height,
+      };
+    }
+
+    if (originMode === "random") {
+      if (options.randomOriginRef) {
+        if (!options.randomOriginRef.current) {
+          options.randomOriginRef.current = {
+            x: Math.max(0, Math.random() * maxX),
+            y: Math.max(0, Math.random() * maxY),
+          };
+        }
+        return options.randomOriginRef.current;
+      }
+
+      return {
+        x: Math.max(0, Math.random() * maxX),
+        y: Math.max(0, Math.random() * maxY),
+      };
+    }
+
+    return centerOrigin;
+  };
+
+  const origin = resolveOrigin();
+  const originPosition = {
+    x: Math.min(Math.max(origin.x, 0), maxX),
+    y: Math.min(Math.max(origin.y, 0), maxY),
+  };
+
+  const step = Math.max(1, offset);
+  const nextX = anchorPixelFraming.position.x + step;
+  const nextY = anchorPixelFraming.position.y + step;
+  const shouldReset = nextX > maxX || nextY > maxY;
+
+  if (shouldReset && originMode === "random" && options.randomOriginRef) {
+    options.randomOriginRef.current = null;
+  }
+
+  const nextPosition = shouldReset ? originPosition : { x: nextX, y: nextY };
+
+  const nextPixelFraming: WindowPixelFraming = {
+    position: nextPosition,
+    size: anchorPixelFraming.size,
+    unit: "px",
+  };
+
+  return clampPercentFraming(
+    toPercentFraming(nextPixelFraming, bounds),
+    bounds,
+    minSize,
+  );
 }
 
 export function clampPercentFraming(

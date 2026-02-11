@@ -45,6 +45,7 @@ function WindowHeader({
       data-slot="window-header"
       onDoubleClick={handleHeaderDoubleClick}
       className={cn(
+        "os-window__rnd-handler",
         "flex select-none flex-row items-center justify-between gap-3",
         "border-border/80 border-b bg-muted/60 px-3 py-2!",
         "auto-rows-auto grid-rows-none items-center",

@@ -13,13 +13,13 @@ import { useWindowManager } from "./window-manager";
 import { useWindowSnap } from "./window-snap";
 import {
   clampPercentFraming,
+  getCenteredWindowFraming,
   getPointerPosition,
   toPercentFraming,
   toPixelFraming,
   type WindowPercentFraming,
   type WindowPixelFraming,
   type WindowSize,
-  withCenteredFraming,
 } from "./window-utils";
 
 type WindowContextValue = {
@@ -64,7 +64,7 @@ function WindowProvider({ id, children }: WindowProviderProps) {
 
 const fallbackMinSize: WindowSize = { height: 200, width: 280 };
 const fallbackFramingSize = { height: 70, width: 60 } satisfies WindowSize;
-const fallbackFraming = withCenteredFraming(fallbackFramingSize);
+const fallbackFraming = getCenteredWindowFraming(fallbackFramingSize);
 
 export type WindowProps = React.ComponentProps<typeof Card> & {
   id?: string;
@@ -386,6 +386,8 @@ function Window({
           ...style,
           zIndex,
         }}
+        dragHandleClassName="os-window__rnd-handler"
+        cancel="[data-slot=window-control], [data-slot=window-content]"
         onDrag={handleDrag}
         onDragStop={handleDragStop}
         onDragStart={handleDragStart}
@@ -400,12 +402,12 @@ function Window({
           data-hidden={isHidden ? "true" : "false"}
           data-fullscreen={isFullscreen ? "true" : "false"}
           className={cn(
-            "os-window flex h-full w-full flex-col gap-0 border-border/80 p-0 shadow-lg",
+            "flex h-full w-full flex-col gap-0 rounded-none border-border/80 p-0 shadow-lg",
             "transition-shadow data-[focused=true]:shadow-xl",
             "data-[focused=false]:**:data-[slot=window-content]:select-none",
             "data-[focused=true]:**:data-[slot=window-content]:select-text",
-            "data-[fullscreen=false]:**:data-[slot=window-content]:cursor-move",
-            "data-[fullscreen=true]:**:data-[slot=window-content]:cursor-default",
+            "data-[fullscreen=false]:**:data-[slot=window-header]:cursor-move",
+            "data-[fullscreen=true]:**:data-[slot=window-header]:cursor-default",
             className,
           )}
           {...props}
@@ -425,10 +427,16 @@ function useWindow() {
   return context;
 }
 
-export { Window, useWindow, withCenteredFraming };
+export { Window, useWindow };
 
 export type {
   WindowPercentFraming,
   WindowPixelFraming,
+  WindowPosition,
   WindowSize,
+} from "./window-utils";
+
+export {
+  getCascadingWindowFraming,
+  getCenteredWindowFraming,
 } from "./window-utils";

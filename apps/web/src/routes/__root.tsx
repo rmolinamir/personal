@@ -1,10 +1,20 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type * as React from "react";
 
 import appCss from "../styles.css?url";
+import { ApplicationManagerSidebar } from "./-components/application-manager-sidebar";
+import { Desktop } from "./-components/desktop";
+import { Providers } from "./-components/root-providers";
 
 export const Route = createRootRoute({
+  component: RootLayout,
   head: () => ({
     links: [
       {
@@ -25,9 +35,24 @@ export const Route = createRootRoute({
       },
     ],
   }),
-
+  notFoundComponent: () => (
+    <div className="h-svh w-svh bg-blue-600 text-white">
+      TODO: BLUE SCREEN OF DEATH
+    </div>
+  ),
   shellComponent: RootDocument,
 });
+
+function RootLayout() {
+  return (
+    <Providers>
+      <Desktop>
+        <Outlet />
+      </Desktop>
+      <ApplicationManagerSidebar />
+    </Providers>
+  );
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

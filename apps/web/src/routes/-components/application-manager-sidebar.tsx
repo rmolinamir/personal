@@ -9,10 +9,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from "@acme/ui/components/sidebar";
 import { cn } from "@acme/ui/lib/utils";
 import { useApplicationManager } from "@acme/ui/os/application-manager";
 import { useWindowManager } from "@acme/ui/os/window-manager";
+import { Link } from "@tanstack/react-router";
 
 type ApplicationManagerSidebarProps = React.ComponentProps<typeof Sidebar>;
 
@@ -25,6 +27,7 @@ function ApplicationManagerSidebar({
 }: ApplicationManagerSidebarProps) {
   const { runningApplications, closeAll } = useApplicationManager();
   const { activateWindow } = useWindowManager();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <Sidebar
@@ -41,13 +44,18 @@ function ApplicationManagerSidebar({
       <SidebarHeader>
         <div className="flex items-center justify-between">
           <div className="font-semibold text-base">Applications</div>
-          <button
-            type="button"
-            className="text-muted-foreground text-sm hover:text-foreground"
-            onClick={() => closeAll()}
-          >
-            Close all
-          </button>
+          <Link to="/">
+            <button
+              type="button"
+              className="text-muted-foreground text-sm hover:text-foreground"
+              onClick={() => {
+                closeAll();
+                toggleSidebar();
+              }}
+            >
+              Close all
+            </button>
+          </Link>
         </div>
       </SidebarHeader>
       <SidebarSeparator />
@@ -72,7 +80,7 @@ function ApplicationManagerSidebar({
                         }}
                       >
                         <span className="font-medium">
-                          application.metadata.title.toLowerCase()
+                          {application.metadata.title}
                         </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

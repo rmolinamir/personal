@@ -5,7 +5,10 @@ import { Taskbar, TaskbarItem, TaskbarSection } from "@acme/ui/os/taskbar";
 import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import { Link } from "@tanstack/react-router";
-import { AboutApplication, AboutLauncher } from "../(applications)/about";
+import {
+  AboutApplication,
+  AboutLauncher,
+} from "../(applications)/about/-components/application";
 import { TaskbarLogo } from "./taskbar-icon";
 
 type DesktopProps = React.ComponentProps<"main">;

@@ -1,11 +1,6 @@
 import { SidebarProvider } from "@acme/ui/components/sidebar";
 import { ApplicationManagerProvider } from "@acme/ui/os/application-manager";
-import {
-  Taskbar,
-  TaskbarIcon,
-  TaskbarItem,
-  TaskbarSection,
-} from "@acme/ui/os/taskbar";
+import { Taskbar, TaskbarItem, TaskbarSection } from "@acme/ui/os/taskbar";
 import { WindowBoundary } from "@acme/ui/os/window-boundary";
 import { WindowManagerProvider } from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
@@ -97,9 +92,7 @@ export const Default: Story = {
                     variant="icon"
                     className="text-slate-700 hover:bg-black/5"
                   >
-                    <TaskbarIcon className="bg-slate-900 text-white">
-                      OS
-                    </TaskbarIcon>
+                    <span className="h-7 bg-slate-900 text-white">OS</span>
                   </TaskbarItem>
                   <ProductMenu />
                   <MoreMenu />

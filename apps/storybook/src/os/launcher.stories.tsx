@@ -1,6 +1,7 @@
 import { cn } from "@acme/ui/lib/utils";
 import {
   Launcher,
+  LauncherContent,
   LauncherDescription,
   LauncherIcon,
   LauncherLabel,
@@ -58,29 +59,31 @@ export const Default: Story = {
                       }
                     }}
                   >
-                    <LauncherIcon
-                      className={cn(
-                        "shadow-lg ring-white/30",
-                        shortcut.frameClassName,
-                      )}
-                    >
-                      {shortcut.iconUrl ? (
-                        <img
-                          src={shortcut.iconUrl}
-                          alt={shortcut.iconAlt ?? ""}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        shortcut.icon
-                      )}
-                    </LauncherIcon>
-                    <LauncherLabel className="text-white/90">
-                      {shortcut.label}
-                    </LauncherLabel>
-                    <LauncherDescription className="text-white/60">
-                      {shortcut.description}
-                    </LauncherDescription>
+                    <LauncherContent>
+                      <LauncherIcon
+                        className={cn(
+                          "shadow-lg ring-white/30",
+                          shortcut.frameClassName,
+                        )}
+                      >
+                        {shortcut.iconUrl ? (
+                          <img
+                            src={shortcut.iconUrl}
+                            alt={shortcut.iconAlt ?? ""}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          shortcut.icon
+                        )}
+                      </LauncherIcon>
+                      <LauncherLabel className="text-white/90">
+                        {shortcut.label}
+                      </LauncherLabel>
+                      <LauncherDescription className="text-white/60">
+                        {shortcut.description}
+                      </LauncherDescription>
+                    </LauncherContent>
                   </Launcher>
                 );
               })}

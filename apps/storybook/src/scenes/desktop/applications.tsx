@@ -1,11 +1,12 @@
 import { defineApplication, useApplication } from "@acme/ui/os/application";
 import {
   Launcher,
+  LauncherContent,
   LauncherDescription,
   LauncherIcon,
   LauncherLabel,
 } from "@acme/ui/os/launcher";
-import { Window, withCenteredFraming } from "@acme/ui/os/window";
+import { getCenteredWindowFraming, Window } from "@acme/ui/os/window";
 import {
   WindowAction,
   WindowControls,
@@ -41,25 +42,27 @@ const MailApplication = defineApplication("mail")({
 });
 
 function MailApplicationLauncher() {
-  const launch = MailApplication.useWindowLauncher();
+  const { launchWindow: launch } = MailApplication.useApplication();
 
   return (
     <Launcher
-      className="h-35 w-25 items-center justify-center text-slate-700"
+      className="h-35 w-25 text-slate-700"
       onClick={(event) => {
         event.preventDefault();
         launch();
       }}
     >
-      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
-        {MailApplication.getMetadata().title.slice(0, 1)}
-      </LauncherIcon>
-      <LauncherLabel className="text-slate-800">
-        {MailApplication.getMetadata().title.toLowerCase()}.mdx
-      </LauncherLabel>
-      <LauncherDescription className="text-slate-500">
-        Tap to open
-      </LauncherDescription>
+      <LauncherContent className="justify-center">
+        <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+          {MailApplication.getMetadata().title.slice(0, 1)}
+        </LauncherIcon>
+        <LauncherLabel className="text-slate-800">
+          {MailApplication.getMetadata().title.toLowerCase()}.mdx
+        </LauncherLabel>
+        <LauncherDescription className="text-slate-500">
+          Tap to open
+        </LauncherDescription>
+      </LauncherContent>
     </Launcher>
   );
 }
@@ -86,25 +89,27 @@ const NotesApplication = defineApplication("notes")({
 });
 
 function NotesApplicationLauncher() {
-  const launch = NotesApplication.useWindowLauncher();
+  const { launchWindow: launch } = NotesApplication.useApplication();
 
   return (
     <Launcher
-      className="h-35 w-25 items-center justify-center text-slate-700"
+      className="h-35 w-25 text-slate-700"
       onClick={(event) => {
         event.preventDefault();
         launch();
       }}
     >
-      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
-        {NotesApplication.getMetadata().title.slice(0, 1)}
-      </LauncherIcon>
-      <LauncherLabel className="text-slate-800">
-        {NotesApplication.getMetadata().title.toLowerCase()}.mdx
-      </LauncherLabel>
-      <LauncherDescription className="text-slate-500">
-        Tap to open
-      </LauncherDescription>
+      <LauncherContent className="justify-center">
+        <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+          {NotesApplication.getMetadata().title.slice(0, 1)}
+        </LauncherIcon>
+        <LauncherLabel className="text-slate-800">
+          {NotesApplication.getMetadata().title.toLowerCase()}.mdx
+        </LauncherLabel>
+        <LauncherDescription className="text-slate-500">
+          Tap to open
+        </LauncherDescription>
+      </LauncherContent>
     </Launcher>
   );
 }
@@ -129,25 +134,27 @@ const InsightsApplication = defineApplication("insights")({
 });
 
 function InsightsApplicationLauncher() {
-  const launch = InsightsApplication.useWindowLauncher();
+  const { launchWindow: launch } = InsightsApplication.useApplication();
 
   return (
     <Launcher
-      className="h-35 w-25 items-center justify-center text-slate-700"
+      className="h-35 w-25 text-slate-700"
       onClick={(event) => {
         event.preventDefault();
         launch();
       }}
     >
-      <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
-        {InsightsApplication.getMetadata().title.slice(0, 1)}
-      </LauncherIcon>
-      <LauncherLabel className="text-slate-800">
-        {InsightsApplication.getMetadata().title.toLowerCase()}.mdx
-      </LauncherLabel>
-      <LauncherDescription className="text-slate-500">
-        Tap to open
-      </LauncherDescription>
+      <LauncherContent className="justify-center">
+        <LauncherIcon className="bg-slate-200 text-slate-700 ring-black/10">
+          {InsightsApplication.getMetadata().title.slice(0, 1)}
+        </LauncherIcon>
+        <LauncherLabel className="text-slate-800">
+          {InsightsApplication.getMetadata().title.toLowerCase()}.mdx
+        </LauncherLabel>
+        <LauncherDescription className="text-slate-500">
+          Tap to open
+        </LauncherDescription>
+      </LauncherContent>
     </Launcher>
   );
 }
@@ -161,7 +168,7 @@ function ApplicationWindow({ title, children }: ApplicationWindowProps) {
   const { close } = useApplication();
   return (
     <Window
-      defaultFraming={withCenteredFraming({
+      defaultFraming={getCenteredWindowFraming({
         height: 90,
         width: 90,
       })}

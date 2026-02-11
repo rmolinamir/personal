@@ -1,10 +1,16 @@
-import { Window } from "@acme/ui/os/window";
+import { Button } from "@acme/ui/components/button";
+import { useInitialWindowFraming } from "@acme/ui/hooks/use-initial-window-framing";
+import {
+  getCascadingWindowFraming,
+  getCenteredWindowFraming,
+  Window,
+} from "@acme/ui/os/window";
 import {
   WindowControls,
   WindowFullscreenButton,
   WindowHideButton,
 } from "@acme/ui/os/window-actions";
-import { WindowBoundary } from "@acme/ui/os/window-boundary";
+import { useWindowBoundary, WindowBoundary } from "@acme/ui/os/window-boundary";
 import {
   WindowCaption,
   WindowContent,
@@ -12,9 +18,13 @@ import {
   WindowHeader,
   WindowTitle,
 } from "@acme/ui/os/window-layout";
-import { WindowManagerProvider } from "@acme/ui/os/window-manager";
+import {
+  useWindowManager,
+  WindowManagerProvider,
+} from "@acme/ui/os/window-manager";
 import { WindowSnap } from "@acme/ui/os/window-snap";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import * as React from "react";
 import { FloatingHiddenWindows } from "../scenes/taskbar/floating-hidden-windows";
 
 const meta = {
@@ -349,3 +359,96 @@ export const WithControls: Story = {
     </WindowManagerProvider>
   ),
 };
+
+export const CenteredFraming: Story = {
+  render: () => {
+    function CenteredWindow(
+      props: Omit<React.ComponentProps<typeof Window>, "defaultFraming">,
+    ) {
+      const defaultFraming = useInitialWindowFraming(() =>
+        getCenteredWindowFraming({ height: 90, width: 90 }),
+      );
+
+      return defaultFraming ? (
+        <Window defaultFraming={defaultFraming} {...props} />
+      ) : null;
+    }
+
+    return (
+      <WindowManagerProvider>
+        <WindowBoundary className="relative h-160 w-full overflow-hidden bg-blue-300/30 p-6">
+          <CenteredWindow>
+            <WindowHeader>
+              <WindowTitle>Centered Framing</WindowTitle>
+            </WindowHeader>
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Centered by factory</p>
+                <p className="text-muted-foreground">
+                  Uses getCenteredWindowFraming with an explicit size.
+                </p>
+              </div>
+            </WindowContent>
+          </CenteredWindow>
+        </WindowBoundary>
+      </WindowManagerProvider>
+    );
+  },
+};
+
+export const CascadingFraming: Story = {
+  render: () => {
+    const [windowIds, setWindowIds] = React.useState<number[]>([1]);
+
+    const openWindow = React.useCallback(() => {
+      setWindowIds((prev) => [...prev, prev.length + 1]);
+    }, []);
+
+    return (
+      <WindowManagerProvider>
+        <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+          {windowIds.map((id) => (
+            <CascadingWindow key={id} id={id} onOpen={openWindow} />
+          ))}
+        </WindowBoundary>
+      </WindowManagerProvider>
+    );
+  },
+};
+
+type CascadingWindowProps = {
+  id: number;
+  onOpen: () => void;
+};
+
+function CascadingWindow({ id, onOpen }: CascadingWindowProps) {
+  const { size: bounds } = useWindowBoundary();
+  const { getTopWindow } = useWindowManager();
+  const defaultFraming = useInitialWindowFraming(() => {
+    if (!bounds) return null;
+    return getCascadingWindowFraming({
+      bounds,
+      size: { height: 65, width: 55 },
+      topWindowFraming: getTopWindow()?.framing ?? null,
+    });
+  });
+
+  return (
+    <Window id={`cascade-${id}`} defaultFraming={defaultFraming ?? undefined}>
+      <WindowHeader>
+        <WindowTitle>Window {id}</WindowTitle>
+      </WindowHeader>
+      <WindowContent>
+        <div className="space-y-2 text-sm">
+          <p className="font-medium">Cascading placement</p>
+          <p className="text-muted-foreground">
+            Opens offset from the top window.
+          </p>
+          <Button onClick={onOpen} size="sm">
+            Open Window
+          </Button>
+        </div>
+      </WindowContent>
+    </Window>
+  );
+}

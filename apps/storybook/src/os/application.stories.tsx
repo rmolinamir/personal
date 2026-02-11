@@ -3,7 +3,12 @@ import {
   ApplicationManagerProvider,
   useApplicationManager,
 } from "@acme/ui/os/application-manager";
-import { Launcher, LauncherIcon, LauncherLabel } from "@acme/ui/os/launcher";
+import {
+  Launcher,
+  LauncherContent,
+  LauncherIcon,
+  LauncherLabel,
+} from "@acme/ui/os/launcher";
 import { Window } from "@acme/ui/os/window";
 import {
   WindowAction,
@@ -164,7 +169,7 @@ const AboutApplication = defineApplication("about-application")({
 });
 
 function AboutApplicationLauncher() {
-  const launch = AboutApplication.useWindowLauncher();
+  const { launchWindow: launch } = AboutApplication.useApplication();
 
   return (
     <Launcher
@@ -174,12 +179,14 @@ function AboutApplicationLauncher() {
         launch();
       }}
     >
-      <LauncherIcon className="bg-white/10 text-white ring-white/20">
-        <User />
-      </LauncherIcon>
-      <LauncherLabel className="text-white/90">
-        {AboutApplication.getMetadata().title}
-      </LauncherLabel>
+      <LauncherContent>
+        <LauncherIcon className="bg-white/10 text-white ring-white/20">
+          <User />
+        </LauncherIcon>
+        <LauncherLabel className="text-white/90">
+          {AboutApplication.getMetadata().title}
+        </LauncherLabel>
+      </LauncherContent>
     </Launcher>
   );
 }
@@ -231,7 +238,7 @@ const NotesApplication = defineApplication("notes-application")({
 });
 
 function NotesApplicationLauncher() {
-  const launch = NotesApplication.useWindowLauncher();
+  const { launchWindow: launch } = NotesApplication.useApplication();
 
   return (
     <Launcher
@@ -241,12 +248,14 @@ function NotesApplicationLauncher() {
         launch();
       }}
     >
-      <LauncherIcon className="bg-white/10 text-white ring-white/20">
-        <Notebook />
-      </LauncherIcon>
-      <LauncherLabel className="text-white/90">
-        {NotesApplication.getMetadata().title}
-      </LauncherLabel>
+      <LauncherContent>
+        <LauncherIcon className="bg-white/10 text-white ring-white/20">
+          <Notebook />
+        </LauncherIcon>
+        <LauncherLabel className="text-white/90">
+          {NotesApplication.getMetadata().title}
+        </LauncherLabel>
+      </LauncherContent>
     </Launcher>
   );
 }

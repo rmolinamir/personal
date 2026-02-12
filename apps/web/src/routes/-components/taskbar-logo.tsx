@@ -11,7 +11,7 @@ import { useRouter } from "@tanstack/react-router";
 
 type TaskbarLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function TaskbarHome({ className, ...props }: TaskbarLogoProps) {
+export function TaskbarLogo({ className, ...props }: TaskbarLogoProps) {
   const { closeAll, runningApplications } = useApplicationManager();
   const { navigate } = useRouter();
 
@@ -27,6 +27,7 @@ export function TaskbarHome({ className, ...props }: TaskbarLogoProps) {
           <TaskbarItem variant="icon" onClick={handleClick}>
             <svg
               className={cn("h-6 w-6", className)}
+              role="img"
               viewBox="0 0 433 289"
               fill="currentColor"
               stroke="currentColor"

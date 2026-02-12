@@ -1,0 +1,52 @@
+import { useApplicationManager } from "@acme/ui/os/application-manager";
+import {
+  TabStrip,
+  TabStripClose,
+  TabStripList,
+  TabStripRail,
+  TabStripTab,
+  TabStripTitle,
+} from "@acme/ui/os/tab-strip";
+import { useWindowManager } from "@acme/ui/os/window-manager";
+
+type ApplicationTabStripProps = Omit<
+  typeof TabStrip,
+  "value" | "onValueChange"
+>;
+
+export function ApplicationTabStrip(props: ApplicationTabStripProps) {
+  const { runningApplications, close } = useApplicationManager();
+  const { activateWindow, getWindowData, getTopWindow, hideWindow } =
+    useWindowManager();
+
+  const activeWindow = getTopWindow();
+
+  return (
+    <TabStrip
+      value={activeWindow?.id}
+      onValueChange={activateWindow}
+      {...props}
+      className="border-0"
+    >
+      <TabStripRail>
+        <TabStripList className="border-none">
+          {runningApplications.map((application) => {
+            const window = getWindowData(application.id);
+            return (
+              <TabStripTab
+                key={application.id}
+                value={application.id}
+                isHidden={window?.isHidden}
+                onClick={() => activateWindow(application.id)}
+                onDoubleClick={() => hideWindow(application.id)}
+              >
+                <TabStripTitle>{application.metadata.title}</TabStripTitle>
+                <TabStripClose onClose={() => close(application)} />
+              </TabStripTab>
+            );
+          })}
+        </TabStripList>
+      </TabStripRail>
+    </TabStrip>
+  );
+}

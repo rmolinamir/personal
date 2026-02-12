@@ -1,10 +1,10 @@
 import {
-  TabSTrip,
-  TabSTripClose,
-  TabSTripList,
-  TabSTripTab,
-  TabSTripTitle,
+  TabStrip,
+  TabStripClose,
+  TabStripList,
   TabStripRail,
+  TabStripTab,
+  TabStripTitle,
 } from "@acme/ui/os/tab-strip";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
@@ -35,7 +35,7 @@ export const Default: Story = {
     const [tabs, setTabs] = React.useState(initialTabs);
     const [activeId, setActiveId] = React.useState(tabs[0]?.id ?? "");
 
-    const handleClose = (id: string) => {
+    function handleClose(id: string) {
       setTabs((prev) => {
         const nextTabs = prev.filter((tab) => tab.id !== id);
         if (id === activeId) {
@@ -46,26 +46,26 @@ export const Default: Story = {
         }
         return nextTabs;
       });
-    };
+    }
 
     return (
-      <div className="w-full max-w-full rounded-xl border border-border/40 bg-background/80 p-4 shadow-sm">
-        <TabSTrip value={activeId} onValueChange={setActiveId}>
+      <div className="w-120 max-w-full rounded-xl border border-border/40 bg-background/80 p-4 shadow-sm">
+        <TabStrip value={activeId} onValueChange={setActiveId}>
           <TabStripRail className="max-w-140">
-            <TabSTripList>
+            <TabStripList>
               {tabs.map((tab) => (
-                <TabSTripTab
+                <TabStripTab
                   key={tab.id}
                   value={tab.id}
                   isHidden={tab.isHidden}
                 >
-                  <TabSTripTitle>{tab.title}</TabSTripTitle>
-                  <TabSTripClose onClose={() => handleClose(tab.id)} />
-                </TabSTripTab>
+                  <TabStripTitle>{tab.title}</TabStripTitle>
+                  <TabStripClose onClose={() => handleClose(tab.id)} />
+                </TabStripTab>
               ))}
-            </TabSTripList>
+            </TabStripList>
           </TabStripRail>
-        </TabSTrip>
+        </TabStrip>
       </div>
     );
   },

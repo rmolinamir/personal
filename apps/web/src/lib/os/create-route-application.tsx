@@ -20,7 +20,7 @@ import {
   WindowTitle,
 } from "@acme/ui/os/window-layout";
 import { useWindowManager } from "@acme/ui/os/window-manager";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Maximize, Minimize, Minus, X } from "lucide-react";
 import React, { useEffect } from "react";
 import type { FileRoutesByTo } from "../../routeTree.gen";
@@ -44,7 +44,6 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
           application: { id, metadata },
         } = useApplication();
         const isMobile = useIsMobile();
-        const { navigate } = useRouter();
         const { size: bounds } = useWindowBoundary();
         const { getTopWindow, toggleFullscreen, getWindowData } =
           useWindowManager();
@@ -84,14 +83,7 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
                     )}
                   </WindowFullscreenButton>
                 )}
-                <WindowCloseButton
-                  onClick={() => {
-                    navigate({
-                      to: "/",
-                    });
-                  }}
-                  aria-label="Close"
-                >
+                <WindowCloseButton aria-label="Close">
                   <X className="size-4" />
                 </WindowCloseButton>
               </WindowControls>

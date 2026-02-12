@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../lib/utils";
 
 export type TaskbarBarSize = "sm" | "md";
@@ -65,18 +65,20 @@ function TaskbarDivider({ className, ...props }: TaskbarDividerProps) {
 
 export type TaskbarItemVariant = "icon" | "label" | "pill";
 
-export type TaskbarItemProps = React.ComponentPropsWithoutRef<"button"> & {
+export type TaskbarItemProps = React.ComponentProps<"button"> & {
   variant?: TaskbarItemVariant;
   active?: boolean;
 };
 
-const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
-  (
-    { variant = "label", active = false, className, type = "button", ...props },
-    ref,
-  ) => (
+function TaskbarItem({
+  variant = "label",
+  active = false,
+  className,
+  type = "button",
+  ...props
+}: TaskbarItemProps) {
+  return (
     <button
-      ref={ref}
       type={type}
       data-variant={variant}
       data-active={active}
@@ -91,8 +93,7 @@ const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
       )}
       {...props}
     />
-  ),
-);
-TaskbarItem.displayName = "TaskbarItem";
+  );
+}
 
 export { Taskbar, TaskbarDivider, TaskbarItem, TaskbarSection };

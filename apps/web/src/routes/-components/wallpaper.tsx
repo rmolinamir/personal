@@ -10,6 +10,9 @@ import {
   Shader,
 } from "shaders/react";
 
+const LIGHT_WALLPAPER = "/vibrant-wallpaper-light.webp";
+const DARK_WALLPAPER = "/vibrant-wallpaper-dark.webp";
+
 type WallpaperProps = React.ComponentProps<typeof Shader>;
 
 export function Wallpaper(props: WallpaperProps) {
@@ -29,19 +32,10 @@ export function Wallpaper(props: WallpaperProps) {
           vignetteRadius={0.33}
         >
           <Glitch intensity={0.1} speed={0.5}>
-            <Liquify intensity={1} decay={2.5} radius={1.5} edges="mirror">
-              <FlowField
-                strength={0.25}
-                detail={1.2}
-                speed={0.1}
-                edges="mirror"
-              >
+            <Liquify intensity={0.8} decay={2.5} radius={1.5} edges="mirror">
+              <FlowField strength={0.4} detail={1.2} speed={0.1} edges="mirror">
                 <ImageTexture
-                  url={
-                    isLight
-                      ? "/vibrant-wallpaper-light.webp"
-                      : "/vibrant-wallpaper-dark.webp"
-                  }
+                  url={isLight ? LIGHT_WALLPAPER : DARK_WALLPAPER}
                 />
               </FlowField>
             </Liquify>

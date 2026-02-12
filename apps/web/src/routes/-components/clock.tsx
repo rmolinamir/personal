@@ -62,13 +62,17 @@ export function Clock({ className, ...props }: ClockProps) {
             <Button variant="ghost" asChild>
               <Timer className={cn("select-none", className)} {...props}>
                 <TimerGroup>
-                  <TimerSegment>{hours}</TimerSegment>
-                  <TimerSeparator>:</TimerSeparator>
-                  <TimerSegment>{minutes}</TimerSegment>
-                  <TimerSeparator>:</TimerSeparator>
-                  <TimerSegment>{seconds}</TimerSegment>
+                  <TimerSegment className="text-inherit">{hours}</TimerSegment>
+                  <TimerSeparator className="text-inherit">:</TimerSeparator>
+                  <TimerSegment className="text-inherit">
+                    {minutes}
+                  </TimerSegment>
+                  <TimerSeparator className="text-inherit">:</TimerSeparator>
+                  <TimerSegment className="text-inherit">
+                    {seconds}
+                  </TimerSegment>
                   {format === "12" ? (
-                    <TimerSegment className="ml-1 text-foreground/70">
+                    <TimerSegment className="ml-1 text-inherit/70">
                       {meridiem}
                     </TimerSegment>
                   ) : null}

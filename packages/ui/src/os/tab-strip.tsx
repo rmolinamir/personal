@@ -5,7 +5,7 @@ import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "../components/tabs";
 import { cn } from "../lib/utils";
 
-function TabSTrip({ className, ...props }: React.ComponentProps<typeof Tabs>) {
+function TabStrip({ className, ...props }: React.ComponentProps<typeof Tabs>) {
   return <Tabs className={cn("w-full", className)} {...props} />;
 }
 
@@ -19,7 +19,7 @@ function TabStripRail({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function TabSTripList({
+function TabStripList({
   className,
   ...props
 }: React.ComponentProps<typeof TabsList>) {
@@ -36,18 +36,18 @@ function TabSTripList({
   );
 }
 
-type TabSTripTabProps = React.ComponentProps<typeof TabsTrigger> & {
+type TabStripTabProps = React.ComponentProps<typeof TabsTrigger> & {
   isHidden?: boolean;
   scrollIntoViewOnSelect?: boolean;
 };
 
-function TabSTripTab({
+function TabStripTab({
   className,
   isHidden,
   scrollIntoViewOnSelect = true,
   onClick,
   ...props
-}: TabSTripTabProps) {
+}: TabStripTabProps) {
   const tabRef = React.useRef<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,7 +83,7 @@ function TabSTripTab({
   );
 }
 
-function TabSTripTitle({ className, ...props }: React.ComponentProps<"span">) {
+function TabStripTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="tabstrip-title"
@@ -93,21 +93,22 @@ function TabSTripTitle({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
-type TabSTripCloseProps = React.ComponentProps<"button"> & {
+type TabStripCloseProps = React.ComponentProps<"button"> & {
   onClose?: () => void;
 };
 
-function TabSTripClose({
+function TabStripClose({
   className,
   onClick,
   onClose,
   ...props
-}: TabSTripCloseProps) {
+}: TabStripCloseProps) {
   return (
     <button
-      type="button"
       data-slot="tabstrip-close"
       aria-label="Close tab"
+      tabIndex={0}
+      type="button"
       className={cn(
         "absolute top-1/2 right-1 -translate-y-1/2 rounded-sm p-0.5",
         "text-foreground/50 opacity-0 transition",
@@ -116,10 +117,14 @@ function TabSTripClose({
         className,
       )}
       onClick={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
         onClick?.(event);
         if (event.defaultPrevented) return;
+        onClose?.();
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        event.stopPropagation();
         onClose?.();
       }}
       {...props}
@@ -130,10 +135,10 @@ function TabSTripClose({
 }
 
 export {
-  TabSTrip,
+  TabStrip,
   TabStripRail,
-  TabSTripList,
-  TabSTripTab,
-  TabSTripTitle,
-  TabSTripClose,
+  TabStripList,
+  TabStripTab,
+  TabStripTitle,
+  TabStripClose,
 };

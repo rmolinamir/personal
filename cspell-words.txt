@@ -20,3 +20,7 @@ nums
 contenteditable
 TAGNAME
 tabstrip
+blocknote
+shadcn
+tiptap
+robertmolina

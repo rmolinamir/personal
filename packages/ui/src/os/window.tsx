@@ -382,15 +382,14 @@ function Window({
         maxWidth={maxSize?.width}
         maxHeight={maxSize?.height}
         default={undefined}
-        position={isHidden ? { x: 0, y: 0 } : currentPixelFraming?.position}
-        size={isHidden ? { height: 0, width: 0 } : currentPixelFraming?.size}
+        position={currentPixelFraming?.position}
+        size={currentPixelFraming?.size}
         style={{
           ...style,
           zIndex,
         }}
         className={cn("max-h-full max-w-full", {
-          "opacity-0": isHidden,
-          "pointer-events-none": isHidden,
+          "hidden!": isHidden,
         })}
         dragHandleClassName="os-window__rnd-handler"
         cancel="[data-slot=window-control], [data-slot=window-content]"

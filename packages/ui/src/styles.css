@@ -1,12 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Path to your installed `@blocknote/shadcn` package. */
+@source "../node_modules/@blocknote/shadcn";
+
 @source "./**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
 
 body {
   @apply m-0;
+  letter-spacing: var(--tracking-normal);
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
@@ -19,6 +23,15 @@ code {
     source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+.tabstrip-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabstrip-rail::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -27,6 +40,14 @@ code {
     @apply bg-background text-foreground;
   }
 }
+
+/* Applies some additional necessary border styles within the editor. */
+@layer base {
+  .bn-shadcn * {
+    @apply border-border outline-ring/50;
+  }
+}
+
 :root {
   --background: oklch(0.997 0 0);
   --foreground: oklch(0 0 0);
@@ -203,17 +224,4 @@ code {
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-}
-
-body {
-  letter-spacing: var(--tracking-normal);
-}
-
-.tabstrip-rail {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.tabstrip-rail::-webkit-scrollbar {
-  display: none;
 }

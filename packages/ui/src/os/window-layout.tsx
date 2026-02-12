@@ -96,7 +96,7 @@ function WindowContent({
       ref={ref}
       data-slot="window-content"
       className={cn(
-        "flex-1 select-text overflow-auto bg-background/92.5 px-3 py-2 backdrop-blur-md dark:bg-background/97.5",
+        "flex-1 select-text overflow-auto bg-background/90 px-3 py-2 backdrop-blur-md dark:bg-background/92.5",
         className,
       )}
       {...props}

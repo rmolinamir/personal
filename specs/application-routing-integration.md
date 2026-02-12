@@ -62,6 +62,36 @@ Hydration and route-driven launch need an id -> app lookup. A centralized
 registry can live in the UI package, populated by defineApplication() at module
 load time. The registry is read-only from routing code.
 
+## Window lifecycle -> route sync
+Route synchronization for focus/close should stay in the app layer. The window
+manager remains the source of truth and emits lifecycle events for the web app
+to react to. The UI library does not import or depend on the router.
+
+Proposed manager events (app layer consumers only):
+- `onWindowFocused(id)` fires after focus changes.
+- `onWindowClosed(nextTopId?)` fires after a window closes, with the next top
+  window id (if any) so the app can navigate.
+
+Route sync flow:
+1. Window closes or focus changes.
+2. Manager determines next focused window.
+3. App layer maps window id -> application route and calls `navigate()`.
+4. If no matching app, fall back to `/`.
+
+Example (app layer, not UI library):
+```tsx
+<WindowManagerProvider
+  onWindowFocused={(id) => {
+    const route = getRouteForWindow(id) ?? "/";
+    navigate({ to: route });
+  }}
+  onWindowClosed={(nextTopId) => {
+    const route = nextTopId ? getRouteForWindow(nextTopId) : "/";
+    navigate({ to: route });
+  }}
+/>
+```
+
 ## Non-goals
 - The UI library does not import or depend on the router.
 - Routes are not automatically discovered or scanned by the workspace.

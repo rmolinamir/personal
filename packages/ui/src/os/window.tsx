@@ -382,11 +382,11 @@ function Window({
         maxWidth={maxSize?.width}
         maxHeight={maxSize?.height}
         default={undefined}
-        position={currentPixelFraming?.position}
-        size={currentPixelFraming?.size}
+        position={isHidden ? { x: 0, y: 0 } : currentPixelFraming?.position}
+        size={isHidden ? { height: 0, width: 0 } : currentPixelFraming?.size}
         style={{
           ...style,
-          zIndex: isHidden ? -1 : zIndex,
+          zIndex,
         }}
         className={cn("max-h-full max-w-full", {
           "opacity-0": isHidden,

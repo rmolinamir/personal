@@ -1,3 +1,4 @@
+import { Button } from "@acme/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,20 +59,22 @@ export function Clock({ className, ...props }: ClockProps) {
       <DropdownMenu>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Timer className={cn("select-none", className)} {...props}>
-              <TimerGroup>
-                <TimerSegment>{hours}</TimerSegment>
-                <TimerSeparator>:</TimerSeparator>
-                <TimerSegment>{minutes}</TimerSegment>
-                <TimerSeparator>:</TimerSeparator>
-                <TimerSegment>{seconds}</TimerSegment>
-                {format === "12" ? (
-                  <TimerSegment className="ml-1 text-foreground/70">
-                    {meridiem}
-                  </TimerSegment>
-                ) : null}
-              </TimerGroup>
-            </Timer>
+            <Button variant="ghost" asChild>
+              <Timer className={cn("select-none", className)} {...props}>
+                <TimerGroup>
+                  <TimerSegment>{hours}</TimerSegment>
+                  <TimerSeparator>:</TimerSeparator>
+                  <TimerSegment>{minutes}</TimerSegment>
+                  <TimerSeparator>:</TimerSeparator>
+                  <TimerSegment>{seconds}</TimerSegment>
+                  {format === "12" ? (
+                    <TimerSegment className="ml-1 text-foreground/70">
+                      {meridiem}
+                    </TimerSegment>
+                  ) : null}
+                </TimerGroup>
+              </Timer>
+            </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
         <DropdownMenuContent align="end">

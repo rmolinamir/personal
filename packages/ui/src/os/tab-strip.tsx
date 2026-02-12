@@ -28,7 +28,7 @@ function TabStripList({
       variant="line"
       data-slot="tabstrip-list"
       className={cn(
-        "min-w-max gap-1 rounded-md border border-border/40 bg-background/70 px-1 py-1 text-foreground/70 backdrop-blur-sm",
+        "min-w-max gap-1 rounded-md border border-border/40 px-1 py-1",
         className,
       )}
       {...props}

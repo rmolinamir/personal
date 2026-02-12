@@ -12,7 +12,7 @@ function Taskbar({ size = "md", className, ...props }: TaskbarProps) {
     <nav
       data-size={size}
       className={cn(
-        "flex items-center gap-3 border border-border/40 bg-background/92.5 text-foreground backdrop-blur-md dark:bg-background/97.5",
+        "flex items-center gap-3 border border-border/40 bg-background/60 text-foreground backdrop-blur-md dark:bg-background/50",
         "data-[size=sm]:h-8 data-[size=sm]:px-3",
         "data-[size=md]:h-10",
         className,

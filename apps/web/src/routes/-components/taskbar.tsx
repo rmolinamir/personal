@@ -20,7 +20,7 @@ export function Taskbar() {
         <TaskbarLinkedIn />
       </TaskbarSection>
       <TaskbarDivider />
-      <TaskbarSection align="center" grow>
+      <TaskbarSection className="items-center" align="center" grow>
         <ApplicationTabStrip />
       </TaskbarSection>
       <TaskbarDivider />

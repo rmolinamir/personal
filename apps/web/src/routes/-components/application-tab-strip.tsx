@@ -26,10 +26,10 @@ export function ApplicationTabStrip(props: ApplicationTabStripProps) {
       value={activeWindow?.id}
       onValueChange={activateWindow}
       {...props}
-      className="border-0"
+      className="border-none"
     >
       <TabStripRail>
-        <TabStripList className="border-none">
+        <TabStripList className="border-none p-0">
           {runningApplications.map((application) => {
             const window = getWindowData(application.id);
             return (

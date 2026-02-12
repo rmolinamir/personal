@@ -14,3 +14,8 @@ disabledpointer
 rgba
 offcanvas
 pointerdown
+scanline
+webp
+nums
+contenteditable
+TAGNAME

@@ -3,12 +3,13 @@ import { TooltipProvider } from "@acme/ui/components/tooltip";
 import { ApplicationManagerProvider } from "@acme/ui/os/application-manager";
 import { WindowManagerProvider } from "@acme/ui/os/window-manager";
 import * as React from "react";
+import { ClientRootProviders } from "./root-providers.client";
 
 type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-export function Providers({ children }: RootLayoutProps) {
+export function RootProviders({ children }: RootLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   return (
@@ -19,7 +20,9 @@ export function Providers({ children }: RootLayoutProps) {
           onOpenChange={setSidebarOpen}
           className="flex flex-col"
         >
-          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+          <TooltipProvider delayDuration={0}>
+            <ClientRootProviders>{children}</ClientRootProviders>
+          </TooltipProvider>
         </SidebarProvider>
       </WindowManagerProvider>
     </ApplicationManagerProvider>

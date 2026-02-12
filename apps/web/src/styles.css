@@ -1,1 +1,71 @@
 @import "@acme/ui/styles.css";
+
+@keyframes tv-on {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04) scaleX(0.98);
+    filter: brightness(0) blur(8px) drop-shadow(0 0 0 transparent);
+    background-color: var(--secondary-foreground);
+  }
+  16% {
+    opacity: 1;
+    transform: scaleY(0.035) scaleX(1.04);
+    filter: brightness(2.6) blur(3px) drop-shadow(0 0 38px var(--secondary));
+    background-color: var(--secondary-foreground);
+  }
+  34% {
+    opacity: 1;
+    transform: scaleY(0.18) scaleX(1.02);
+    filter: brightness(1.9) blur(2px) drop-shadow(0 0 26px var(--secondary));
+    background-color: var(--secondary);
+  }
+  56% {
+    opacity: 1;
+    transform: scaleY(1.06) scaleX(1.01);
+    filter: brightness(1.7) blur(1px) drop-shadow(0 0 22px var(--secondary));
+    background-color: var(--secondary);
+  }
+  74% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1.05) blur(0) drop-shadow(0 0 0 transparent);
+    background-color: var(--secondary-foreground);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1) blur(0) drop-shadow(0 0 0 transparent);
+    background-color: var(--secondary-foreground);
+  }
+}
+
+@keyframes tv-off {
+  0% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1) blur(0) drop-shadow(0 0 0 transparent);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleY(0.2) scaleX(1.02);
+    filter: brightness(2) blur(2px)
+      drop-shadow(0 0 28px var(--secondary-foreground));
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0) scaleX(1.04);
+    filter: brightness(0.1) blur(8px) drop-shadow(0 0 0 transparent);
+  }
+}
+
+@layer utilities {
+  .animate-tv-on {
+    animation: tv-on 620ms ease-out forwards;
+    transform-origin: center;
+  }
+
+  .animate-tv-off {
+    animation: tv-off 420ms ease-in forwards;
+    transform-origin: center;
+  }
+}

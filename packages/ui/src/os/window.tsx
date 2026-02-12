@@ -25,6 +25,8 @@ import {
 type WindowContextValue = {
   toggleHidden: () => void;
   toggleFullscreen: () => void;
+  isFullscreen: boolean;
+  isHidden: boolean;
 };
 
 const WindowContext = React.createContext<WindowContextValue | null>(null);
@@ -49,12 +51,16 @@ function WindowProvider({ id, children }: WindowProviderProps) {
     manager.toggleFullscreen(id);
   }, [manager, id]);
 
+  const { isFullscreen, isHidden } = manager.getWindowData(id) ?? {};
+
   const value = React.useMemo(
     () => ({
+      isFullscreen: Boolean(isFullscreen),
+      isHidden: Boolean(isHidden),
       toggleFullscreen,
       toggleHidden,
     }),
-    [toggleHidden, toggleFullscreen],
+    [toggleHidden, toggleFullscreen, isFullscreen, isHidden],
   );
 
   return (
@@ -379,13 +385,13 @@ function Window({
         position={currentPixelFraming?.position}
         size={currentPixelFraming?.size}
         style={{
-          maxHeight: "100%",
-          maxWidth: "100%",
-          opacity: isHidden ? 0 : 1,
-          pointerEvents: isHidden ? "none" : undefined,
           ...style,
-          zIndex,
+          zIndex: isHidden ? -1 : zIndex,
         }}
+        className={cn("max-h-full max-w-full", {
+          "opacity-0": isHidden,
+          "pointer-events-none": isHidden,
+        })}
         dragHandleClassName="os-window__rnd-handler"
         cancel="[data-slot=window-control], [data-slot=window-content]"
         onDrag={handleDrag}
@@ -402,7 +408,7 @@ function Window({
           data-hidden={isHidden ? "true" : "false"}
           data-fullscreen={isFullscreen ? "true" : "false"}
           className={cn(
-            "flex h-full w-full flex-col gap-0 rounded-none border-border/80 p-0 shadow-lg",
+            "shadow- flex h-full w-full flex-col gap-0 rounded-none border-border/80 bg-transparent p-0",
             "transition-shadow data-[focused=true]:shadow-xl",
             "data-[focused=false]:**:data-[slot=window-content]:select-none",
             "data-[focused=true]:**:data-[slot=window-content]:select-text",

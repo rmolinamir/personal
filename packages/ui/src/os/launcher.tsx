@@ -13,19 +13,20 @@ function Launcher({
   size = "md",
   className,
   asChild,
-  ...props
+  type = "button",
+  ...rest
 }: LauncherProps) {
   const Comp = asChild ? Slot.Root : "button";
-  const componentProps = asChild ? props : { type: "button", ...props };
+  const props = asChild ? rest : { type, ...rest };
   return (
     <Comp
       data-size={size}
       className={cn(
         "group border border-transparent px-3 py-2 transition",
-        "hover:border-border/60 hover:bg-muted/40",
+        "hover:border-border/60 hover:bg-background/40",
         className,
       )}
-      {...componentProps}
+      {...props}
     />
   );
 }
@@ -47,7 +48,7 @@ function LauncherIcon({ className, ...props }: LauncherIconProps) {
   return (
     <span
       className={cn(
-        "flex items-center justify-center overflow-hidden bg-muted/60 text-muted-foreground shadow-sm ring-1 ring-border/40",
+        "flex items-center justify-center overflow-hidden bg-background text-foreground shadow-sm ring-1 ring-border/40",
         "select-none transition group-hover:shadow-md",
         "[&>img]:pointer-events-none [&>img]:select-none [&>svg]:pointer-events-none [&>svg]:select-none",
         "group-data-[size=sm]:h-10 group-data-[size=sm]:w-10",

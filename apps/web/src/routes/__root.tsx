@@ -7,11 +7,10 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type * as React from "react";
-
 import appCss from "../styles.css?url";
 import { ApplicationManagerSidebar } from "./-components/application-manager-sidebar";
 import { Desktop } from "./-components/desktop";
-import { Providers } from "./-components/root-providers";
+import { RootProviders } from "./-components/root-providers";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -31,7 +30,7 @@ export const Route = createRootRoute({
         name: "viewport",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Robert Molina",
       },
     ],
   }),
@@ -45,12 +44,12 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <Providers>
+    <RootProviders>
       <Desktop>
         <Outlet />
       </Desktop>
       <ApplicationManagerSidebar />
-    </Providers>
+    </RootProviders>
   );
 }
 
@@ -60,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-secondary">
         {children}
         <TanStackDevtools
           config={{

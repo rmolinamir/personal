@@ -18,10 +18,12 @@ export const {
   }),
   launcher: () => (
     <LauncherContent>
-      <LauncherIcon>
+      <LauncherIcon className="bg-background/90 backdrop-blur-xs">
         <User />
       </LauncherIcon>
-      <LauncherLabel>about.mdx</LauncherLabel>
+      <LauncherLabel className="border bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-xs">
+        about.mdx
+      </LauncherLabel>
     </LauncherContent>
   ),
   metadata: {

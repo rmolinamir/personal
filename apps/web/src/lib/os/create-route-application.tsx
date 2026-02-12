@@ -21,8 +21,8 @@ import {
 } from "@acme/ui/os/window-layout";
 import { useWindowManager } from "@acme/ui/os/window-manager";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Minus, Square, X } from "lucide-react";
-import React from "react";
+import { Maximize, Minimize, Minus, X } from "lucide-react";
+import React, { useEffect } from "react";
 import type { FileRoutesByTo } from "../../routeTree.gen";
 
 type RouteApplicationDefinition = ApplicationDefinition & {
@@ -41,12 +41,13 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
       ...applicationFactoryDefinition,
       component: () => {
         const {
-          application: { metadata },
+          application: { id, metadata },
         } = useApplication();
         const isMobile = useIsMobile();
         const { navigate } = useRouter();
         const { size: bounds } = useWindowBoundary();
-        const { getTopWindow } = useWindowManager();
+        const { getTopWindow, toggleFullscreen, getWindowData } =
+          useWindowManager();
         const defaultFraming = useInitialWindowFraming(() => {
           if (!bounds) return null;
           return getCascadingWindowFraming({
@@ -58,23 +59,31 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
           });
         });
 
+        const { isFullscreen } = getWindowData(id) ?? {};
+
+        useEffect(() => {
+          if (isMobile && !isFullscreen) {
+            toggleFullscreen(id);
+          }
+        }, [isMobile, isFullscreen, toggleFullscreen, id]);
+
         return (
           <Window defaultFraming={defaultFraming ?? undefined}>
             <WindowHeader>
               <WindowTitle>{metadata.title}</WindowTitle>
               <WindowControls>
-                <WindowHideButton
-                  aria-label="Hide"
-                  className="text-muted-foreground"
-                >
+                <WindowHideButton aria-label="Hide">
                   <Minus className="size-4" />
                 </WindowHideButton>
-                <WindowFullscreenButton
-                  aria-label="Fullscreen"
-                  className="text-muted-foreground"
-                >
-                  <Square className="size-3.5" />
-                </WindowFullscreenButton>
+                {!isMobile && (
+                  <WindowFullscreenButton aria-label="Fullscreen">
+                    {isFullscreen ? (
+                      <Minimize className="size-3.5" />
+                    ) : (
+                      <Maximize className="size-3.5" />
+                    )}
+                  </WindowFullscreenButton>
+                )}
                 <WindowCloseButton
                   onClick={() => {
                     navigate({
@@ -82,7 +91,6 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
                     });
                   }}
                   aria-label="Close"
-                  className="text-muted-foreground"
                 >
                   <X className="size-4" />
                 </WindowCloseButton>

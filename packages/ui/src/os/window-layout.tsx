@@ -47,7 +47,7 @@ function WindowHeader({
       className={cn(
         "os-window__rnd-handler",
         "flex select-none flex-row items-center justify-between gap-3",
-        "border-border/80 border-b bg-muted/60 px-3 py-2!",
+        "border-border/80 border-b bg-accent/85 px-3 py-2! text-accent-foreground backdrop-blur-xs",
         "auto-rows-auto grid-rows-none items-center",
         className,
       )}
@@ -79,8 +79,26 @@ function WindowCaption({
   return (
     <CardDescription
       ref={ref}
-      data-slot="window-description"
+      data-slot="window-caption"
       className={cn("text-xs", className)}
+      {...props}
+    />
+  );
+}
+
+function WindowContent({
+  className,
+  ref,
+  ...props
+}: React.ComponentProps<typeof CardContent>) {
+  return (
+    <CardContent
+      ref={ref}
+      data-slot="window-content"
+      className={cn(
+        "flex-1 select-text overflow-auto bg-background/92.5 px-3 py-2 backdrop-blur-md dark:bg-background/97.5",
+        className,
+      )}
       {...props}
     />
   );
@@ -96,21 +114,6 @@ function WindowFooter({
       ref={ref}
       data-slot="window-footer"
       className={cn("px-3 py-2", className)}
-      {...props}
-    />
-  );
-}
-
-function WindowContent({
-  className,
-  ref,
-  ...props
-}: React.ComponentProps<typeof CardContent>) {
-  return (
-    <CardContent
-      ref={ref}
-      data-slot="window-content"
-      className={cn("flex-1 select-text overflow-auto px-3 py-2", className)}
       {...props}
     />
   );

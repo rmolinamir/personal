@@ -12,9 +12,9 @@ function Taskbar({ size = "md", className, ...props }: TaskbarProps) {
     <nav
       data-size={size}
       className={cn(
-        "flex items-center gap-3 border border-border/40 bg-background/90 text-foreground backdrop-blur-md",
-        "data-[size=sm]:h-7 data-[size=sm]:px-3",
-        "data-[size=md]:h-9",
+        "flex items-center gap-3 border border-border/40 bg-background/92.5 text-foreground backdrop-blur-md dark:bg-background/97.5",
+        "data-[size=sm]:h-8 data-[size=sm]:px-3",
+        "data-[size=md]:h-10",
         className,
       )}
       {...props}
@@ -40,7 +40,7 @@ function TaskbarSection({
       data-align={align}
       data-grow={grow}
       className={cn(
-        "flex items-center gap-2",
+        "flex items-center",
         "data-[grow=true]:flex-1",
         "data-[align=center]:justify-center",
         "data-[align=end]:justify-end",
@@ -84,9 +84,9 @@ const TaskbarItem = React.forwardRef<HTMLButtonElement, TaskbarItemProps>(
         "flex items-center justify-center gap-2 rounded-xl text-sm transition",
         "hover:bg-muted/60 data-[active=true]:bg-muted/70",
         "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
-        "data-[variant=icon]:h7 data-[variant=icon]:w-9",
-        "data-[variant=label]:h-7 data-[variant=label]:px-3",
-        "data-[variant=pill]:h-6 data-[variant=pill]:px-2",
+        "data-[variant=icon]:h-8 data-[variant=icon]:w-9",
+        "data-[variant=label]:h-8 data-[variant=label]:px-3",
+        "data-[variant=pill]:h-7 data-[variant=pill]:px-2",
         className,
       )}
       {...props}

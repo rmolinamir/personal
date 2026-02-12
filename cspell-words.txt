@@ -19,3 +19,4 @@ webp
 nums
 contenteditable
 TAGNAME
+tabstrip

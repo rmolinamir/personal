@@ -5,6 +5,10 @@ import {
   AboutApplication,
   AboutLauncher,
 } from "../(applications)/about/-components/application";
+import {
+  ResumeApplication,
+  ResumeLauncher,
+} from "../(applications)/resume/-components/application";
 import { Taskbar } from "./taskbar";
 import { Wallpaper } from "./wallpaper";
 
@@ -23,15 +27,17 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
       <div className="absolute -z-2 h-full w-full bg-secondary" />
       <Wallpaper className="absolute inset-0 -z-1 h-full w-full" />
 
-      <Taskbar />
+      <Taskbar className="z-10000 shrink-0" />
 
       <nav className="absolute bottom-9 flex h-[calc(100dvh-2.25rem)] min-h-0 w-full flex-1 flex-col flex-wrap content-start gap-1 p-2">
         <AboutLauncher />
+        <ResumeLauncher />
       </nav>
 
       <WindowBoundary className="pointer-events-none min-h-0 w-full flex-1 **:pointer-events-auto">
         <WindowSnap>
           <AboutApplication.Component />
+          <ResumeApplication.Component />
         </WindowSnap>
       </WindowBoundary>
 

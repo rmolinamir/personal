@@ -1,4 +1,4 @@
-export function About() {
+export function Resume() {
   return (
     <article className="h-full space-y-3 text-sm">
       <iframe

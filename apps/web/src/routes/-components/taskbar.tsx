@@ -9,13 +9,15 @@ import { ApplicationTabStrip } from "./application-tab-strip";
 import { Clock } from "./clock";
 import { TaskbarGitHub } from "./taskbar-github";
 import { TaskbarLinkedIn } from "./taskbar-linkedin";
-import { TaskbarLogo } from "./taskbar-logo";
+import { TaskbarStart } from "./taskbar-start";
 
-export function Taskbar() {
+type TaskbarProps = React.ComponentProps<typeof TaskbarPrimitive>;
+
+export function Taskbar(props: TaskbarProps) {
   return (
-    <TaskbarPrimitive className="z-100009 w-full shrink-0 self-end">
+    <TaskbarPrimitive {...props}>
       <TaskbarSection align="start">
-        <TaskbarLogo />
+        <TaskbarStart />
         <TaskbarGitHub />
         <TaskbarLinkedIn />
       </TaskbarSection>
@@ -27,7 +29,7 @@ export function Taskbar() {
       <TaskbarSection align="end">
         <ThemeMenu variant="ghost" />
         <SidebarTrigger variant="ghost" />
-        <Clock className="px-2 py-1 text-xs" />
+        <Clock className="hidden px-2 py-1 text-xs md:flex" />
       </TaskbarSection>
     </TaskbarPrimitive>
   );

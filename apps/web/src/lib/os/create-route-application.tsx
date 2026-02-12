@@ -14,11 +14,7 @@ import {
   WindowHideButton,
 } from "@acme/ui/os/window-actions";
 import { useWindowBoundary } from "@acme/ui/os/window-boundary";
-import {
-  WindowContent,
-  WindowHeader,
-  WindowTitle,
-} from "@acme/ui/os/window-layout";
+import { WindowHeader, WindowTitle } from "@acme/ui/os/window-layout";
 import { useWindowManager } from "@acme/ui/os/window-manager";
 import { Link } from "@tanstack/react-router";
 import { Maximize, Minimize, Minus, X } from "lucide-react";
@@ -88,9 +84,7 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
                 </WindowCloseButton>
               </WindowControls>
             </WindowHeader>
-            <WindowContent>
-              <ApplicationComponent />
-            </WindowContent>
+            <ApplicationComponent />
           </Window>
         );
       },

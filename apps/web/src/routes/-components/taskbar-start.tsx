@@ -7,24 +7,19 @@ import {
 import { cn } from "@acme/ui/lib/utils";
 import { useApplicationManager } from "@acme/ui/os/application-manager";
 import { TaskbarItem } from "@acme/ui/os/taskbar";
-import { useRouter } from "@tanstack/react-router";
+import { useQuitApplications } from "@/hooks/use-quit-applications";
 
 type TaskbarLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function TaskbarLogo({ className, ...props }: TaskbarLogoProps) {
-  const { closeAll, runningApplications } = useApplicationManager();
-  const { navigate } = useRouter();
-
-  function handleClick() {
-    closeAll();
-    navigate({ to: "/" });
-  }
+export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
+  const { runningApplications } = useApplicationManager();
+  const { quitApplications } = useQuitApplications();
 
   return (
     <Tooltip>
       <Button variant="ghost" size="icon" asChild>
         <TooltipTrigger>
-          <TaskbarItem variant="icon" onClick={handleClick}>
+          <TaskbarItem variant="icon" onClick={quitApplications}>
             <svg
               className={cn("h-6 w-6", className)}
               role="img"

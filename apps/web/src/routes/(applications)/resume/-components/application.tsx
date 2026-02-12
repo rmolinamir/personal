@@ -4,36 +4,36 @@ import {
   LauncherLabel,
 } from "@acme/ui/os/launcher";
 import { WindowContent } from "@acme/ui/os/window-layout";
-import { User } from "lucide-react";
+import { FileText } from "lucide-react";
 import React from "react";
 import { createApplicationRoute } from "@/lib/os/create-route-application";
 
-const About = React.lazy(async () => {
-  const module = await import("./about");
-  return { default: module.About };
+const Resume = React.lazy(async () => {
+  const module = await import("./resume");
+  return { default: module.Resume };
 });
 
 export const {
-  Application: AboutApplication,
-  Launcher: AboutLauncher,
-  Route: AboutRoute,
-} = createApplicationRoute("/about")({
+  Application: ResumeApplication,
+  Launcher: ResumeLauncher,
+  Route: ResumeRoute,
+} = createApplicationRoute("/resume")({
   component: () => (
     <WindowContent className="p-0">
-      <About />
+      <Resume />
     </WindowContent>
   ),
   launcher: () => (
     <LauncherContent>
       <LauncherIcon className="bg-background/90 backdrop-blur-xs">
-        <User />
+        <FileText />
       </LauncherIcon>
       <LauncherLabel className="border bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-xs">
-        about.mdx
+        resume.pdf
       </LauncherLabel>
     </LauncherContent>
   ),
   metadata: {
-    title: "About",
+    title: "Resume",
   },
 });

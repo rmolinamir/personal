@@ -16,8 +16,9 @@ import { cn } from "@acme/ui/lib/utils";
 import type { ApplicationInstance } from "@acme/ui/os/application";
 import { useApplicationManager } from "@acme/ui/os/application-manager";
 import { useWindowManager } from "@acme/ui/os/window-manager";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { XIcon } from "lucide-react";
+import { useQuitApplications } from "@/hooks/use-quit-applications";
 
 type ApplicationManagerSidebarProps = React.ComponentProps<typeof Sidebar>;
 
@@ -28,9 +29,9 @@ function ApplicationManagerSidebar({
   className,
   ...props
 }: ApplicationManagerSidebarProps) {
-  const { runningApplications, closeAll, close } = useApplicationManager();
+  const { runningApplications, close } = useApplicationManager();
   const { activateWindow } = useWindowManager();
-  const { navigate } = useRouter();
+  const { quitApplications } = useQuitApplications();
   const { toggleSidebar } = useSidebar();
 
   function handleClick(
@@ -63,8 +64,7 @@ function ApplicationManagerSidebar({
               type="button"
               className="text-muted-foreground text-sm hover:text-foreground"
               onClick={() => {
-                closeAll();
-                navigate({ to: "/" });
+                quitApplications();
                 toggleSidebar();
               }}
             >

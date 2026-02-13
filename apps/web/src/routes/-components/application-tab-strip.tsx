@@ -34,10 +34,7 @@ export function ApplicationTabStrip(props: ApplicationTabStripProps) {
           {runningApplications.map((application) => {
             const window = getWindowData(application.id);
             return (
-              <TabStripTab
-                key={application.id}
-                isHidden={window?.isHidden}
-              >
+              <TabStripTab key={application.id} isHidden={window?.isHidden}>
                 <TabStripTabTrigger
                   value={application.id}
                   onClick={() => activateWindow(application.id)}

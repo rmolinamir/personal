@@ -92,7 +92,7 @@ function TaskbarItem({
       data-taskbar-variant={variant}
       data-active={active}
       className={cn(
-        "flex items-center justify-center gap-2 rounded-xl text-sm font-normal transition",
+        "flex items-center justify-center gap-2 rounded-xl font-normal text-sm transition",
         "hover:bg-muted/60 data-[active=true]:bg-muted/70",
         "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
         "data-[taskbar-variant=icon]:h-9 data-[taskbar-variant=icon]:w-9",

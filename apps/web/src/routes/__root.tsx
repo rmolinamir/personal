@@ -58,8 +58,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body className="bg-secondary">
+      <body className="bg-background">
         {children}
         <TanStackDevtools
           config={{

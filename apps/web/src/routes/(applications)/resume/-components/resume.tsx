@@ -1,6 +1,6 @@
 export function Resume() {
   return (
-    <article className="h-full space-y-3 text-sm">
+    <article className="h-full text-sm">
       <iframe
         className="h-full w-full p-2"
         title="Robert Molina - Resume"

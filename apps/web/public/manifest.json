@@ -4,22 +4,17 @@
   "icons": [
     {
       "sizes": "64x64 32x32 24x24 16x16",
-      "src": "favicon.ico",
-      "type": "image/x-icon"
+      "src": "favicon.svg",
+      "type": "image/svg+xml"
     },
     {
-      "sizes": "192x192",
-      "src": "logo192.png",
-      "type": "image/png"
-    },
-    {
-      "sizes": "512x512",
-      "src": "logo512.png",
-      "type": "image/png"
+      "sizes": "433x289",
+      "src": "rmolinamir-logo.svg",
+      "type": "image/svg+xml"
     }
   ],
-  "name": "Create TanStack App Sample",
-  "short_name": "TanStack App",
+  "name": "Robert Molina",
+  "short_name": "rmolinamir",
   "start_url": ".",
   "theme_color": "#000000"
 }

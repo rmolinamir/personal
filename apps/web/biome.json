@@ -8,7 +8,7 @@
   "extends": "//",
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!src/routeTree.gen.ts"]
+    "includes": ["!src/routeTree.gen.ts", "!public/dwasm/index.js"]
   },
   "root": false
 }

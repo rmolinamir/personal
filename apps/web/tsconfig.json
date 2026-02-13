@@ -1,6 +1,7 @@
 {
   "extends": "@acme/tsconfig/tsconfig.react.json",
   "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["public/dwasm/index.js"],
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",

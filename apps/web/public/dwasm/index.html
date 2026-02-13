@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Freedoom (Dwasm)</title>
+    <style>
+      /* Base layout */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+      }
+
+      #screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+        background: #000;
+      }
+
+      /* Status badge (hidden once runtime is ready) */
+      #status {
+        position: fixed;
+        right: 10px;
+        top: 10px;
+        z-index: 10;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        color: rgba(255, 255, 255, 0.85);
+        font:
+          12px ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          "Courier New",
+          monospace;
+        backdrop-filter: blur(6px);
+      }
+
+      /* Mobile controls container (hidden on desktop) */
+      #mobile-controls {
+        position: relative;
+        height: clamp(240px, 42vh, 340px);
+        display: none;
+        z-index: 5;
+        padding: 14px 18px calc(18px + env(safe-area-inset-bottom));
+        box-sizing: border-box;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(6, 7, 10, 0) 0%,
+          rgba(6, 7, 10, 0.45) 18%,
+          rgba(10, 12, 16, 0.95) 60%,
+          #0b0d12 100%
+        );
+      }
+
+      #mobile-controls * {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Touch-only layout */
+      @media (hover: none) and (pointer: coarse) {
+        body {
+          display: flex;
+          flex-direction: column;
+        }
+
+        #screen {
+          flex: 0 0 auto;
+          height: auto;
+          min-height: 0;
+          padding: 12px 12px 0;
+          box-sizing: border-box;
+        }
+
+        canvas {
+          height: auto;
+          width: 100%;
+          aspect-ratio: 4 / 3;
+        }
+
+        #mobile-controls {
+          display: flex;
+          height: 100%;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      /* GBA shell + grid layout */
+      .gba-shell {
+        position: absolute;
+        inset: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(18, 20, 26, 0.65);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        pointer-events: none;
+      }
+
+      .gba-controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr) minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+          "enter . aim"
+          "dpad . action"
+          "bottom bottom bottom";
+        align-items: center;
+        align-content: center;
+        gap: 50px 10px;
+        height: 100%;
+        padding: 5px 4px 7px;
+        pointer-events: none;
+      }
+
+      /* Buttons */
+      .gba-button {
+        border: 1px solid rgba(0, 0, 0, 0.65);
+        background: linear-gradient(180deg, #2f3440 0%, #1c2028 100%);
+        color: rgba(236, 240, 248, 0.85);
+        font:
+          12px ui-sans-serif,
+          system-ui,
+          sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          inset 0 2px 5px rgba(255, 255, 255, 0.12),
+          inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+          0 6px 12px rgba(0, 0, 0, 0.4);
+        pointer-events: auto;
+        touch-action: none;
+        user-select: none;
+      }
+
+      .gba-button.is-pressed {
+        transform: translateY(2px);
+        filter: brightness(0.92);
+        box-shadow:
+          inset 0 1px 2px rgba(255, 255, 255, 0.15),
+          inset 0 -2px 6px rgba(0, 0, 0, 0.45);
+      }
+
+      /* Control clusters */
+      .gba-enter {
+        grid-area: enter;
+        justify-self: start;
+        height: 30px;
+        width: clamp(90px, 24vw, 110px);
+        border-radius: 8px;
+        font-size: 10px;
+        pointer-events: auto;
+      }
+
+      .gba-aim {
+        grid-area: aim;
+        justify-self: end;
+        display: flex;
+        gap: 8px;
+        pointer-events: none;
+      }
+
+      .gba-aim .gba-button {
+        pointer-events: auto;
+      }
+
+      .gba-aim-button {
+        height: 28px;
+        width: clamp(60px, 16vw, 80px);
+        border-radius: 8px;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+      }
+
+      .gba-dpad {
+        grid-area: dpad;
+        justify-self: start;
+        width: clamp(128px, 34vw, 156px);
+        height: clamp(128px, 34vw, 156px);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .gba-dpad .dpad {
+        border-radius: 12px;
+        background: linear-gradient(180deg, #303742 0%, #151a21 100%);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .gba-dpad .up {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .gba-dpad .left {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .gba-dpad .right {
+        grid-column: 3;
+        grid-row: 2;
+      }
+
+      .gba-dpad .down {
+        grid-column: 2;
+        grid-row: 3;
+      }
+
+      .gba-dpad .center {
+        grid-column: 2;
+        grid-row: 2;
+        border-radius: 16px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(18, 20, 26, 0.85) 70%
+        );
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      }
+
+      .gba-small {
+        height: 30px;
+        min-width: 96px;
+        padding: 0 14px;
+        border-radius: 8px;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+      }
+
+      .gba-bottom {
+        grid-area: bottom;
+        justify-self: center;
+        align-self: end;
+        display: flex;
+        gap: 12px;
+      }
+
+      .gba-buttons {
+        grid-area: action;
+        justify-self: end;
+        position: relative;
+        width: clamp(150px, 40vw, 180px);
+        height: clamp(110px, 30vw, 140px);
+      }
+
+      .gba-action {
+        position: absolute;
+        width: clamp(50px, 14vw, 62px);
+        height: clamp(50px, 14vw, 62px);
+        border-radius: 999px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+      }
+
+      .gba-action.a {
+        right: 0;
+        bottom: 22px;
+        background: linear-gradient(180deg, #4960a6 0%, #2c3966 100%);
+      }
+
+      .gba-action.b {
+        right: clamp(56px, 16vw, 74px);
+        bottom: 0;
+        background: linear-gradient(180deg, #a6514b 0%, #6f302b 100%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="status">Waiting for host…</div>
+    <div id="screen">
+      <canvas id="canvas" tabindex="-1"></canvas>
+    </div>
+    <!-- Mobile controls are rendered from the template below. -->
+    <div id="mobile-controls" aria-hidden="true"></div>
+    <template id="mobile-controls-template">
+      <div class="gba-shell"></div>
+      <div class="gba-controls">
+        <button
+          class="gba-button gba-enter"
+          data-code="Enter"
+          data-key="Enter"
+          data-keycode="13"
+          data-tap="true"
+        >
+          Enter
+        </button>
+        <div class="gba-aim">
+          <button
+            class="gba-button gba-aim-button"
+            data-code="KeyO"
+            data-key="o"
+            data-keycode="79"
+          >
+            Aim L
+          </button>
+          <button
+            class="gba-button gba-aim-button"
+            data-code="KeyP"
+            data-key="p"
+            data-keycode="80"
+          >
+            Aim R
+          </button>
+        </div>
+        <div class="gba-dpad">
+          <button
+            class="gba-button dpad up"
+            data-code="KeyW"
+            data-key="w"
+            data-keycode="87"
+          >
+            W
+          </button>
+          <button
+            class="gba-button dpad left"
+            data-code="KeyA"
+            data-key="a"
+            data-keycode="65"
+          >
+            A
+          </button>
+          <div class="dpad center"></div>
+          <button
+            class="gba-button dpad right"
+            data-code="KeyD"
+            data-key="d"
+            data-keycode="68"
+          >
+            D
+          </button>
+          <button
+            class="gba-button dpad down"
+            data-code="KeyS"
+            data-key="s"
+            data-keycode="83"
+          >
+            S
+          </button>
+        </div>
+        <div class="gba-bottom">
+          <button
+            class="gba-button gba-small"
+            data-code="Tab"
+            data-key="Tab"
+            data-keycode="9"
+            data-tap="true"
+          >
+            Map
+          </button>
+          <button
+            class="gba-button gba-small"
+            data-code="Escape"
+            data-key="Escape"
+            data-keycode="27"
+            data-tap="true"
+          >
+            Menu
+          </button>
+          <button
+            class="gba-button gba-small"
+            data-code="ShiftLeft"
+            data-key="Shift"
+            data-keycode="16"
+          >
+            Run
+          </button>
+        </div>
+        <div class="gba-buttons">
+          <button
+            class="gba-button gba-action b"
+            data-code="KeyE"
+            data-key="e"
+            data-keycode="69"
+          >
+            Use
+          </button>
+          <button
+            class="gba-button gba-action a"
+            data-code="Space"
+            data-key="Space"
+            data-keycode="32"
+          >
+            Fire
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!--Loading DOOM-->
+    <script>
+      (() => {
+        /*
+         * Host handshake:
+         * - parent -> iframe: postMessage({ type: "BOOT", iwad })
+         * - iframe -> parent: postMessage({ type: "DWASM_READY" })
+         *
+         * Mobile controls mapping:
+         * - MOVE: W/A/S/D
+         * - AIM: O/P
+         * - FIRE: Space
+         * - USE: E
+         * - RUN: Shift
+         * - MAP: Tab
+         * - MENU: Escape
+         * - ENTER: Enter
+         */
+        const statusEl = document.getElementById("status");
+        const canvas = document.getElementById("canvas");
+        const mobileControls = document.getElementById("mobile-controls");
+        const controlsTemplate = document.getElementById(
+          "mobile-controls-template",
+        );
+
+        // Only add mobile controls from the template if necessary
+        if (
+          mobileControls &&
+          controlsTemplate &&
+          "content" in controlsTemplate
+        ) {
+          mobileControls.appendChild(controlsTemplate.content.cloneNode(true));
+        }
+
+        function setStatus(s) {
+          statusEl.textContent = s;
+          if (s) {
+            statusEl.style.display = "block";
+          } else {
+            statusEl.style.display = "none";
+          }
+        }
+
+        function u8(buf) {
+          return buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+        }
+
+        function fetchArrayBuffer(url, label) {
+          return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.responseType = "arraybuffer";
+            xhr.timeout = 120000;
+            xhr.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const pct = Math.floor((event.loaded / event.total) * 100);
+                setStatus(`Downloading ${label}... ${pct}%`);
+              } else {
+                const mb = (event.loaded / (1024 * 1024)).toFixed(1);
+                setStatus(`Downloading ${label}... ${mb}MB`);
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);
+              } else {
+                reject(new Error(`Failed to fetch ${url} (${xhr.status})`));
+              }
+            };
+            xhr.onerror = () => {
+              reject(new Error(`Failed to fetch ${url}`));
+            };
+            xhr.ontimeout = () => {
+              reject(new Error(`Timed out fetching ${url}`));
+            };
+            xhr.send();
+          });
+        }
+
+        let booted = false;
+
+        async function boot(iwad) {
+          if (booted) return;
+          booted = true;
+
+          const game = iwad === "freedoom2" ? "freedoom2" : "freedoom1";
+          const wadUrl = `./${game}.wad`;
+          const wadName = `${game}.wad`;
+
+          setStatus(`Downloading ${wadName}...`);
+
+          const [wadBuf, cfgRes] = await Promise.all([
+            fetchArrayBuffer(wadUrl, wadName),
+            fetch("./prboom-plus.cfg"),
+          ]);
+
+          if (!cfgRes.ok) {
+            throw new Error(
+              `Failed to fetch prboom-plus.cfg (${cfgRes.status})`,
+            );
+          }
+
+          const wadBytes = u8(wadBuf);
+          const cfgText = await cfgRes.text();
+
+          // This Module object is necessary before fetching `index.js`
+          window.Module = {
+            arguments: ["-iwad", wadName, "-config", "prboom-plus.cfg"],
+            canvas,
+            locateFile(path) {
+              return `./${path}`;
+            },
+            onRuntimeInitialized() {
+              setStatus("");
+              requestAnimationFrame(() => {
+                try {
+                  canvas.focus();
+                } catch {}
+              });
+            },
+            preRun: [
+              () => {
+                FS.writeFile(`/${wadName}`, wadBytes);
+                FS.writeFile("/prboom-plus.cfg", cfgText);
+              },
+            ],
+            print(text) {
+              setStatus(String(text));
+            },
+            printErr(text) {
+              console.error(text);
+              setStatus(`(!) ${text}`);
+            },
+          };
+
+          setStatus("Starting engine…");
+
+          // This will kick off the game initialization
+          const s = document.createElement("script");
+          s.src = "./index.js";
+          s.async = true;
+          s.onerror = () => setStatus("Failed to load index.js");
+          document.body.appendChild(s);
+        }
+
+        // Listen for the host (React) telling us which IWAD to boot
+        window.addEventListener("message", (event) => {
+          // Same-origin check (since you host /dwasm)
+          if (event.origin !== window.location.origin) return;
+          const msg = event.data;
+          if (!msg || msg.type !== "BOOT") return;
+
+          setStatus(`Host ready. Booting ${msg.iwad || "freedoom1"}…`);
+
+          boot(msg.iwad).catch((e) => {
+            console.error(e);
+            setStatus(`Boot failed: ${e?.message || e}`);
+          });
+        });
+
+        // Tell host we're ready to receive BOOT
+        window.parent?.postMessage(
+          { type: "DWASM_READY" },
+          window.location.origin,
+        );
+
+        // Map touch buttons to keyboard events for the game
+        function setupMobileControls() {
+          const controls = mobileControls;
+          if (!controls || !canvas) return;
+
+          const buttons = Array.from(
+            controls.querySelectorAll("button[data-key]"),
+          );
+          const activeCounts = new Map();
+          const pointerKeys = new Map();
+
+          function normalizeKey(key) {
+            if (key === "Space") return " ";
+            return key;
+          }
+
+          function buildKeyInfo(el) {
+            const key = normalizeKey(el.dataset.key || "");
+            const code = el.dataset.code || key;
+            const keyCode = Number(el.dataset.keycode || "0");
+            const tap = el.dataset.tap === "true";
+            return { code, key, keyCode, tap };
+          }
+
+          function sendKey(type, info) {
+            const event = new KeyboardEvent(type, {
+              altKey: false,
+              bubbles: true,
+              cancelable: true,
+              code: info.code,
+              ctrlKey: false,
+              key: info.key,
+              keyCode: info.keyCode,
+              metaKey: false,
+              repeat: false,
+              shiftKey: info.code === "ShiftLeft" || info.key === "Shift",
+              which: info.keyCode,
+            });
+            canvas.dispatchEvent(event);
+          }
+
+          function press(info) {
+            const count = activeCounts.get(info.code) || 0;
+            if (count === 0) sendKey("keydown", info);
+            activeCounts.set(info.code, count + 1);
+          }
+
+          function release(info) {
+            const count = activeCounts.get(info.code) || 0;
+            if (count <= 1) {
+              activeCounts.delete(info.code);
+              sendKey("keyup", info);
+            } else {
+              activeCounts.set(info.code, count - 1);
+            }
+          }
+
+          function tapKey(info) {
+            sendKey("keydown", info);
+            setTimeout(() => sendKey("keyup", info), 40);
+          }
+
+          function handlePointerDown(event) {
+            event.preventDefault();
+            const el = event.currentTarget;
+            const info = buildKeyInfo(el);
+
+            try {
+              canvas.focus();
+            } catch {}
+
+            if (info.tap) {
+              tapKey(info);
+              el.classList.add("is-pressed");
+              setTimeout(() => el.classList.remove("is-pressed"), 80);
+              return;
+            }
+
+            press(info);
+            pointerKeys.set(event.pointerId, { el, info });
+            el.classList.add("is-pressed");
+
+            if (el.setPointerCapture) {
+              el.setPointerCapture(event.pointerId);
+            }
+          }
+
+          function handlePointerUp(event) {
+            const entry = pointerKeys.get(event.pointerId);
+            if (!entry) return;
+            pointerKeys.delete(event.pointerId);
+            release(entry.info);
+            entry.el.classList.remove("is-pressed");
+          }
+
+          function handlePointerCancel(event) {
+            const entry = pointerKeys.get(event.pointerId);
+            if (!entry) return;
+            pointerKeys.delete(event.pointerId);
+            release(entry.info);
+            entry.el.classList.remove("is-pressed");
+          }
+
+          buttons.forEach((button) => {
+            button.addEventListener("pointerdown", handlePointerDown);
+            button.addEventListener("pointerup", handlePointerUp);
+            button.addEventListener("pointercancel", handlePointerCancel);
+            button.addEventListener("pointerleave", handlePointerUp);
+          });
+        }
+
+        setupMobileControls();
+      })();
+    </script>
+  </body>
+</html>

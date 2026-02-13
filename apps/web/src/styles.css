@@ -68,4 +68,18 @@
     animation: tv-off 420ms ease-in forwards;
     transform-origin: center;
   }
+
+  .animate-doom-reveal {
+    animation: doom-reveal 2s steps(30, end) 1s 1 normal both;
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes doom-reveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
 }

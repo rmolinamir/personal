@@ -6,6 +6,10 @@ import {
   AboutLauncher,
 } from "../(applications)/about/-components/application";
 import {
+  DoomApplication,
+  DoomLauncher,
+} from "../(applications)/doom/-components/application";
+import {
   ResumeApplication,
   ResumeLauncher,
 } from "../(applications)/resume/-components/application";
@@ -32,12 +36,14 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
       <nav className="absolute bottom-9 flex h-[calc(100dvh-2.25rem)] min-h-0 w-full flex-1 flex-col flex-wrap content-start gap-1 p-2">
         <AboutLauncher />
         <ResumeLauncher />
+        <DoomLauncher />
       </nav>
 
       <WindowBoundary className="pointer-events-none min-h-0 w-full flex-1 **:pointer-events-auto">
         <WindowSnap>
           <AboutApplication.Component />
           <ResumeApplication.Component />
+          <DoomApplication.Component />
         </WindowSnap>
       </WindowBoundary>
 

@@ -24,3 +24,15 @@ blocknote
 shadcn
 tiptap
 robertmolina
+rmolinamir
+autoplay
+HTMLI
+prboom
+freedoom
+Emscripten
+iwad
+dwasm
+trackpad
+touchstart
+keyup
+WASD

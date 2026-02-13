@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as applicationsResumeIndexRouteImport } from './routes/(applications)/resume/index'
+import { Route as applicationsDoomIndexRouteImport } from './routes/(applications)/doom/index'
 import { Route as applicationsAboutIndexRouteImport } from './routes/(applications)/about/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const applicationsResumeIndexRoute = applicationsResumeIndexRouteImport.update({
   path: '/resume/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const applicationsDoomIndexRoute = applicationsDoomIndexRouteImport.update({
+  id: '/(applications)/doom/',
+  path: '/doom/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const applicationsAboutIndexRoute = applicationsAboutIndexRouteImport.update({
   id: '/(applications)/about/',
   path: '/about/',
@@ -32,30 +38,39 @@ const applicationsAboutIndexRoute = applicationsAboutIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about/': typeof applicationsAboutIndexRoute
+  '/doom/': typeof applicationsDoomIndexRoute
   '/resume/': typeof applicationsResumeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof applicationsAboutIndexRoute
+  '/doom': typeof applicationsDoomIndexRoute
   '/resume': typeof applicationsResumeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(applications)/about/': typeof applicationsAboutIndexRoute
+  '/(applications)/doom/': typeof applicationsDoomIndexRoute
   '/(applications)/resume/': typeof applicationsResumeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about/' | '/resume/'
+  fullPaths: '/' | '/about/' | '/doom/' | '/resume/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/resume'
-  id: '__root__' | '/' | '/(applications)/about/' | '/(applications)/resume/'
+  to: '/' | '/about' | '/doom' | '/resume'
+  id:
+    | '__root__'
+    | '/'
+    | '/(applications)/about/'
+    | '/(applications)/doom/'
+    | '/(applications)/resume/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   applicationsAboutIndexRoute: typeof applicationsAboutIndexRoute
+  applicationsDoomIndexRoute: typeof applicationsDoomIndexRoute
   applicationsResumeIndexRoute: typeof applicationsResumeIndexRoute
 }
 
@@ -75,6 +90,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof applicationsResumeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(applications)/doom/': {
+      id: '/(applications)/doom/'
+      path: '/doom'
+      fullPath: '/doom/'
+      preLoaderRoute: typeof applicationsDoomIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(applications)/about/': {
       id: '/(applications)/about/'
       path: '/about'
@@ -88,6 +110,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   applicationsAboutIndexRoute: applicationsAboutIndexRoute,
+  applicationsDoomIndexRoute: applicationsDoomIndexRoute,
   applicationsResumeIndexRoute: applicationsResumeIndexRoute,
 }
 export const routeTree = rootRouteImport

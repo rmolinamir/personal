@@ -1,5 +1,12 @@
 import { Moon, Sun } from "lucide-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { cn } from "../lib/utils";
 import { Button } from "./button";
 import {
   DropdownMenu,
@@ -8,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
-import { cn } from "../lib/utils";
 
 type Theme = "dark" | "light" | "system";
 
@@ -40,7 +46,7 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
   );
 
-  useEffect(() => {
+  const switchTheme = React.useCallback(() => {
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");
@@ -58,13 +64,24 @@ export function ThemeProvider({
     root.classList.add(theme);
   }, [theme]);
 
-  const value = {
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
-    },
-    theme,
-  };
+  useEffect(() => {
+    if (!document.startViewTransition) switchTheme();
+    document.startViewTransition(switchTheme);
+  }, [switchTheme]);
+
+  const value = useMemo(() => {
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    return {
+      setTheme: (theme: Theme) => {
+        localStorage.setItem(storageKey, theme);
+        setTheme(theme);
+      },
+      theme: theme === "system" ? systemTheme : theme,
+    };
+  }, [theme, storageKey]);
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
@@ -75,16 +92,9 @@ export function ThemeProvider({
 
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
-
   if (context === undefined)
     throw new Error("useTheme must be used within a ThemeProvider");
-
-  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-  const theme = context.theme === "system" ? systemTheme : context.theme;
-
-  return { ...context, theme };
+  return context;
 };
 
 type ThemeToggleProps = Omit<React.ComponentProps<typeof Button>, "children">;
@@ -121,18 +131,24 @@ export function ThemeMenu(props: ThemeToggleProps) {
   );
 }
 
-export function LightThemeOnly({ className, ...props }: React.ComponentProps<'div'>) {
+export function LightThemeOnly({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const { theme } = useTheme();
 
-  if (theme !== 'light') return null;
+  if (theme !== "light") return null;
 
   return <div className={cn("hidden", className)} {...props} />;
 }
 
-export function DarkThemeOnly({ className, ...props }: React.ComponentProps<'div'>) {
+export function DarkThemeOnly({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const { theme } = useTheme();
 
-  if (theme !== 'dark') return null;
+  if (theme !== "dark") return null;
 
   return <div className={cn("hidden", className)} {...props} />;
 }

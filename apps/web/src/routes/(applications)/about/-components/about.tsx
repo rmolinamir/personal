@@ -14,7 +14,7 @@ export function About() {
   const editor = useBlockNoteEditor({
     initialContent: [
       {
-        content: "Robert Molina",
+        content: "About",
         props: { level: 2 },
         type: "heading",
       },
@@ -33,7 +33,7 @@ export function About() {
       },
       {
         content: "What I’m good at",
-        props: { level: 3 },
+        props: { level: 2 },
         type: "heading",
       },
       {
@@ -91,7 +91,7 @@ export function About() {
       },
       {
         content: "Contact",
-        props: { level: 3 },
+        props: { level: 2 },
         type: "heading",
       },
       {

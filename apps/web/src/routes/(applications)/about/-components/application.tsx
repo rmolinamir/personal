@@ -34,6 +34,6 @@ export const {
     </LauncherContent>
   ),
   metadata: {
-    title: "About",
+    title: "Markdown Editor",
   },
 });

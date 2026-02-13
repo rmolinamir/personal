@@ -48,6 +48,34 @@ code {
   }
 }
 
+::view-transition-group(root) {
+  animation-timing-function: var(--expo-out);
+}
+
+::view-transition-new(root) {
+  clip-path: circle(0 at 100% 100%);
+  animation: reveal 1s;
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root),
+.dark::view-transition-old(root) {
+  animation: none;
+  animation-fill-mode: both;
+  z-index: -1;
+}
+
+.dark::view-transition-new(root) {
+  animation: reveal 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes reveal {
+  to {
+    clip-path: circle(200vmax at 100% 100%);
+  }
+}
+
 :root {
   --background: oklch(0.997 0 0);
   --foreground: oklch(0 0 0);

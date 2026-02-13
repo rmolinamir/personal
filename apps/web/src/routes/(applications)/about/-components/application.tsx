@@ -29,7 +29,7 @@ export const {
         <User />
       </LauncherIcon>
       <LauncherLabel className="border bg-background/90 px-2 py-0.5 shadow-sm backdrop-blur-xs">
-        About.md
+        about.md
       </LauncherLabel>
     </LauncherContent>
   ),

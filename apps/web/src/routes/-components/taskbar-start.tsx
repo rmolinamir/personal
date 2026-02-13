@@ -5,42 +5,51 @@ import {
   TooltipTrigger,
 } from "@acme/ui/components/tooltip";
 import { cn } from "@acme/ui/lib/utils";
-import { useApplicationManager } from "@acme/ui/os/application-manager";
 import { TaskbarItem } from "@acme/ui/os/taskbar";
 import { useQuitApplications } from "@/hooks/use-quit-applications";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@acme/ui/components/dropdown-menu";
+import { useSystem } from "./system-provider";
 
 type TaskbarLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
 export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
-  const { runningApplications } = useApplicationManager();
   const { quitApplications } = useQuitApplications();
+  const { shutdown } = useSystem();
 
   return (
     <Tooltip>
-      <Button variant="ghost" size="icon" asChild>
+      <DropdownMenu>
         <TooltipTrigger asChild>
-          <TaskbarItem variant="icon" onClick={quitApplications}>
-            <svg
-              className={cn("h-6 w-6", className)}
-              role="img"
-              viewBox="0 0 433 289"
-              fill="currentColor"
-              stroke="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-              {...props}
-            >
-              <title>Personal Logo</title>
-              <path d="M0.769226 288.228L128.269 1.22754L212.951 190.362L300.269 1.22754L431.769 288.228H256.769L212.951 190.362L167.769 288.228H0.769226Z" />
-              <path d="M0.769226 288.228L128.269 1.22754L256.769 288.228H431.769L300.269 1.22754L167.769 288.228H0.769226Z" />
-            </svg>
-          </TaskbarItem>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" asChild>
+              <TaskbarItem variant="icon" onClick={quitApplications}>
+                <svg
+                  className={cn("h-6 w-6", className)}
+                  role="img"
+                  viewBox="0 0 433 289"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                  {...props}
+                >
+                  <title>Personal Logo</title>
+                  <path d="M0.769226 288.228L128.269 1.22754L212.951 190.362L300.269 1.22754L431.769 288.228H256.769L212.951 190.362L167.769 288.228H0.769226Z" />
+                  <path d="M0.769226 288.228L128.269 1.22754L256.769 288.228H431.769L300.269 1.22754L167.769 288.228H0.769226Z" />
+                </svg>
+              </TaskbarItem>
+            </Button>
+          </DropdownMenuTrigger>
         </TooltipTrigger>
-      </Button>
-      <TooltipContent>
-        {runningApplications.length
-          ? "Close all applications"
-          : "No applications running"}
-      </TooltipContent>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={quitApplications}>
+            Quit all applications
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={shutdown}>
+            Turn off computer
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <TooltipContent>Start menu</TooltipContent>
     </Tooltip>
   );
 }

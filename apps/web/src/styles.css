@@ -58,6 +58,42 @@
   }
 }
 
+@keyframes tv-off-overlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes chroma-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes chroma-spin-reverse {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes doom-reveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 @layer utilities {
   .animate-tv-on {
     animation: tv-on 620ms ease-out forwards;
@@ -69,17 +105,66 @@
     transform-origin: center;
   }
 
+  .animate-tv-off-overlay {
+    animation: 210ms tv-off-overlay 420ms ease-out forwards;
+    animation-fill-mode: both;
+    transform-origin: center;
+  }
+
+  .power-button-chroma {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    border-radius: 999px;
+    --chroma-speed: 4s;
+    --chroma-opacity: 0.7;
+    --chroma-brightness: 1;
+    --chroma-boost-opacity: 0;
+  }
+
+  .power-button-chroma::before,
+  .power-button-chroma::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: conic-gradient(
+      transparent 0deg,
+      var(--chart-1) 24deg,
+      var(--chart-2) 64deg,
+      var(--chart-3) 104deg,
+      transparent 140deg,
+      transparent 200deg,
+      var(--chart-4) 236deg,
+      var(--chart-5) 280deg,
+      transparent 330deg,
+      transparent 360deg
+    );
+    animation: chroma-spin var(--chroma-speed) linear infinite;
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 3px),
+      #000 calc(100% - 2px)
+    );
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 3px),
+      #000 calc(100% - 2px)
+    );
+    opacity: var(--chroma-opacity);
+    filter: brightness(var(--chroma-brightness));
+    transition: opacity 200ms ease, filter 200ms ease;
+  }
+
+  .power-button-chroma::after {
+    animation: chroma-spin-reverse 2.2s linear infinite;
+    opacity: var(--chroma-boost-opacity);
+  }
+
   .animate-doom-reveal {
     animation: doom-reveal 2s steps(30, end) 1s 1 normal both;
     clip-path: inset(0 100% 0 0);
-  }
-}
-
-@keyframes doom-reveal {
-  0% {
-    clip-path: inset(0 100% 0 0);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
   }
 }

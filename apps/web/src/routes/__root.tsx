@@ -20,8 +20,8 @@ export const Route = createRootRoute({
         href: appCss,
         rel: "stylesheet",
       },
-      { rel: "preload", as: "image", href: "/vibrant-wallpaper-light.webp" },
-      { rel: "preload", as: "image", href: "/vibrant-wallpaper-dark.webp" },
+      { as: "image", href: "/vibrant-wallpaper-light.webp", rel: "preload" },
+      { as: "image", href: "/vibrant-wallpaper-dark.webp", rel: "preload" },
     ],
     meta: [
       {
@@ -69,7 +69,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
 
 function RootLayout() {
   return (

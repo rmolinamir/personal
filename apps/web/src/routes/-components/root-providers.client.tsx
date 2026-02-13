@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@acme/ui/components/theme";
 import { ClientOnly } from "@tanstack/react-router";
 import type * as React from "react";
+import { SystemProvider } from "./system-provider";
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -9,7 +10,9 @@ type RootLayoutProps = {
 export function ClientRootProviders({ children }: RootLayoutProps) {
   return (
     <ClientOnly>
-      <ThemeProvider>{children}</ThemeProvider>
+      <SystemProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+      </SystemProvider>
     </ClientOnly>
   );
 }

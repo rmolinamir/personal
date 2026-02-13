@@ -20,6 +20,8 @@ export const Route = createRootRoute({
         href: appCss,
         rel: "stylesheet",
       },
+      { rel: "preload", as: "image", href: "/vibrant-wallpaper-light.webp" },
+      { rel: "preload", as: "image", href: "/vibrant-wallpaper-dark.webp" },
     ],
     meta: [
       {
@@ -41,17 +43,6 @@ export const Route = createRootRoute({
   ),
   shellComponent: RootDocument,
 });
-
-function RootLayout() {
-  return (
-    <RootProviders>
-      <Desktop>
-        <Outlet />
-      </Desktop>
-      <ApplicationManagerSidebar />
-    </RootProviders>
-  );
-}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -76,5 +67,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+
+function RootLayout() {
+  return (
+    <RootProviders>
+      <Desktop>
+        <Outlet />
+      </Desktop>
+      <ApplicationManagerSidebar />
+    </RootProviders>
   );
 }

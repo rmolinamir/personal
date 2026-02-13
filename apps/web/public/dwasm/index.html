@@ -12,6 +12,11 @@
         margin: 0;
         background: #000;
         overflow: hidden;
+        overscroll-behavior: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        touch-action: none;
       }
 
       #screen {
@@ -63,13 +68,11 @@
         padding: 14px 18px calc(18px + env(safe-area-inset-bottom));
         box-sizing: border-box;
         pointer-events: none;
-        background: linear-gradient(
-          180deg,
-          rgba(6, 7, 10, 0) 0%,
-          rgba(6, 7, 10, 0.45) 18%,
-          rgba(10, 12, 16, 0.95) 60%,
-          #0b0d12 100%
-        );
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        touch-action: none;
+        background: oklch(0.6543 0.2341 34.1962);
       }
 
       #mobile-controls * {
@@ -121,13 +124,12 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr) minmax(0, 1fr);
         grid-template-rows: auto auto auto;
         grid-template-areas:
-          "enter . aim"
-          "dpad . action"
+          "enter . action"
+          "dpad . aim"
           "bottom bottom bottom";
         align-items: center;
         align-content: center;
-        gap: 50px 10px;
-        height: 100%;
+        gap: 25px 10px;
         padding: 5px 4px 7px;
         pointer-events: none;
       }
@@ -152,6 +154,7 @@
           0 6px 12px rgba(0, 0, 0, 0.4);
         pointer-events: auto;
         touch-action: none;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -176,73 +179,67 @@
 
       .gba-aim {
         grid-area: aim;
-        justify-self: end;
+      }
+
+      .gba-joystick {
+        position: relative;
         display: flex;
-        gap: 8px;
-        pointer-events: none;
-      }
-
-      .gba-aim .gba-button {
-        pointer-events: auto;
-      }
-
-      .gba-aim-button {
-        height: 28px;
-        width: clamp(60px, 16vw, 80px);
-        border-radius: 8px;
-        font-size: 10px;
-        letter-spacing: 0.06em;
-      }
-
-      .gba-dpad {
-        grid-area: dpad;
-        justify-self: start;
+        align-items: center;
+        justify-content: center;
         width: clamp(128px, 34vw, 156px);
         height: clamp(128px, 34vw, 156px);
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 6px;
+        pointer-events: auto;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
       }
 
-      .gba-dpad .dpad {
-        border-radius: 12px;
-        background: linear-gradient(180deg, #303742 0%, #151a21 100%);
-        font-weight: 600;
-        font-size: 13px;
+      .gba-joystick.gba-aim {
+        justify-self: end;
+        width: clamp(110px, 28vw, 135px);
+        height: clamp(110px, 28vw, 135px);
       }
 
-      .gba-dpad .up {
-        grid-column: 2;
-        grid-row: 1;
+      .gba-joystick.gba-move {
+        grid-area: dpad;
+        justify-self: start;
       }
 
-      .gba-dpad .left {
-        grid-column: 1;
-        grid-row: 2;
-      }
-
-      .gba-dpad .right {
-        grid-column: 3;
-        grid-row: 2;
-      }
-
-      .gba-dpad .down {
-        grid-column: 2;
-        grid-row: 3;
-      }
-
-      .gba-dpad .center {
-        grid-column: 2;
-        grid-row: 2;
-        border-radius: 16px;
+      .gba-joystick .joystick-base {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
         background: radial-gradient(
           circle,
-          rgba(255, 255, 255, 0.08) 0%,
-          rgba(18, 20, 26, 0.85) 70%
+          rgba(42, 48, 58, 0.92) 0%,
+          rgba(18, 22, 30, 0.98) 70%
         );
-        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
-        pointer-events: none;
+        box-shadow:
+          inset 0 2px 6px rgba(255, 255, 255, 0.08),
+          inset 0 -6px 10px rgba(0, 0, 0, 0.6);
+      }
+
+      .gba-joystick .joystick-stick {
+        position: absolute;
+        width: 48%;
+        height: 48%;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(
+          calc(-50% + var(--stick-x, 0px)),
+          calc(-50% + var(--stick-y, 0px))
+        );
+        transition: transform 90ms ease;
+        background: linear-gradient(180deg, #3a4454 0%, #1f2530 100%);
+        box-shadow:
+          inset 0 2px 5px rgba(255, 255, 255, 0.12),
+          inset 0 -4px 8px rgba(0, 0, 0, 0.55),
+          0 8px 14px rgba(0, 0, 0, 0.5);
+      }
+
+      .gba-joystick.is-active .joystick-stick {
+        transition: none;
       }
 
       .gba-small {
@@ -267,7 +264,7 @@
         justify-self: end;
         position: relative;
         width: clamp(150px, 40vw, 180px);
-        height: clamp(110px, 30vw, 140px);
+        height: 70px;
       }
 
       .gba-action {
@@ -282,13 +279,13 @@
       .gba-action.a {
         right: 0;
         bottom: 22px;
-        background: linear-gradient(180deg, #4960a6 0%, #2c3966 100%);
+        background: linear-gradient(180deg, #a6514b 0%, #6f302b 100%);
       }
 
       .gba-action.b {
         right: clamp(56px, 16vw, 74px);
         bottom: 0;
-        background: linear-gradient(180deg, #a6514b 0%, #6f302b 100%);
+        background: linear-gradient(180deg, #4960a6 0%, #2c3966 100%);
       }
     </style>
   </head>
@@ -303,96 +300,16 @@
     <template id="mobile-controls-template">
       <div class="gba-shell"></div>
       <div class="gba-controls">
+        <!--Top section-->
         <button
           class="gba-button gba-enter"
-          data-code="Enter"
-          data-key="Enter"
-          data-keycode="13"
+          data-code="Escape"
+          data-key="Escape"
+          data-keycode="27"
           data-tap="true"
         >
-          Enter
+          Menu
         </button>
-        <div class="gba-aim">
-          <button
-            class="gba-button gba-aim-button"
-            data-code="KeyO"
-            data-key="o"
-            data-keycode="79"
-          >
-            Aim L
-          </button>
-          <button
-            class="gba-button gba-aim-button"
-            data-code="KeyP"
-            data-key="p"
-            data-keycode="80"
-          >
-            Aim R
-          </button>
-        </div>
-        <div class="gba-dpad">
-          <button
-            class="gba-button dpad up"
-            data-code="KeyW"
-            data-key="w"
-            data-keycode="87"
-          >
-            W
-          </button>
-          <button
-            class="gba-button dpad left"
-            data-code="KeyA"
-            data-key="a"
-            data-keycode="65"
-          >
-            A
-          </button>
-          <div class="dpad center"></div>
-          <button
-            class="gba-button dpad right"
-            data-code="KeyD"
-            data-key="d"
-            data-keycode="68"
-          >
-            D
-          </button>
-          <button
-            class="gba-button dpad down"
-            data-code="KeyS"
-            data-key="s"
-            data-keycode="83"
-          >
-            S
-          </button>
-        </div>
-        <div class="gba-bottom">
-          <button
-            class="gba-button gba-small"
-            data-code="Tab"
-            data-key="Tab"
-            data-keycode="9"
-            data-tap="true"
-          >
-            Map
-          </button>
-          <button
-            class="gba-button gba-small"
-            data-code="Escape"
-            data-key="Escape"
-            data-keycode="27"
-            data-tap="true"
-          >
-            Menu
-          </button>
-          <button
-            class="gba-button gba-small"
-            data-code="ShiftLeft"
-            data-key="Shift"
-            data-keycode="16"
-          >
-            Run
-          </button>
-        </div>
         <div class="gba-buttons">
           <button
             class="gba-button gba-action b"
@@ -409,6 +326,46 @@
             data-keycode="32"
           >
             Fire
+          </button>
+        </div>
+
+        <!--Middle section-->
+        <div class="gba-joystick gba-aim" data-joystick="aim">
+          <div class="joystick-base"></div>
+          <div class="joystick-stick"></div>
+        </div>
+        <div class="gba-joystick gba-move" data-joystick="move">
+          <div class="joystick-base"></div>
+          <div class="joystick-stick"></div>
+        </div>
+
+        <!--Bottom section-->
+        <div class="gba-bottom">
+          <button
+            class="gba-button gba-small"
+            data-code="Tab"
+            data-key="Tab"
+            data-keycode="9"
+            data-tap="true"
+          >
+            Map
+          </button>
+          <button
+            class="gba-button gba-small"
+            data-code="Enter"
+            data-key="Enter"
+            data-keycode="13"
+            data-tap="true"
+          >
+            Enter
+          </button>
+          <button
+            class="gba-button gba-small"
+            data-code="ShiftLeft"
+            data-key="Shift"
+            data-keycode="16"
+          >
+            Run
           </button>
         </div>
       </div>
@@ -448,10 +405,21 @@
           mobileControls.appendChild(controlsTemplate.content.cloneNode(true));
         }
 
+        let statusTimer;
+
         function setStatus(s) {
+          if (statusTimer) {
+            clearTimeout(statusTimer);
+            statusTimer = null;
+          }
+
           statusEl.textContent = s;
           if (s) {
             statusEl.style.display = "block";
+            statusTimer = setTimeout(() => {
+              statusEl.style.display = "none";
+              statusTimer = null;
+            }, 6500);
           } else {
             statusEl.style.display = "none";
           }
@@ -590,6 +558,18 @@
           );
           const activeCounts = new Map();
           const pointerKeys = new Map();
+          const joystickElements = Array.from(
+            controls.querySelectorAll("[data-joystick]"),
+          );
+          const joystickStates = new Map();
+          const keyInfoMap = {
+            KeyW: { code: "KeyW", key: "w", keyCode: 87 },
+            KeyA: { code: "KeyA", key: "a", keyCode: 65 },
+            KeyS: { code: "KeyS", key: "s", keyCode: 83 },
+            KeyD: { code: "KeyD", key: "d", keyCode: 68 },
+            KeyO: { code: "KeyO", key: "o", keyCode: 79 },
+            KeyP: { code: "KeyP", key: "p", keyCode: 80 },
+          };
 
           function normalizeKey(key) {
             if (key === "Space") return " ";
@@ -602,6 +582,10 @@
             const keyCode = Number(el.dataset.keycode || "0");
             const tap = el.dataset.tap === "true";
             return { code, key, keyCode, tap };
+          }
+
+          function getKeyInfo(code) {
+            return keyInfoMap[code];
           }
 
           function sendKey(type, info) {
@@ -683,11 +667,162 @@
             entry.el.classList.remove("is-pressed");
           }
 
+          function updateJoystickKeys(state, nextKeys) {
+            state.activeKeys.forEach((code) => {
+              if (!nextKeys.has(code)) {
+                const info = getKeyInfo(code);
+                if (info) release(info);
+              }
+            });
+
+            nextKeys.forEach((code) => {
+              if (!state.activeKeys.has(code)) {
+                const info = getKeyInfo(code);
+                if (info) press(info);
+              }
+            });
+
+            state.activeKeys = nextKeys;
+          }
+
+          function resetJoystick(state) {
+            state.el.style.setProperty("--stick-x", "0px");
+            state.el.style.setProperty("--stick-y", "0px");
+            updateJoystickKeys(state, new Set());
+          }
+
+          function updateJoystick(state, clientX, clientY) {
+            const { center, radius, type } = state;
+            if (!center || !radius) return;
+
+            const dx = clientX - center.x;
+            const dy = clientY - center.y;
+            const distance = Math.hypot(dx, dy);
+            const scale = distance > radius ? radius / distance : 1;
+            const stickX = dx * scale;
+            const stickY = dy * scale;
+
+            state.el.style.setProperty("--stick-x", `${stickX}px`);
+            state.el.style.setProperty("--stick-y", `${stickY}px`);
+
+            const deadzone = radius * 0.22;
+            const nextKeys = new Set();
+
+            if (type === "move") {
+              if (stickX > deadzone) nextKeys.add("KeyD");
+              if (stickX < -deadzone) nextKeys.add("KeyA");
+              if (stickY > deadzone) nextKeys.add("KeyS");
+              if (stickY < -deadzone) nextKeys.add("KeyW");
+            }
+
+            if (type === "aim") {
+              if (stickX > deadzone) nextKeys.add("KeyP");
+              if (stickX < -deadzone) nextKeys.add("KeyO");
+            }
+
+            updateJoystickKeys(state, nextKeys);
+          }
+
+          function handleJoystickDown(event) {
+            const el = event.currentTarget;
+            const state = joystickStates.get(el);
+            if (!state || state.pointerId !== null) return;
+            event.preventDefault();
+
+            const rect = el.getBoundingClientRect();
+            state.center = {
+              x: rect.left + rect.width / 2,
+              y: rect.top + rect.height / 2,
+            };
+            state.radius = rect.width / 2 - 12;
+            state.pointerId = event.pointerId;
+            el.classList.add("is-active");
+
+            if (el.setPointerCapture) {
+              el.setPointerCapture(event.pointerId);
+            }
+
+            updateJoystick(state, event.clientX, event.clientY);
+          }
+
+          function handleJoystickMove(event) {
+            const el = event.currentTarget;
+            const state = joystickStates.get(el);
+            if (!state || state.pointerId !== event.pointerId) return;
+            event.preventDefault();
+            updateJoystick(state, event.clientX, event.clientY);
+          }
+
+          function handleJoystickUp(event) {
+            const el = event.currentTarget;
+            const state = joystickStates.get(el);
+            if (!state || state.pointerId !== event.pointerId) return;
+            event.preventDefault();
+
+            state.pointerId = null;
+            state.center = null;
+            state.radius = 0;
+            el.classList.remove("is-active");
+            resetJoystick(state);
+          }
+
+          function handleJoystickLostPointer(event) {
+            const el = event.currentTarget;
+            const state = joystickStates.get(el);
+            if (!state || state.pointerId === null) return;
+
+            state.pointerId = null;
+            state.center = null;
+            state.radius = 0;
+            el.classList.remove("is-active");
+            resetJoystick(state);
+          }
+
+          function releaseAllJoysticks() {
+            joystickStates.forEach((state) => {
+              if (!state || state.pointerId === null) return;
+              state.pointerId = null;
+              state.center = null;
+              state.radius = 0;
+              state.el.classList.remove("is-active");
+              resetJoystick(state);
+            });
+          }
+
           buttons.forEach((button) => {
             button.addEventListener("pointerdown", handlePointerDown);
             button.addEventListener("pointerup", handlePointerUp);
             button.addEventListener("pointercancel", handlePointerCancel);
             button.addEventListener("pointerleave", handlePointerUp);
+          });
+
+          joystickElements.forEach((joystick) => {
+            joystickStates.set(joystick, {
+              el: joystick,
+              type: joystick.dataset.joystick,
+              activeKeys: new Set(),
+              pointerId: null,
+              center: null,
+              radius: 0,
+            });
+
+            joystick.addEventListener("pointerdown", handleJoystickDown);
+            joystick.addEventListener("pointermove", handleJoystickMove);
+            joystick.addEventListener("pointerup", handleJoystickUp);
+            joystick.addEventListener("pointercancel", handleJoystickUp);
+            joystick.addEventListener(
+              "lostpointercapture",
+              handleJoystickLostPointer,
+            );
+          });
+
+          controls.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+          });
+
+          window.addEventListener("blur", releaseAllJoysticks);
+          document.addEventListener("visibilitychange", () => {
+            if (document.hidden) releaseAllJoysticks();
           });
         }
 

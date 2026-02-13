@@ -36,3 +36,4 @@ trackpad
 touchstart
 keyup
 WASD
+deadzone

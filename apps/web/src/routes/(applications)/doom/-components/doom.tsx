@@ -96,7 +96,7 @@ export function Doom() {
                     Start Game
                   </button>
                   <div className="max-w-105 text-balance font-mono text-[11px] text-muted-foreground uppercase tracking-[0.14em] sm:text-xs">
-                    WebAssembly Doom port with DWASM. Select a game and get in.
+                    WebAssembly Doom port with Dwasm. Select a game and get in.
                   </div>
                 </div>
               )}
@@ -144,10 +144,12 @@ type DoomFooterProps = {
 };
 
 function DoomFooter({ active, runKey }: DoomFooterProps) {
+  const isMobile = useIsMobile();
   return (
     <div
       className={cn(
-        "flex min-h-12 shrink-0 items-center justify-center px-3 pb-1 text-center font-mono text-[10px] text-muted-foreground uppercase tracking-[0.18em] sm:min-h-14 sm:px-4 sm:text-xs",
+        isMobile ? "hidden" : "flex items-center justify-center",
+        "min-h-12 shrink-0 px-3 pb-1 text-center font-mono text-[10px] text-muted-foreground uppercase tracking-[0.18em] sm:min-h-14 sm:px-4 sm:text-xs",
         active ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >

@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import { cn } from "../lib/utils";
 
 type Theme = "dark" | "light" | "system";
 
@@ -118,4 +119,20 @@ export function ThemeMenu(props: ThemeToggleProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+export function LightThemeOnly({ className, ...props }: React.ComponentProps<'div'>) {
+  const { theme } = useTheme();
+
+  if (theme !== 'light') return null;
+
+  return <div className={cn("hidden", className)} {...props} />;
+}
+
+export function DarkThemeOnly({ className, ...props }: React.ComponentProps<'div'>) {
+  const { theme } = useTheme();
+
+  if (theme !== 'dark') return null;
+
+  return <div className={cn("hidden", className)} {...props} />;
 }

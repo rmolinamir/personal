@@ -34,6 +34,6 @@ export const {
     </LauncherContent>
   ),
   metadata: {
-    title: "DOOM.exe",
+    title: "FREE(DOOM)",
   },
 });

@@ -34,6 +34,6 @@ export const {
     </LauncherContent>
   ),
   metadata: {
-    title: "Resume",
+    title: "resume.pdf",
   },
 });

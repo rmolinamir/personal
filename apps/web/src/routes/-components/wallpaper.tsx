@@ -1,4 +1,4 @@
-import { useTheme } from "@acme/ui/components/theme";
+import { LightThemeOnly, DarkThemeOnly } from "@acme/ui/components/theme";
 import { ClientOnly } from "@tanstack/react-router";
 import type React from "react";
 import {
@@ -16,8 +16,6 @@ const DARK_WALLPAPER = "/vibrant-wallpaper-dark.webp";
 type WallpaperProps = React.ComponentProps<typeof Shader>;
 
 export function Wallpaper(props: WallpaperProps) {
-  const { theme } = useTheme();
-  const isLight = theme === "light";
   return (
     <ClientOnly>
       <Shader {...props}>
@@ -34,9 +32,16 @@ export function Wallpaper(props: WallpaperProps) {
           <Glitch intensity={0.1} speed={0.5}>
             <Liquify intensity={0.8} decay={2.5} radius={1.5} edges="mirror">
               <FlowField strength={0.4} detail={1.2} speed={0.1} edges="mirror">
-                <ImageTexture
-                  url={isLight ? LIGHT_WALLPAPER : DARK_WALLPAPER}
-                />
+                <LightThemeOnly>
+                  <ImageTexture
+                    url={LIGHT_WALLPAPER}
+                  />
+                </LightThemeOnly>
+                <DarkThemeOnly>
+                  <ImageTexture
+                    url={DARK_WALLPAPER}
+                  />
+                </DarkThemeOnly>
               </FlowField>
             </Liquify>
           </Glitch>

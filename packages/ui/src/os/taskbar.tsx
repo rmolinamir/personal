@@ -1,4 +1,5 @@
 import type * as React from "react";
+import { Button } from "../components/button";
 import { cn } from "../lib/utils";
 
 export type TaskbarBarSize = "sm" | "md";
@@ -65,8 +66,12 @@ function TaskbarDivider({ className, ...props }: TaskbarDividerProps) {
 
 export type TaskbarItemVariant = "icon" | "label" | "pill";
 
-export type TaskbarItemProps = React.ComponentProps<"button"> & {
+type ButtonProps = React.ComponentProps<typeof Button>;
+
+export type TaskbarItemProps = Omit<ButtonProps, "variant" | "size"> & {
   variant?: TaskbarItemVariant;
+  buttonVariant?: ButtonProps["variant"];
+  buttonSize?: ButtonProps["size"];
   active?: boolean;
 };
 
@@ -75,20 +80,26 @@ function TaskbarItem({
   active = false,
   className,
   type = "button",
+  buttonVariant = "ghost",
+  buttonSize = "sm",
   ...props
 }: TaskbarItemProps) {
   return (
-    <button
+    <Button
       type={type}
-      data-variant={variant}
+      variant={buttonVariant}
+      size={buttonSize}
+      data-taskbar-variant={variant}
       data-active={active}
       className={cn(
-        "flex items-center justify-center gap-2 rounded-xl text-sm transition",
+        "flex items-center justify-center gap-2 rounded-xl text-sm font-normal transition",
         "hover:bg-muted/60 data-[active=true]:bg-muted/70",
         "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
-        "data-[variant=icon]:h-8 data-[variant=icon]:w-9",
-        "data-[variant=label]:h-8 data-[variant=label]:px-3",
-        "data-[variant=pill]:h-7 data-[variant=pill]:px-2",
+        "data-[taskbar-variant=icon]:h-9 data-[taskbar-variant=icon]:w-9",
+        "data-[taskbar-variant=icon]:px-0",
+        "data-[taskbar-variant=label]:h-9 data-[taskbar-variant=label]:px-3",
+        "data-[taskbar-variant=pill]:h-7 data-[taskbar-variant=pill]:px-2",
+        "data-[taskbar-variant=pill]:self-center",
         className,
       )}
       {...props}

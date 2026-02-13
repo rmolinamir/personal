@@ -16,17 +16,17 @@ type TaskbarProps = React.ComponentProps<typeof TaskbarPrimitive>;
 export function Taskbar(props: TaskbarProps) {
   return (
     <TaskbarPrimitive {...props}>
-      <TaskbarSection align="start">
+      <TaskbarSection className="h-full" align="start">
         <TaskbarStart />
         <TaskbarGitHub />
         <TaskbarLinkedIn />
       </TaskbarSection>
       <TaskbarDivider />
-      <TaskbarSection className="items-center" align="center" grow>
+      <TaskbarSection className="h-full items-center" align="center" grow>
         <ApplicationTabStrip />
       </TaskbarSection>
       <TaskbarDivider />
-      <TaskbarSection align="end">
+      <TaskbarSection className="h-full" align="end">
         <ThemeMenu variant="ghost" />
         <SidebarTrigger variant="ghost" />
         <Clock className="hidden px-2 py-1 text-xs md:flex" />

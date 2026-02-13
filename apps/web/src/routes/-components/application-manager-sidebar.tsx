@@ -92,13 +92,13 @@ function ApplicationManagerSidebar({
                           <span className="font-medium">
                             {application.metadata.title}
                           </span>
-                          <SidebarMenuAction
-                            showOnHover
-                            onClick={(event) => handleClick(event, application)}
-                          >
-                            <XIcon className="size-3" />
-                          </SidebarMenuAction>
                         </SidebarMenuButton>
+                        <SidebarMenuAction
+                          showOnHover
+                          onClick={(event) => handleClick(event, application)}
+                        >
+                          <XIcon className="size-3" />
+                        </SidebarMenuAction>
                       </SidebarMenuItem>
                     );
                   })}

@@ -18,7 +18,7 @@ export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
   return (
     <Tooltip>
       <Button variant="ghost" size="icon" asChild>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <TaskbarItem variant="icon" onClick={quitApplications}>
             <svg
               className={cn("h-6 w-6", className)}

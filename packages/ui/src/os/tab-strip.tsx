@@ -36,18 +36,31 @@ function TabStripList({
   );
 }
 
-type TabStripTabProps = React.ComponentProps<typeof TabsTrigger> & {
+type TabStripTabProps = React.ComponentProps<"div"> & {
   isHidden?: boolean;
+};
+
+function TabStripTab({ className, isHidden, ...props }: TabStripTabProps) {
+  return (
+    <div
+      data-slot="tabstrip-tab"
+      data-hidden={isHidden ? "true" : "false"}
+      className={cn("group/tab relative", className)}
+      {...props}
+    />
+  );
+}
+
+type TabStripTabTriggerProps = React.ComponentProps<typeof TabsTrigger> & {
   scrollIntoViewOnSelect?: boolean;
 };
 
-function TabStripTab({
+function TabStripTabTrigger({
   className,
-  isHidden,
   scrollIntoViewOnSelect = true,
   onClick,
   ...props
-}: TabStripTabProps) {
+}: TabStripTabTriggerProps) {
   const tabRef = React.useRef<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -67,14 +80,13 @@ function TabStripTab({
   return (
     <TabsTrigger
       ref={tabRef}
-      data-slot="tabstrip-tab"
-      data-hidden={isHidden ? "true" : "false"}
+      data-slot="tabstrip-tab-trigger"
       className={cn(
-        "group/tab relative h-7 max-w-48 justify-start rounded-md border border-transparent px-2 pr-6 text-foreground/70",
+        "h-7 max-w-48 justify-start rounded-md border border-transparent px-2 pr-6 text-foreground/70",
         "hover:bg-muted/60 hover:text-foreground",
         "data-[state=active]:bg-background/90 data-[state=active]:text-foreground",
         "data-[state=active]:border-border/60",
-        "data-[hidden=true]:border-dashed data-[hidden=true]:opacity-60",
+        "group-data-[hidden=true]/tab:border-dashed group-data-[hidden=true]/tab:opacity-60",
         className,
       )}
       onClick={handleClick}
@@ -139,6 +151,7 @@ export {
   TabStripRail,
   TabStripList,
   TabStripTab,
+  TabStripTabTrigger,
   TabStripTitle,
   TabStripClose,
 };

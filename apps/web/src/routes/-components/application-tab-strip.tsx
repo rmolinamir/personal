@@ -5,6 +5,7 @@ import {
   TabStripList,
   TabStripRail,
   TabStripTab,
+  TabStripTabTrigger,
   TabStripTitle,
 } from "@acme/ui/os/tab-strip";
 import { useWindowManager } from "@acme/ui/os/window-manager";
@@ -35,12 +36,15 @@ export function ApplicationTabStrip(props: ApplicationTabStripProps) {
             return (
               <TabStripTab
                 key={application.id}
-                value={application.id}
                 isHidden={window?.isHidden}
-                onClick={() => activateWindow(application.id)}
-                onDoubleClick={() => hideWindow(application.id)}
               >
-                <TabStripTitle>{application.metadata.title}</TabStripTitle>
+                <TabStripTabTrigger
+                  value={application.id}
+                  onClick={() => activateWindow(application.id)}
+                  onDoubleClick={() => hideWindow(application.id)}
+                >
+                  <TabStripTitle>{application.metadata.title}</TabStripTitle>
+                </TabStripTabTrigger>
                 <TabStripClose onClose={() => close(application)} />
               </TabStripTab>
             );

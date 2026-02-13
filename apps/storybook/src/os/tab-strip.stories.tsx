@@ -4,6 +4,7 @@ import {
   TabStripList,
   TabStripRail,
   TabStripTab,
+  TabStripTabTrigger,
   TabStripTitle,
 } from "@acme/ui/os/tab-strip";
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -54,12 +55,10 @@ export const Default: Story = {
           <TabStripRail className="max-w-140">
             <TabStripList>
               {tabs.map((tab) => (
-                <TabStripTab
-                  key={tab.id}
-                  value={tab.id}
-                  isHidden={tab.isHidden}
-                >
-                  <TabStripTitle>{tab.title}</TabStripTitle>
+                <TabStripTab key={tab.id} isHidden={tab.isHidden}>
+                  <TabStripTabTrigger value={tab.id}>
+                    <TabStripTitle>{tab.title}</TabStripTitle>
+                  </TabStripTabTrigger>
                   <TabStripClose onClose={() => handleClose(tab.id)} />
                 </TabStripTab>
               ))}

@@ -43,7 +43,7 @@ export function BSODScreen() {
       </ClientOnly>
 
       <div className="relative z-1 mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 text-left font-mono">
-        <div className="s">
+        <div>
           <Frown className="size-12" />
         </div>
         <div className="text-lg leading-relaxed">

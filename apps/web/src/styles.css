@@ -58,7 +58,7 @@
   }
 }
 
-@keyframes tv-off-overlay {
+@keyframes fade-in {
   0% {
     opacity: 0;
   }
@@ -67,7 +67,7 @@
   }
 }
 
-@keyframes chroma-spin {
+@keyframes spin {
   0% {
     transform: rotate(0deg);
   }
@@ -76,7 +76,7 @@
   }
 }
 
-@keyframes chroma-spin-reverse {
+@keyframes spin-reverse {
   0% {
     transform: rotate(360deg);
   }
@@ -106,7 +106,7 @@
   }
 
   .animate-tv-off-overlay {
-    animation: 210ms tv-off-overlay 420ms ease-out forwards;
+    animation: 210ms fade-in 420ms ease-out forwards;
     animation-fill-mode: both;
     transform-origin: center;
   }
@@ -142,7 +142,7 @@
       transparent 330deg,
       transparent 360deg
     );
-    animation: chroma-spin var(--chroma-speed) linear infinite;
+    animation: spin var(--chroma-speed) linear infinite;
     -webkit-mask: radial-gradient(
       farthest-side,
       transparent calc(100% - 3px),
@@ -155,11 +155,13 @@
     );
     opacity: var(--chroma-opacity);
     filter: brightness(var(--chroma-brightness));
-    transition: opacity 200ms ease, filter 200ms ease;
+    transition:
+      opacity 200ms ease,
+      filter 200ms ease;
   }
 
   .power-button-chroma::after {
-    animation: chroma-spin-reverse 2.2s linear infinite;
+    animation: spin-reverse 2.2s linear infinite;
     opacity: var(--chroma-boost-opacity);
   }
 

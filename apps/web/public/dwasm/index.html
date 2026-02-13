@@ -467,9 +467,8 @@
           if (booted) return;
           booted = true;
 
-          const game = iwad === "freedoom2" ? "freedoom2" : "freedoom1";
-          const wadUrl = `./${game}.wad`;
-          const wadName = `${game}.wad`;
+          const wadUrl = `./${iwad}.wad`;
+          const wadName = `${iwad}.wad`;
 
           setStatus(`Downloading ${wadName}...`);
 

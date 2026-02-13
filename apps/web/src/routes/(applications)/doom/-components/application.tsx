@@ -34,6 +34,6 @@ export const {
     </LauncherContent>
   ),
   metadata: {
-    title: "FREE(DOOM)",
+    title: "DOOM",
   },
 });

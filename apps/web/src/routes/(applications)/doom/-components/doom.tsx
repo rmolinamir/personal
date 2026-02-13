@@ -2,10 +2,10 @@ import { useIsMobile } from "@acme/ui/hooks/use-mobile";
 import { cn } from "@acme/ui/lib/utils";
 import React from "react";
 
-type Game = "freedoom1" | "freedoom2";
+type Game = "doom1" | "freedoom1" | "freedoom2";
 
 export function Doom() {
-  const [game, setGame] = React.useState<Game>("freedoom1");
+  const [game, setGame] = React.useState<Game>("doom1");
   const [nonce, setNonce] = React.useState(() => Date.now());
   const [started, setStarted] = React.useState(false);
   const [iframeReady, setIframeReady] = React.useState(false);
@@ -75,6 +75,12 @@ export function Doom() {
                     className="w-auto max-w-90 object-contain drop-shadow-xl sm:max-w-105"
                   />
                   <div className="flex flex-wrap items-center justify-center gap-2">
+                    <DoomSelectButton
+                      active={game === "doom1"}
+                      onClick={() => selectGame("doom1")}
+                    >
+                      Shareware Doom
+                    </DoomSelectButton>
                     <DoomSelectButton
                       active={game === "freedoom1"}
                       onClick={() => selectGame("freedoom1")}

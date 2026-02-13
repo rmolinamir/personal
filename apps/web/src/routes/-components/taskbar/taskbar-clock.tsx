@@ -40,7 +40,7 @@ function getTimeParts(date: Date, format: ClockFormat) {
 
 type ClockProps = React.ComponentProps<typeof Timer>;
 
-export function Clock({ className, ...props }: ClockProps) {
+export function TaskbarClock({ className, ...props }: ClockProps) {
   const [now, setNow] = React.useState(() => new Date());
   const [format, setFormat] = React.useState<ClockFormat>("12");
 

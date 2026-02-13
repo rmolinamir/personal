@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@acme/ui/components/theme";
 import { ClientOnly } from "@tanstack/react-router";
 import type * as React from "react";
-import { SystemProvider } from "./system-provider";
+import { SystemProvider } from "../system/system-provider";
 
 type RootLayoutProps = {
   children: React.ReactNode;

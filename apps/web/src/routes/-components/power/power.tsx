@@ -1,10 +1,40 @@
 import { Button } from "@acme/ui/components/button";
 import { cn } from "@acme/ui/lib/utils";
+import { useRouter } from "@tanstack/react-router";
 import { Power } from "lucide-react";
+import { createPortal } from "react-dom";
+import { useNotFound } from "@/hooks/use-not-found";
+
+type PowerScreen = React.ComponentProps<"div">;
+
+export function PowerScreen({ className, ...props }: PowerScreen) {
+  return (
+    <>
+      {createPortal(
+        <div
+          className={cn(
+            "flex items-center justify-center",
+            "bg-foreground dark:bg-background",
+            className,
+          )}
+          {...props}
+        />,
+        document.body,
+      )}
+    </>
+  );
+}
 
 type PowerButtonProps = Omit<React.ComponentProps<typeof Button>, "children">;
 
-export function PowerButton({ className, ...props }: PowerButtonProps) {
+export function PowerButton({
+  className,
+  onClick,
+  ...props
+}: PowerButtonProps) {
+  const { isNotFound } = useNotFound();
+  const { navigate } = useRouter();
+
   return (
     <div
       className={cn(
@@ -23,6 +53,11 @@ export function PowerButton({ className, ...props }: PowerButtonProps) {
           "hover:scale-[1.2] active:scale-95",
           className,
         )}
+        onClick={(event) => {
+          onClick?.(event);
+          if (event.defaultPrevented) return;
+          if (isNotFound) navigate({ to: "/" });
+        }}
         {...props}
       >
         <Power className="size-22" />

@@ -37,3 +37,4 @@ touchstart
 keyup
 WASD
 deadzone
+BSOD

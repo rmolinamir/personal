@@ -95,17 +95,17 @@
 }
 
 @layer utilities {
-  .animate-tv-on {
+  .animate-power-on {
     animation: tv-on 620ms ease-out forwards;
     transform-origin: center;
   }
 
-  .animate-tv-off {
+  .animate-power-off {
     animation: tv-off 420ms ease-in forwards;
     transform-origin: center;
   }
 
-  .animate-tv-off-overlay {
+  .animate-screen-blackout {
     animation: 210ms fade-in 420ms ease-out forwards;
     animation-fill-mode: both;
     transform-origin: center;

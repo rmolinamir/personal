@@ -8,20 +8,31 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type * as React from "react";
 import appCss from "../styles.css?url";
-import { ApplicationManagerSidebar } from "./-components/application-manager-sidebar";
-import { Desktop } from "./-components/desktop";
-import { RootProviders } from "./-components/root-providers";
+import { BSODScreen } from "./-components/bsod/bsod";
+import { RootLayout } from "./-components/root/root-layout";
+import { RootProviders } from "./-components/root/root-providers";
+import { ApplicationSidebar } from "./-components/sidebar/application-sidebar";
 
 export const Route = createRootRoute({
-  component: RootLayout,
+  component: RouteComponent,
   head: () => ({
     links: [
       {
         href: appCss,
         rel: "stylesheet",
       },
-      { as: "image", href: "/vibrant-wallpaper-light.webp", rel: "preload" },
-      { as: "image", href: "/vibrant-wallpaper-dark.webp", rel: "preload" },
+      {
+        as: "image",
+        href: "/vibrant-wallpaper-light.webp",
+        media: "(prefers-color-scheme: light)",
+        rel: "prefetch",
+      },
+      {
+        as: "image",
+        href: "/vibrant-wallpaper-dark.webp",
+        media: "(prefers-color-scheme: dark)",
+        rel: "prefetch",
+      },
     ],
     meta: [
       {
@@ -36,15 +47,19 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  notFoundComponent: () => (
-    <div className="flex h-svh w-svh items-center justify-center bg-primary text-primary-foreground">
-      TODO: SCREEN OF DEATH
-    </div>
-  ),
-  shellComponent: RootDocument,
+  notFoundComponent: BSODScreen,
+  shellComponent: RouteShellComponent,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RouteComponent() {
+  return (
+    <RootLayout>
+      <Outlet />
+    </RootLayout>
+  );
+}
+
+function RouteShellComponent({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -52,7 +67,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="bg-background">
-        {children}
+        <RootProviders>
+          {children}
+          <ApplicationSidebar />
+        </RootProviders>
         <TanStackDevtools
           config={{
             position: "bottom-right",
@@ -67,16 +85,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
-}
-
-function RootLayout() {
-  return (
-    <RootProviders>
-      <Desktop>
-        <Outlet />
-      </Desktop>
-      <ApplicationManagerSidebar />
-    </RootProviders>
   );
 }

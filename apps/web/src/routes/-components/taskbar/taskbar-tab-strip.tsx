@@ -15,7 +15,7 @@ type ApplicationTabStripProps = Omit<
   "value" | "onValueChange"
 >;
 
-export function ApplicationTabStrip(props: ApplicationTabStripProps) {
+export function TaskbarTabStrip(props: ApplicationTabStripProps) {
   const { runningApplications, close } = useApplicationManager();
   const { activateWindow, getWindowData, getTopWindow, hideWindow } =
     useWindowManager();

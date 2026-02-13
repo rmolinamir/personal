@@ -1,5 +1,11 @@
 import { Button } from "@acme/ui/components/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@acme/ui/components/dropdown-menu";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -7,8 +13,7 @@ import {
 import { cn } from "@acme/ui/lib/utils";
 import { TaskbarItem } from "@acme/ui/os/taskbar";
 import { useQuitApplications } from "@/hooks/use-quit-applications";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@acme/ui/components/dropdown-menu";
-import { useSystem } from "./system-provider";
+import { useSystem } from "../system/system-provider";
 
 type TaskbarLogoProps = React.ComponentPropsWithoutRef<"svg">;
 

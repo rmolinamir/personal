@@ -20,15 +20,15 @@ import { Link } from "@tanstack/react-router";
 import { XIcon } from "lucide-react";
 import { useQuitApplications } from "@/hooks/use-quit-applications";
 
-type ApplicationManagerSidebarProps = React.ComponentProps<typeof Sidebar>;
+type ApplicationSidebarProps = React.ComponentProps<typeof Sidebar>;
 
-function ApplicationManagerSidebar({
+function ApplicationSidebar({
   side = "right",
   variant = "floating",
   collapsible = "offcanvas",
   className,
   ...props
-}: ApplicationManagerSidebarProps) {
+}: ApplicationSidebarProps) {
   const { runningApplications, close } = useApplicationManager();
   const { activateWindow } = useWindowManager();
   const { quitApplications } = useQuitApplications();
@@ -120,4 +120,4 @@ function ApplicationManagerSidebar({
   );
 }
 
-export { ApplicationManagerSidebar };
+export { ApplicationSidebar };

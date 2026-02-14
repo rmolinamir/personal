@@ -1,6 +1,7 @@
 {
   "name": "@acme/web",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -16,8 +17,8 @@
   "dependencies": {
     "@acme/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
-    "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/query-core": "^5.90.5",
+    "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-query": "^5.90.5",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",

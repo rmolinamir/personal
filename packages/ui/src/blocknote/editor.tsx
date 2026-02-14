@@ -144,5 +144,5 @@ export function useBlockNoteEditor(
       schema: base,
     },
     dependencies,
-  ) as unknown as BlockNoteEditorProps["editor"];
+  ) as unknown as BlockNoteEditorProps["editor"]; // The library types kinda suck, so had to cast...
 }

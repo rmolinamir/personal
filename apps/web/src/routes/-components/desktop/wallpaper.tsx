@@ -1,4 +1,4 @@
-import { LightThemeOnly, DarkThemeOnly } from "@acme/ui/components/theme";
+import { DarkThemeOnly, LightThemeOnly } from "@acme/ui/components/theme";
 import { ClientOnly } from "@tanstack/react-router";
 import type React from "react";
 import {
@@ -33,14 +33,10 @@ export function Wallpaper(props: WallpaperProps) {
             <Liquify intensity={0.8} decay={2.5} radius={1.5} edges="mirror">
               <FlowField strength={0.4} detail={1.2} speed={0.1} edges="mirror">
                 <LightThemeOnly>
-                  <ImageTexture
-                    url={LIGHT_WALLPAPER}
-                  />
+                  <ImageTexture url={LIGHT_WALLPAPER} />
                 </LightThemeOnly>
                 <DarkThemeOnly>
-                  <ImageTexture
-                    url={DARK_WALLPAPER}
-                  />
+                  <ImageTexture url={DARK_WALLPAPER} />
                 </DarkThemeOnly>
               </FlowField>
             </Liquify>

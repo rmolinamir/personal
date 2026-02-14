@@ -37,7 +37,7 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
     >
       <DesktopWallpaper className="absolute h-full w-full" />
 
-      <Taskbar className="z-10000 shrink-0">
+      <Taskbar className="z-taskbar shrink-0">
         <TaskbarSection className="h-full" align="start">
           <TaskbarStart />
           <TaskbarGitHub />
@@ -82,8 +82,8 @@ function DesktopWallpaper({ className, ...props }: DesktopWallpaperProps) {
   return (
     <>
       {/* Wallpaper Backdrop (e.g., fallback while it loads) */}
-      <div className={cn("-z-2 bg-secondary", className)} />
-      <Wallpaper className={cn("-z-1", className)} {...props} />
+      <div className={cn("z-backdrop bg-secondary", className)} />
+      <Wallpaper className={cn("z-wallpaper", className)} {...props} />
     </>
   );
 }

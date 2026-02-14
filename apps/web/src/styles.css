@@ -1,5 +1,21 @@
 @import "@acme/ui/styles.css";
 
+:root {
+  --z-backdrop: -2;
+  --z-wallpaper: -1;
+  --z-formatting: 100;
+  --z-taskbar: 10000;
+  --z-power: 10100;
+}
+
+@theme inline {
+  --z-index-backdrop: calc(var(--z-backdrop));
+  --z-index-wallpaper: calc(var(--z-wallpaper));
+  --z-index-formatting: calc(var(--z-formatting));
+  --z-index-taskbar: calc(var(--z-taskbar));
+  --z-index-power: calc(var(--z-power));
+}
+
 @keyframes tv-on {
   0% {
     opacity: 0;
@@ -95,6 +111,11 @@
 }
 
 @layer utilities {
+  .animate-doom-reveal {
+    animation: doom-reveal 2s steps(30, end) 1s 1 normal both;
+    clip-path: inset(0 100% 0 0);
+  }
+
   .animate-power-on {
     animation: tv-on 620ms ease-out forwards;
     transform-origin: center;
@@ -129,6 +150,7 @@
     content: "";
     position: absolute;
     inset: 0;
+    pointer-events: none;
     border-radius: 999px;
     background: conic-gradient(
       transparent 0deg,
@@ -163,10 +185,5 @@
   .power-button-chroma::after {
     animation: spin-reverse 2.2s linear infinite;
     opacity: var(--chroma-boost-opacity);
-  }
-
-  .animate-doom-reveal {
-    animation: doom-reveal 2s steps(30, end) 1s 1 normal both;
-    clip-path: inset(0 100% 0 0);
   }
 }

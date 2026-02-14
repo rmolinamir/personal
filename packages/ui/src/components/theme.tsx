@@ -16,25 +16,25 @@ import {
 } from "./dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
-type Theme = "dark" | "light" | "system";
+type SystemTheme = "dark" | "light" | "system";
 
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
+type ThemeContextValue = {
+  theme: SystemTheme;
+  setTheme: (theme: SystemTheme) => void;
 };
 
-type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-};
-
-const initialState: ThemeProviderState = {
+const initialState: ThemeContextValue = {
   setTheme: () => null,
   theme: "system",
 };
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+const ThemeContext = createContext<ThemeContextValue>(initialState);
+
+type ThemeProviderProps = {
+  children: React.ReactNode;
+  defaultTheme?: SystemTheme;
+  storageKey?: string;
+};
 
 export function ThemeProvider({
   children,
@@ -42,8 +42,8 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
+  const [theme, setTheme] = useState<SystemTheme>(
+    () => (localStorage.getItem(storageKey) as SystemTheme) || defaultTheme,
   );
 
   const switchTheme = React.useCallback(() => {
@@ -69,33 +69,39 @@ export function ThemeProvider({
     document.startViewTransition(switchTheme);
   }, [switchTheme]);
 
+  const value = {
+    setTheme: (theme: SystemTheme) => {
+      localStorage.setItem(storageKey, theme);
+      setTheme(theme);
+    },
+    theme,
+  } satisfies ThemeContextValue;
+
+  return (
+    <ThemeContext.Provider {...props} value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined)
+    throw new Error("useTheme must be used within a ThemeProvider");
+
   const value = useMemo(() => {
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
       .matches
       ? "dark"
       : "light";
     return {
-      setTheme: (theme: Theme) => {
-        localStorage.setItem(storageKey, theme);
-        setTheme(theme);
-      },
-      theme: theme === "system" ? systemTheme : theme,
+      ...context,
+      theme: context.theme === "system" ? systemTheme : context.theme,
     };
-  }, [theme, storageKey]);
+  }, [context]);
 
-  return (
-    <ThemeProviderContext.Provider {...props} value={value}>
-      {children}
-    </ThemeProviderContext.Provider>
-  );
+  return value;
 }
-
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider");
-  return context;
-};
 
 type ThemeToggleProps = Omit<React.ComponentProps<typeof Button>, "children">;
 

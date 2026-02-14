@@ -2,26 +2,20 @@ import { Button } from "@acme/ui/components/button";
 import { cn } from "@acme/ui/lib/utils";
 import { useRouter } from "@tanstack/react-router";
 import { Power } from "lucide-react";
-import { createPortal } from "react-dom";
 import { useNotFound } from "@/hooks/use-not-found";
 
 type PowerScreen = React.ComponentProps<"div">;
 
 export function PowerScreen({ className, ...props }: PowerScreen) {
   return (
-    <>
-      {createPortal(
-        <div
-          className={cn(
-            "flex items-center justify-center",
-            "bg-foreground dark:bg-background",
-            className,
-          )}
-          {...props}
-        />,
-        document.body,
+    <div
+      className={cn(
+        "flex items-center justify-center",
+        "bg-foreground dark:bg-background",
+        className,
       )}
-    </>
+      {...props}
+    />
   );
 }
 
@@ -49,7 +43,7 @@ export function PowerButton({
         variant="ghost"
         size="icon"
         className={cn(
-          "relative z-1 size-22 p-16 text-chart-5 transition-transform duration-150",
+          "relative size-22 p-16 text-chart-5 transition-transform duration-150",
           "hover:scale-[1.2] active:scale-95",
           className,
         )}

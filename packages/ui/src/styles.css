@@ -8,74 +8,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
-  @apply m-0;
-  letter-spacing: var(--tracking-normal);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-.tabstrip-rail {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.tabstrip-rail::-webkit-scrollbar {
-  display: none;
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* Applies some additional necessary border styles within the editor. */
-@layer base {
-  .bn-shadcn * {
-    @apply border-border outline-ring/50;
-  }
-}
-
-::view-transition-group(root) {
-  animation-timing-function: var(--expo-out);
-}
-
-::view-transition-new(root) {
-  clip-path: circle(0 at 100% 100%);
-  animation: reveal 1s;
-  animation-fill-mode: both;
-}
-
-::view-transition-old(root),
-.dark::view-transition-old(root) {
-  animation: none;
-  animation-fill-mode: both;
-  z-index: -1;
-}
-
-.dark::view-transition-new(root) {
-  animation: reveal 1s;
-  animation-fill-mode: both;
-}
-
-@keyframes reveal {
-  to {
-    clip-path: circle(200vmax at 100% 100%);
-  }
-}
-
 :root {
   --background: oklch(0.997 0 0);
   --foreground: oklch(0 0 0);
@@ -134,6 +66,8 @@ code {
   --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 0% / 250);
   --tracking-normal: -0.02em;
   --spacing: 0.25rem;
+  --z-popover: 50;
+  --z-overlay: 50;
 }
 
 .dark {
@@ -252,4 +186,75 @@ code {
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+
+  --z-index-popover: calc(var(--z-popover));
+  --z-index-overlay: calc(var(--z-overlay));
+}
+
+body {
+  @apply m-0;
+  letter-spacing: var(--tracking-normal);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.tabstrip-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabstrip-rail::-webkit-scrollbar {
+  display: none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Applies some additional necessary border styles within the editor. */
+@layer base {
+  .bn-shadcn * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+::view-transition-group(root) {
+  animation-timing-function: var(--expo-out);
+}
+
+::view-transition-new(root) {
+  clip-path: circle(0 at 100% 100%);
+  animation: reveal 1s;
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root),
+.dark::view-transition-old(root) {
+  animation: none;
+  animation-fill-mode: both;
+  z-index: -1;
+}
+
+.dark::view-transition-new(root) {
+  animation: reveal 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes reveal {
+  to {
+    clip-path: circle(200vmax at 100% 100%);
+  }
 }

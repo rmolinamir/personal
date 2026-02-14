@@ -17,21 +17,19 @@ export function RootLayout({
   const isOn = power === "on";
 
   return (
-    <div
-      className={cn(
-        {
+    <div className={cn("relative", className)} {...props}>
+      <div
+        className={cn({
           "animate-power-off": isOff,
           "animate-power-on": isOn,
-        },
-        className,
-      )}
-      {...props}
-    >
-      {isNotFound ? children : <Desktop>{children}</Desktop>}
+        })}
+      >
+        {isNotFound ? children : <Desktop>{children}</Desktop>}
+      </div>
       {isOff && (
         <PowerScreen
           className={cn(
-            "absolute inset-0 z-20000",
+            "absolute inset-0 top-0 left-0 z-power h-full w-full",
             "animate-screen-blackout opacity-0",
           )}
         >

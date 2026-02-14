@@ -562,12 +562,12 @@
           );
           const joystickStates = new Map();
           const keyInfoMap = {
-            KeyW: { code: "KeyW", key: "w", keyCode: 87 },
             KeyA: { code: "KeyA", key: "a", keyCode: 65 },
-            KeyS: { code: "KeyS", key: "s", keyCode: 83 },
             KeyD: { code: "KeyD", key: "d", keyCode: 68 },
             KeyO: { code: "KeyO", key: "o", keyCode: 79 },
             KeyP: { code: "KeyP", key: "p", keyCode: 80 },
+            KeyS: { code: "KeyS", key: "s", keyCode: 83 },
+            KeyW: { code: "KeyW", key: "w", keyCode: 87 },
           };
 
           function normalizeKey(key) {
@@ -797,12 +797,12 @@
 
           joystickElements.forEach((joystick) => {
             joystickStates.set(joystick, {
-              el: joystick,
-              type: joystick.dataset.joystick,
               activeKeys: new Set(),
-              pointerId: null,
               center: null,
+              el: joystick,
+              pointerId: null,
               radius: 0,
+              type: joystick.dataset.joystick,
             });
 
             joystick.addEventListener("pointerdown", handleJoystickDown);

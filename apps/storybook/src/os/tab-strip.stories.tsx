@@ -55,7 +55,7 @@ export const Default: Story = {
           <TabStripRail className="max-w-140">
             <TabStripList>
               {tabs.map((tab) => (
-                <TabStripTab key={tab.id} isHidden={tab.isHidden}>
+                <TabStripTab key={tab.id}>
                   <TabStripTabTrigger value={tab.id}>
                     <TabStripTitle>{tab.title}</TabStripTitle>
                   </TabStripTabTrigger>

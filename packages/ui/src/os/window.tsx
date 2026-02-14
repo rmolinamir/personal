@@ -264,6 +264,11 @@ function Window({
     activateWindow();
   }, [activateWindow]);
 
+  const handleFocusCapture = React.useCallback(() => {
+    if (isActive) return;
+    activateWindow();
+  }, [activateWindow, isActive]);
+
   const mountWindow = React.useEffectEvent((nextId: string) => {
     manager.mountWindow(nextId);
   });
@@ -406,6 +411,7 @@ function Window({
           data-focused={isActive ? "true" : "false"}
           data-hidden={isHidden ? "true" : "false"}
           data-fullscreen={isFullscreen ? "true" : "false"}
+          onFocusCapture={handleFocusCapture}
           className={cn(
             "shadow- flex h-full w-full flex-col gap-0 rounded-none border-border/80 bg-transparent p-0",
             "transition-shadow data-[focused=true]:shadow-xl",

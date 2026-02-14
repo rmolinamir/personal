@@ -16,11 +16,13 @@ import {
 } from "./dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
-type SystemTheme = "dark" | "light" | "system";
+type DocumentTheme = "dark" | "light";
+
+type Theme = DocumentTheme | "system";
 
 type ThemeContextValue = {
-  theme: SystemTheme;
-  setTheme: (theme: SystemTheme) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 };
 
 const initialState: ThemeContextValue = {
@@ -32,47 +34,43 @@ const ThemeContext = createContext<ThemeContextValue>(initialState);
 
 type ThemeProviderProps = {
   children: React.ReactNode;
-  defaultTheme?: SystemTheme;
+  defaultTheme?: Theme;
   storageKey?: string;
 };
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme,
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<SystemTheme>(
-    () => (localStorage.getItem(storageKey) as SystemTheme) || defaultTheme,
+  const [theme, setTheme] = useState<Theme>(
+    () =>
+      (localStorage.getItem(storageKey) as Theme) ||
+      defaultTheme ||
+      getSystemTheme(),
   );
 
-  const switchTheme = React.useCallback(() => {
-    const root = window.document.documentElement;
-
-    root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
-    }
-
-    root.classList.add(theme);
-  }, [theme]);
+  const initializeTheme = React.useEffectEvent(() => {
+    updateDocumentTheme(toDocumentTheme(theme));
+  });
 
   useEffect(() => {
-    if (!document.startViewTransition) switchTheme();
-    document.startViewTransition(switchTheme);
-  }, [switchTheme]);
+    initializeTheme();
+  }, []);
 
   const value = {
-    setTheme: (theme: SystemTheme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      if (newTheme === theme) return;
+
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
+
+      const previousDocumentTheme = toDocumentTheme(theme);
+      const newDocumentTheme = toDocumentTheme(newTheme);
+
+      if (previousDocumentTheme !== newDocumentTheme)
+        safeViewTransition(() => updateDocumentTheme(newDocumentTheme));
     },
     theme,
   } satisfies ThemeContextValue;
@@ -157,4 +155,25 @@ export function DarkThemeOnly({
   if (theme !== "dark") return null;
 
   return <div className={cn("hidden", className)} {...props} />;
+}
+
+function getSystemTheme() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function safeViewTransition(callback: ViewTransitionUpdateCallback) {
+  if (!document.startViewTransition) return callback();
+  return document.startViewTransition(callback);
+}
+
+function toDocumentTheme(theme: Theme) {
+  return theme === "system" ? getSystemTheme() : theme;
+}
+
+function updateDocumentTheme(theme: DocumentTheme) {
+  const root = window.document.documentElement;
+  root.classList.remove("light", "dark");
+  root.classList.add(theme);
 }

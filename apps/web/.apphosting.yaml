@@ -1,0 +1,5 @@
+env:
+  - variable: NITRO_PRESET
+    value: firebase_app_hosting
+    availability:
+      - BUILD

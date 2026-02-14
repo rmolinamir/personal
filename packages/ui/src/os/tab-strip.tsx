@@ -11,13 +11,22 @@ function TabStrip({ className, ...props }: React.ComponentProps<typeof Tabs>) {
   return <Tabs className={cn("w-full", className)} {...props} />;
 }
 
-function TabStripRail({ className, ...props }: React.ComponentProps<"div">) {
+function TabStripRail({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="tabstrip-rail"
-      className={cn("tabstrip-rail overflow-x-auto px-1", className)}
+      className={cn(
+        "tabstrip-rail w-full min-w-0 max-w-full overflow-x-auto overflow-y-hidden px-1",
+        className,
+      )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 
@@ -33,90 +42,45 @@ function TabStripList({
         "min-w-max gap-1 rounded-md border border-border/40 px-1 py-1",
         className,
       )}
+      tabIndex={-1}
       {...props}
     />
   );
 }
 
-type TabStripTabContextValue = {
-  isHidden: boolean;
-};
+type TabStripTabProps = React.ComponentProps<"div">;
 
-const TabStripTabContext = React.createContext<TabStripTabContextValue | null>(
-  null,
-);
-
-type TabStripTabProps = React.ComponentProps<"div"> & {
-  isHidden?: boolean;
-};
-
-function TabStripTab({ className, isHidden, ...props }: TabStripTabProps) {
-  const value = React.useMemo(
-    () => ({ isHidden: Boolean(isHidden) }),
-    [isHidden],
-  );
-
+function TabStripTab({ className, ...props }: TabStripTabProps) {
   return (
-    <TabStripTabContext.Provider value={value}>
-      <div
-        data-slot="tabstrip-tab"
-        data-hidden={isHidden ? "true" : "false"}
-        className={cn("group/tab relative", className)}
-        {...props}
-      />
-    </TabStripTabContext.Provider>
+    <div
+      data-slot="tabstrip-tab"
+      className={cn("group/tab relative", className)}
+      {...props}
+    />
   );
 }
 
-function useTabStripTabContext() {
-  const context = React.useContext(TabStripTabContext);
-  if (!context)
-    throw new Error("TabStripTab components must be used within TabStripTab");
-  return context;
-}
-
-type TabStripTabTriggerProps = React.ComponentProps<typeof TabsTrigger> & {
-  scrollIntoViewOnSelect?: boolean;
-};
+type TabStripTabTriggerProps = React.ComponentProps<typeof TabsTrigger>;
 
 function TabStripTabTrigger({
   className,
-  scrollIntoViewOnSelect = true,
-  onClick,
+  value,
   ...props
 }: TabStripTabTriggerProps) {
-  const { isHidden } = useTabStripTabContext();
   const tabRef = React.useRef<HTMLButtonElement | null>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onClick?.(event);
-    if (event.defaultPrevented || !scrollIntoViewOnSelect) return;
-    const target = tabRef.current;
-    if (!target) return;
-    window.requestAnimationFrame(() => {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "nearest",
-      });
-    });
-  };
 
   return (
     <TabsTrigger
       ref={tabRef}
       data-slot="tabstrip-tab-trigger"
-      aria-hidden={isHidden ? "true" : undefined}
-      disabled={isHidden}
       className={cn(
         "h-7 max-w-48 justify-start rounded-md border border-transparent px-2 pr-6 text-foreground/70",
         "hover:bg-muted/60 hover:text-foreground",
-        "data-[state=active]:bg-background/90 data-[state=active]:text-foreground",
-        "data-[state=active]:border-border/60",
-        "group-data-[hidden=true]/tab:border-dashed group-data-[hidden=true]/tab:opacity-60",
+        "data-[state=active]:border-border/60 data-[state=active]:bg-background/90 data-[state=active]:text-foreground",
         className,
       )}
-      onClick={handleClick}
+      value={value}
+      tabIndex={0}
       {...props}
     />
   );

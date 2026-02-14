@@ -17,7 +17,7 @@
   --popover-foreground: oklch(0 0 0);
   --primary: oklch(0.6543 0.2341 34.1962);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.8442 0.1457 209.2851);
+  --secondary: oklch(0.66442 0.1457 209.2851);
   --secondary-foreground: oklch(0 0 0);
   --muted: oklch(0.9551 0 0);
   --muted-foreground: oklch(0.5103 0 0);
@@ -30,9 +30,9 @@
   --ring: oklch(0.6543 0.2341 34.1962);
   --chart-1: oklch(0.6543 0.2341 34.1962);
   --chart-2: oklch(0.5602 0.2634 290.3195);
-  --chart-3: oklch(0.8442 0.1457 209.2851);
-  --chart-4: oklch(0.8868 0.1822 95.3305);
-  --chart-5: oklch(0.8758 0.2303 152.0212);
+  --chart-3: oklch(0.66442 0.1457 209.2851);
+  --chart-4: oklch(0.66868 0.1822 95.3305);
+  --chart-5: oklch(0.66758 0.2303 152.0212);
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0 0 0);
   --sidebar-primary: oklch(0.6543 0.2341 34.1962);
@@ -79,7 +79,7 @@
   --popover-foreground: oklch(1 0 0);
   --primary: oklch(0.6543 0.2341 34.1962);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.8442 0.1457 209.2851);
+  --secondary: oklch(0.66442 0.1457 209.2851);
   --secondary-foreground: oklch(0 0 0);
   --muted: oklch(0.2178 0 0);
   --muted-foreground: oklch(0.709 0 0);
@@ -92,9 +92,9 @@
   --ring: oklch(0.6543 0.2341 34.1962);
   --chart-1: oklch(0.6543 0.2341 34.1962);
   --chart-2: oklch(0.5602 0.2634 290.3195);
-  --chart-3: oklch(0.8442 0.1457 209.2851);
-  --chart-4: oklch(0.8868 0.1822 95.3305);
-  --chart-5: oklch(0.8758 0.2303 152.0212);
+  --chart-3: oklch(0.66442 0.1457 209.2851);
+  --chart-4: oklch(0.66868 0.1822 95.3305);
+  --chart-5: oklch(0.66758 0.2303 152.0212);
   --sidebar: oklch(0.1448 0 0);
   --sidebar-foreground: oklch(1 0 0);
   --sidebar-primary: oklch(0.6543 0.2341 34.1962);
@@ -231,13 +231,14 @@ code {
   }
 }
 
+/* Theme toggle animations. */
 ::view-transition-group(root) {
   animation-timing-function: var(--expo-out);
 }
 
 ::view-transition-new(root) {
   clip-path: circle(0 at 100% 100%);
-  animation: reveal 1s;
+  animation: reveal 0.66s;
   animation-fill-mode: both;
 }
 
@@ -249,7 +250,7 @@ code {
 }
 
 .dark::view-transition-new(root) {
-  animation: reveal 1s;
+  animation: reveal 0.66s;
   animation-fill-mode: both;
 }
 

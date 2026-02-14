@@ -1,3 +1,7 @@
+scripts:
+  buildCommand: pnpm build
+  runCommand: node .output/server/index.mjs
+
 env:
   - variable: NITRO_PRESET
     value: firebase_app_hosting

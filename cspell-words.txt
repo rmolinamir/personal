@@ -38,3 +38,5 @@ keyup
 WASD
 deadzone
 BSOD
+Turborepo
+agentic

@@ -1,9 +1,0 @@
-scripts:
-  buildCommand: pnpm --filter @acme/web build
-  runCommand: node apps/web/.output/server/index.mjs
-
-env:
-  - variable: NITRO_PRESET
-    value: firebase_app_hosting
-    availability:
-      - BUILD

@@ -1,11 +1,11 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalEnv": [],
-  "globalPassThroughEnv": [],
+  "globalEnv": ["NITRO_PRESET"],
+  "globalPassThroughEnv": ["NITRO_PRESET"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".cache/tsbuildinfo.json", "dist/**"]
+      "outputs": [".cache/tsbuildinfo.json", "dist/**", ".output/**"]
     },
     "check": {
       "dependsOn": ["^topo", "^build"],

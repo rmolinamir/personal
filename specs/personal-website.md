@@ -9,16 +9,17 @@ This spec is the source of truth for UX, content apps, theming, and interactions
 - About app as the primary content hub.
 - Additional apps for content + utilities.
 - Theming, animations, and easter eggs.
+- MVP scope is complete; remaining work is tracked in `specs/roadmap.md`.
 
 ## Desktop Shell
 - Launcher grid for app launchers (desktop icons).
 - Window layer with snap, focus, hide, and cascade placement.
-- Taskbar with running apps + system tray + profile menu.
+- Taskbar with running apps + system tray.
 
 ## Taskbar Items
-- Start/launcher button (left).
+- Start/launcher button (left) with power action in Start menu.
 - Running apps with active state + hidden badge.
-- System tray: theme toggle, power button, profile menu.
+- System tray: theme toggle.
 - Clock/date (right).
 
 ## About App (Primary Content Hub)
@@ -30,48 +31,50 @@ Sections (single window with scroll or tabs):
 - Open Source: repo list + contributions.
 - Education: summary + logos.
 - Contact: mailto + social links.
+- Status: content is partial; missing sections are tracked in `specs/roadmap.md`.
 
-## Additional Apps (MVP)
-- Projects: featured projects (standalone view).
-- Experience: focused timeline.
-- Skills: matrix/table.
-- Open Source: list of repos/contributions.
-- Settings: theme toggle + wallpaper + dock/taskbar options.
-- Terminal: command-driven navigation + easter egg hooks.
+## MVP (Complete)
+- Original MVP scope is complete. (complete)
+- Desktop shell, taskbar, windowing, and wallpaper. (complete)
+- Start menu with power button. (complete)
+- BSOD 404 screen. (complete)
+- Power shutdown flow. (complete)
+- App shells: About, Doom, Resume. (complete)
 
-## Additional Apps (Later)
-- Resume: PDF viewer + download CTA.
-- Gallery: wallpaper/pixel art gallery.
-- Notes: TL;DR + now/next/learning.
-- Changelog: updates + latest work.
-- Contact: richer profile card + links.
-
-## Profile Menu (Taskbar)
-- Resume (view/download).
-- LinkedIn, GitHub, email, calendar.
-- Theme toggle.
-- Power button (shutdown easter egg).
+## Missing Apps (Roadmap)
+Missing apps are tracked in `specs/roadmap.md` (priority order, not strictly later).
+- Blog.
+- Settings (display options, wallpaper, taskbar/dock options).
+- Projects.
+- Experience.
+- Skills.
+- Open Source.
+- Terminal.
+- Gallery.
+- Notes.
+- Changelog.
+- Contact.
 
 ## Background
-- Pixelated art wallpaper with subtle animation (parallax or shimmer).
+- Animated wallpaper with subtle motion.
 - Light/dark variants with matching palette.
 
 ## Theming
 - Replace hardcoded colors with theme tokens from `packages/ui/src/styles.css`.
   Use `bg-background`, `text-foreground`, `bg-muted`, `text-muted-foreground`,
   `border-border`, `text-primary`, `bg-accent`, `ring-ring`, etc.
-- Add a theme toggle in taskbar/profile menu.
+- Add a theme toggle in the taskbar system tray.
 - Respect `prefers-color-scheme` and persist selection.
 
 ## Animations
 - Window open/close: scale + fade + slight translate.
 - Focus: shadow/outline bump.
 - Launcher hover/active: lift + glow.
-- Background: slow drift + pixel shimmer.
+- Background: slow drift.
 
 ## Not Found + Easter Eggs
-- 404: “Lost & Found” window with Return to Desktop.
-- Power button: iris-close animation to black; cancel on mouse move after 1s.
+- 404: BSOD screen. (complete)
+- Power button: shutdown easter egg. (complete)
 - Terminal commands: hidden apps or playful responses.
 
 ## Implementation Notes

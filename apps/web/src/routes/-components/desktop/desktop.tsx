@@ -30,12 +30,30 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
   return (
     <main
       className={cn(
-        "relative flex h-dvh w-dvw flex-col-reverse overflow-hidden",
+        "relative flex h-dvh w-dvw flex-col overflow-hidden",
         className,
       )}
       {...props}
     >
       <DesktopWallpaper className="absolute h-full w-full" />
+
+      <WindowBoundary className="pointer-events-none min-h-0 w-full flex-1 **:pointer-events-auto">
+        <WindowSnap>
+          <AboutApplication.Component />
+          <ResumeApplication.Component />
+          <DoomApplication.Component />
+        </WindowSnap>
+      </WindowBoundary>
+
+      {/* Nested Routes are rendered here. For now, these will only be programmatic launchers, no HTML will be rendered. */}
+      {children}
+
+      <DesktopGrid className="absolute bottom-9 h-[calc(100dvh-2.25rem)] min-h-0 flex-1 p-2">
+        <AboutLauncher />
+        <ResumeLauncher />
+        <DoomLauncher />
+        <BSODLauncher />
+      </DesktopGrid>
 
       <Taskbar className="z-taskbar shrink-0">
         <TaskbarSection className="h-full" align="start">
@@ -54,24 +72,6 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
           <TaskbarClock className="hidden px-2 py-1 text-xs md:flex" />
         </TaskbarSection>
       </Taskbar>
-
-      <DesktopGrid className="absolute bottom-9 h-[calc(100dvh-2.25rem)] min-h-0 flex-1 p-2">
-        <AboutLauncher />
-        <ResumeLauncher />
-        <DoomLauncher />
-        <BSODLauncher />
-      </DesktopGrid>
-
-      <WindowBoundary className="pointer-events-none min-h-0 w-full flex-1 **:pointer-events-auto">
-        <WindowSnap>
-          <AboutApplication.Component />
-          <ResumeApplication.Component />
-          <DoomApplication.Component />
-        </WindowSnap>
-      </WindowBoundary>
-
-      {/* Nested Routes are rendered here, but these will only be Application launchers, no HTML will ever be rendered. */}
-      {children}
     </main>
   );
 }

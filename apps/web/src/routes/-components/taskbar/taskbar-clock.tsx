@@ -59,7 +59,7 @@ export function TaskbarClock({ className, ...props }: ClockProps) {
       <DropdownMenu>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" asChild>
+            <Button className="p-0" variant="ghost">
               <Timer className={cn("select-none", className)} {...props}>
                 <TimerGroup>
                   <TimerSegment className="text-inherit">{hours}</TimerSegment>

@@ -47,7 +47,7 @@ function WindowHeader({
       className={cn(
         "os-window__rnd-handler",
         "flex select-none flex-row items-center justify-between gap-3",
-        "border-border/80 border-b bg-accent/85 px-3 py-2! text-accent-foreground backdrop-blur-xs",
+        "border-border/80 border-b bg-accent/90 px-3 py-2! text-accent-foreground backdrop-blur-xs",
         "auto-rows-auto grid-rows-none items-center",
         className,
       )}

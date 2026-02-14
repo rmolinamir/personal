@@ -15,7 +15,7 @@ export function About() {
     initialContent: [
       {
         content: "About",
-        props: { level: 2 },
+        props: { level: 1 },
         type: "heading",
       },
       {

@@ -49,9 +49,7 @@ export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
           <DropdownMenuItem onClick={quitApplications}>
             Quit all applications
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={shutdown}>
-            Turn off computer
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={shutdown}>Shut down</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <TooltipContent>Start menu</TooltipContent>

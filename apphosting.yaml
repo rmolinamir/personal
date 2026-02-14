@@ -7,3 +7,11 @@ env:
     value: firebase_app_hosting
     availability:
       - BUILD
+  - variable: NPM_CONFIG_USERCONFIG
+    value: /workspace/.npmrc
+    availability:
+      - BUILD
+  - variable: PNPM_CONFIG_AUTO_INSTALL_PEERS
+    value: "false"
+    availability:
+      - BUILD

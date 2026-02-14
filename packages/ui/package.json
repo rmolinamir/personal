@@ -1,6 +1,7 @@
 {
   "name": "@acme/ui",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",

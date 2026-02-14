@@ -7,7 +7,3 @@ env:
     value: firebase_app_hosting
     availability:
       - BUILD
-  - variable: NPM_CONFIG_IGNORE_SCRIPTS
-    value: "true"
-    availability:
-      - BUILD

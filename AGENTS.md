@@ -59,8 +59,5 @@ Specs
 - Roadmap: `specs/roadmap.md`.
 - Update specs when behavior changes.
 
-Cursor/Copilot rules
-- No `.cursor/rules`, `.cursorrules`, or `.github/copilot-instructions.md` found.
-
 Notes
 - Keep deployment notes high-level and refer to `apphosting.yaml` for config.

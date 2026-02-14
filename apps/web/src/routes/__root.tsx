@@ -8,10 +8,10 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type * as React from "react";
 import appCss from "../styles.css?url";
+import { ApplicationSidebar } from "./-components/applications/application-sidebar";
 import { BSODScreen } from "./-components/bsod/bsod";
 import { RootLayout } from "./-components/root/root-layout";
 import { RootProviders } from "./-components/root/root-providers";
-import { ApplicationSidebar } from "./-components/sidebar/application-sidebar";
 
 export const Route = createRootRoute({
   component: RouteComponent,

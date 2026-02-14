@@ -288,7 +288,7 @@ function SidebarTrigger({
           {...props}
         >
           <PanelRightIcon />
-          <span className="sr-only">Toggle Sidebar</span>
+          <span className="sr-only bg-background">Toggle Sidebar</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent>Toggle sidebar</TooltipContent>

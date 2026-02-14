@@ -18,7 +18,7 @@ type WallpaperProps = React.ComponentProps<typeof Shader>;
 export function Wallpaper(props: WallpaperProps) {
   return (
     <ClientOnly>
-      <Shader {...props}>
+      <Shader aria-hidden="true" {...props}>
         <CRTScreen
           pixelSize={140}
           colorShift={1.2}

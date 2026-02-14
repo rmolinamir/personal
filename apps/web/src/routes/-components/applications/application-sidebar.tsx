@@ -83,7 +83,10 @@ function ApplicationSidebar({
                 <SidebarMenu>
                   {runningApplications.map((application) => {
                     return (
-                      <SidebarMenuItem key={application.id}>
+                      <SidebarMenuItem
+                        className="relative"
+                        key={application.id}
+                      >
                         <SidebarMenuButton
                           onClick={() => {
                             activateWindow(application.id);

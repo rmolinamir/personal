@@ -17,7 +17,7 @@ export function BSODScreen() {
   return (
     <div className="relative flex h-svh w-svw items-center justify-center overflow-hidden bg-[#0b2ea3] text-[#e6f0ff]">
       <ClientOnly>
-        <Shader className="absolute inset-0">
+        <Shader aria-hidden="true" className="absolute inset-0">
           <CRTScreen
             pixelSize={140}
             colorShift={1.2}
@@ -49,19 +49,21 @@ export function BSODScreen() {
         <div className="text-lg leading-relaxed">
           Your PC ran into a problem and needs to restart.
         </div>
-        <div className="font-medium text-[#cfe3ff] [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
-          ERROR: AI_SLOP_DEPLOYED_TO_PROD
+        <div className="font-medium text-[#f1f6ff] [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
+          <code>ERROR: AI_SLOP_DEPLOYED_TO_PROD</code>
         </div>
-        <div className="text-[#cfe3ff] text-sm [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
-          If you call a support person, give them this info: stop code
-          HALLUCINATED_ROUTE
+        <div className="text-[#f1f6ff] text-sm [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
+          <p>If you call a support person, give them this info:</p>
+          <p>
+            <code>STOP_CODE: HALLUCINATED_ROUTE</code>
+          </p>
         </div>
         <Button
           onClick={shutdown}
           variant="ghost"
-          className="w-fit border border-[#f1f6ff]! font-medium text-[#f1f6ff] text-lg underline underline-offset-4 opacity-90 transition hover:bg-[#f1f6ff] hover:text-[#0b2ea3]"
+          className="w-fit border border-[#f1f6ff]! font-medium text-[#f1f6ff]! text-lg underline underline-offset-4 opacity-90 transition hover:bg-[#f1f6ff]! hover:text-[#0b2ea3]!"
         >
-          Restart PC
+          SHUT DOWN
         </Button>
       </div>
     </div>

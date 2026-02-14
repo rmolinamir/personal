@@ -17,7 +17,9 @@
       "!**/.turbo",
       "!**/dist",
       "!**/node_modules",
-      "!**/storybook-static"
+      "!**/storybook-static",
+      "!**/public/dwasm/index.js",
+      "!**/*.gen.ts"
     ]
   },
   "formatter": {

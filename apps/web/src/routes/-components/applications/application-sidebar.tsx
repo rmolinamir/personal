@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  SidebarTrigger,
   useSidebar,
 } from "@acme/ui/components/sidebar";
 import { cn } from "@acme/ui/lib/utils";
@@ -78,7 +79,7 @@ function ApplicationSidebar({
         <SidebarGroup>
           {runningApplications.length ? (
             <>
-              <SidebarGroupLabel>Running apps</SidebarGroupLabel>
+              <SidebarGroupLabel>Running Applications</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {runningApplications.map((application) => {
@@ -123,4 +124,15 @@ function ApplicationSidebar({
   );
 }
 
-export { ApplicationSidebar };
+type ApplicationSidebarTriggerProps = Omit<
+  React.ComponentProps<typeof SidebarTrigger>,
+  "label"
+>;
+
+function ApplicationSidebarTrigger(props: ApplicationSidebarTriggerProps) {
+  return (
+    <SidebarTrigger variant="ghost" label="Manage applications" {...props} />
+  );
+}
+
+export { ApplicationSidebar, ApplicationSidebarTrigger };

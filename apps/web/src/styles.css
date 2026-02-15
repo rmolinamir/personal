@@ -6,6 +6,7 @@
   --z-formatting: 100;
   --z-taskbar: 10000;
   --z-power: 10100;
+  --z-progress: 10200;
 }
 
 @theme inline {
@@ -14,6 +15,7 @@
   --z-index-formatting: calc(var(--z-formatting));
   --z-index-taskbar: calc(var(--z-taskbar));
   --z-index-power: calc(var(--z-power));
+  --z-index-progress: calc(var(--z-progress));
 }
 
 @keyframes tv-on {

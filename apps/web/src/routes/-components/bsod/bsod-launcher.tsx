@@ -7,11 +7,13 @@ import {
 import { Link } from "@tanstack/react-router";
 import { Link2Off } from "lucide-react";
 
+const bsodRoute = `/${encodeURIComponent("you're-absolutely-right!")}`;
+
 export function BSODLauncher() {
   return (
     <Launcher asChild>
       {/* @ts-ignore: This is done on purpose to trigger a 404 easter egg. */}
-      <Link to="/definitely-not-here" rel="nofollow">
+      <Link to={bsodRoute} rel="nofollow">
         <LauncherContent>
           <LauncherIcon className="bg-background/90 backdrop-blur-xs">
             <Link2Off className="h-7 w-7 text-foreground/90" />

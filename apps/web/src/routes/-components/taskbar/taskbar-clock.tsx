@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@acme/ui/components/dropdown-menu";
 import {
@@ -82,6 +83,9 @@ export function TaskbarClock({ className, ...props }: ClockProps) {
           </DropdownMenuTrigger>
         </TooltipTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="select-none text-foreground/55 text-xs">
+            Formats
+          </DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setFormat("24")}>
             24-hour
           </DropdownMenuItem>

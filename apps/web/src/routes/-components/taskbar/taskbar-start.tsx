@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@acme/ui/components/dropdown-menu";
 import {
@@ -46,13 +47,16 @@ export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
           </DropdownMenuTrigger>
         </TooltipTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="select-none text-foreground/55 text-xs">
+            Start Menu
+          </DropdownMenuLabel>
           <DropdownMenuItem onClick={quitApplications}>
-            Quit all applications
+            Quit applications
           </DropdownMenuItem>
           <DropdownMenuItem onClick={shutdown}>Shut down</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <TooltipContent>Start menu</TooltipContent>
+      <TooltipContent>Open start menu</TooltipContent>
     </Tooltip>
   );
 }

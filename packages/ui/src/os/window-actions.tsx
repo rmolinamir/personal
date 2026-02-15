@@ -8,6 +8,8 @@ import { useApplication, useApplicationId } from "./application";
 import { useWindow } from "./window";
 import { useWindowManager } from "./window-manager";
 
+const ACTIONS_TOOLTIP_DELAY_DURATION = 150;
+
 const INPUT_TAGNAME = "INPUT";
 const INPUT_TEXTAREA = "TEXTAREA";
 const INPUT_SELECT = "SELECT";
@@ -106,7 +108,7 @@ function WindowHideButton({
   });
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={ACTIONS_TOOLTIP_DELAY_DURATION}>
       <TooltipTrigger asChild>
         <WindowAction
           ref={ref}
@@ -151,7 +153,7 @@ function WindowFullscreenButton({
   });
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={ACTIONS_TOOLTIP_DELAY_DURATION}>
       <TooltipTrigger asChild>
         <WindowAction
           ref={ref}
@@ -195,7 +197,7 @@ function WindowCloseButton({
   });
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={ACTIONS_TOOLTIP_DELAY_DURATION}>
       <TooltipTrigger asChild>
         <WindowAction
           ref={ref}

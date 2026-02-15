@@ -62,7 +62,7 @@ export const Default: Story = {
       >
         <WindowManagerProvider>
           <ApplicationManagerProvider>
-            <div className="flex h-full min-h-svh w-full flex-col bg-[#e9e2d2]">
+            <div className="flex h-full min-h-dvh w-full flex-col bg-[#e9e2d2]">
               <WindowBoundary className="h-full w-full flex-1">
                 <WindowSnap>
                   {/* Application layer. */}

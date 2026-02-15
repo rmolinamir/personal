@@ -1,8 +1,10 @@
+import type { ApplicationInstance } from "@acme/ui/os/application";
 import * as React from "react";
 
 type PowerState = "on" | "off";
 
 type SystemContextValue = {
+  loadingApplications: ApplicationInstance[];
   power: PowerState;
   shutdown: () => void;
   boot: () => void;
@@ -16,6 +18,9 @@ type SystemProviderProps = {
 
 export function SystemProvider({ children }: SystemProviderProps) {
   const [power, setPower] = React.useState<PowerState>("on");
+  const [loadingApplications, setLoadingApplications] = React.useState<
+    ApplicationInstance[]
+  >([]);
 
   const shutdown = React.useCallback(() => {
     setPower("off");
@@ -24,6 +29,29 @@ export function SystemProvider({ children }: SystemProviderProps) {
   const boot = React.useCallback(() => {
     setPower("on");
   }, []);
+
+  const insertLoadingApplication = React.useCallback(
+    (application: ApplicationInstance) => {
+      setLoadingApplications((prev) => [...prev, application]);
+    },
+    [],
+  );
+
+  const removeLoadingApplication = React.useCallback(
+    (application: ApplicationInstance) => {
+      setLoadingApplications((prev) =>
+        prev.filter((app) => app.id !== application.id),
+      );
+    },
+    [],
+  );
+
+  const isLoadingApplication = React.useCallback(
+    (application: ApplicationInstance) => {
+      return loadingApplications.some((app) => app.id === application.id);
+    },
+    [loadingApplications],
+  );
 
   const value = React.useMemo(
     () => ({ boot, power, shutdown }),

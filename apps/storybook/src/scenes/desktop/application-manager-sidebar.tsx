@@ -22,7 +22,7 @@ function ApplicationManagerSidebar() {
       side="right"
       variant="floating"
       collapsible="offcanvas"
-      className="inset-y-auto top-24 bottom-24 h-[calc(100svh-12rem)]"
+      className="inset-y-auto top-24 bottom-24 h-[calc(100dvh-12rem)]"
     >
       <SidebarHeader>
         <div className="flex items-center justify-between">

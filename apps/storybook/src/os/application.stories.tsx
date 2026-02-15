@@ -66,7 +66,7 @@ export const Default: Story = {
     return (
       <ApplicationManagerProvider>
         <WindowManagerProvider>
-          <PurpleWallpaper className="flex h-svh flex-col">
+          <PurpleWallpaper className="flex h-dvh flex-col">
             <WindowBoundary className="h-full">
               <WindowSnap>
                 {/* Applications layer. */}

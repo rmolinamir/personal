@@ -15,7 +15,7 @@ export function BSODScreen() {
   const { shutdown } = useSystem();
 
   return (
-    <div className="relative flex h-svh w-svw items-center justify-center overflow-hidden bg-[#0b2ea3] text-[#e6f0ff]">
+    <div className="relative flex h-dvh w-dvw items-center justify-center overflow-hidden bg-[#0b2ea3] text-[#e6f0ff]">
       <ClientOnly>
         <Shader aria-hidden="true" className="absolute inset-0">
           <CRTScreen

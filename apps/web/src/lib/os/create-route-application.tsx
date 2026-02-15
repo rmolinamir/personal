@@ -19,6 +19,7 @@ import { useWindowManager } from "@acme/ui/os/window-manager";
 import { Link } from "@tanstack/react-router";
 import { Maximize, Minimize, Minus, X } from "lucide-react";
 import React, { useEffect } from "react";
+import { useSystem } from "@/routes/-components/system/system-provider";
 import type { FileRoutesByTo } from "../../routeTree.gen";
 
 type RouteApplicationDefinition = ApplicationDefinition & {
@@ -30,6 +31,7 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
 
   return ({
     component: ApplicationComponent,
+    fallback: FallbackComponent,
     launcher: LauncherComponent,
     ...applicationFactoryDefinition
   }: RouteApplicationDefinition) => {
@@ -87,6 +89,26 @@ export function createApplicationRoute(toPath: keyof FileRoutesByTo) {
             <ApplicationComponent />
           </Window>
         );
+      },
+      fallback: () => {
+        const { insertLoadingApplication, removeLoadingApplication } =
+          useSystem();
+        const { application } = Application.useApplication();
+
+        const onLoadStart = React.useEffectEvent(() => {
+          insertLoadingApplication(application);
+        });
+
+        const onLoadEnd = React.useEffectEvent(() => {
+          removeLoadingApplication(application);
+        });
+
+        React.useEffect(() => {
+          onLoadStart();
+          return onLoadEnd;
+        }, []);
+
+        if (FallbackComponent) return <FallbackComponent />;
       },
     });
 

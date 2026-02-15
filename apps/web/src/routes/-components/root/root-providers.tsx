@@ -1,5 +1,6 @@
 import { SidebarProvider } from "@acme/ui/components/sidebar";
 import { TooltipProvider } from "@acme/ui/components/tooltip";
+import { DEFAULT_TOOLTIP_DELAY_DURATION } from "@acme/ui/lib/constants";
 import { ApplicationManagerProvider } from "@acme/ui/os/application-manager";
 import { WindowManagerProvider } from "@acme/ui/os/window-manager";
 import * as React from "react";
@@ -20,7 +21,7 @@ export function RootProviders({ children }: RootLayoutProps) {
           onOpenChange={setSidebarOpen}
           className="flex flex-col"
         >
-          <TooltipProvider delayDuration={0}>
+          <TooltipProvider delayDuration={DEFAULT_TOOLTIP_DELAY_DURATION}>
             <ClientRootProviders>{children}</ClientRootProviders>
           </TooltipProvider>
         </SidebarProvider>

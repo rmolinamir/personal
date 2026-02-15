@@ -1,4 +1,3 @@
-import { SidebarTrigger } from "@acme/ui/components/sidebar";
 import { ThemeMenu } from "@acme/ui/components/theme";
 import { cn } from "@acme/ui/lib/utils";
 import { Taskbar, TaskbarDivider, TaskbarSection } from "@acme/ui/os/taskbar";
@@ -16,6 +15,8 @@ import {
   ResumeApplication,
   ResumeLauncher,
 } from "../../(applications)/resume/-components/application";
+import { ApplicationProgressBar } from "../applications/application-progress-bar";
+import { ApplicationSidebarTrigger } from "../applications/application-sidebar";
 import { BSODLauncher } from "../bsod/bsod-launcher";
 import { TaskbarClock } from "../taskbar/taskbar-clock";
 import { TaskbarGitHub } from "../taskbar/taskbar-github";
@@ -33,6 +34,8 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
       {...props}
     >
       <DesktopWallpaper className="absolute h-full w-full" />
+
+      <ApplicationProgressBar className="absolute top-0 left-0 z-progress" />
 
       <WindowBoundary className="pointer-events-none min-h-0 w-full flex-1 **:pointer-events-auto">
         <WindowSnap>
@@ -65,7 +68,7 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
         <TaskbarDivider />
         <TaskbarSection className="h-full" align="end">
           <ThemeMenu variant="ghost" />
-          <SidebarTrigger variant="ghost" />
+          <ApplicationSidebarTrigger variant="ghost" />
           <TaskbarClock className="hidden px-2 py-1 text-xs md:flex" />
         </TaskbarSection>
       </Taskbar>

@@ -46,17 +46,12 @@ export function BSODScreen() {
         <div>
           <Frown className="size-12" />
         </div>
-        <div className="text-lg leading-relaxed">
-          Your PC ran into a problem and needs to restart.
-        </div>
-        <div className="font-medium text-[#f1f6ff] [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
-          <code>ERROR: AI_SLOP_DEPLOYED_TO_PROD</code>
-        </div>
-        <div className="text-[#f1f6ff] text-sm [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
+        <div className="space-y-2 text-[#f1f6ff] leading-relaxed [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
+          <p>Your PC ran into a problem and needs to restart.</p>
           <p>If you call a support person, give them this info:</p>
-          <p>
-            <code>STOP_CODE: HALLUCINATED_ROUTE</code>
-          </p>
+          <code>
+            ERROR: <b>AI_SLOP_DEPLOYED_TO_PROD</b>
+          </code>
         </div>
         <Button
           onClick={shutdown}

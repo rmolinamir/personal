@@ -42,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../components/tooltip";
+import { DEFAULT_TOOLTIP_DELAY_DURATION } from "../lib/constants";
 
 const base = BlockNoteSchema.create();
 
@@ -119,7 +120,12 @@ export function BlockNoteEditor(props: BlockNoteEditorProps) {
         Tooltip: {
           Tooltip,
           TooltipContent,
-          TooltipProvider,
+          TooltipProvider: (props) => (
+            <TooltipProvider
+              {...props}
+              delayDuration={DEFAULT_TOOLTIP_DELAY_DURATION}
+            />
+          ),
           TooltipTrigger,
         },
       }}

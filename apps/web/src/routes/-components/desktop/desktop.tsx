@@ -29,10 +29,7 @@ type DesktopProps = React.ComponentProps<"main">;
 export function Desktop({ className, children, ...props }: DesktopProps) {
   return (
     <main
-      className={cn(
-        "relative flex h-dvh w-dvw flex-col overflow-hidden",
-        className,
-      )}
+      className={cn("relative flex flex-1 flex-col overflow-hidden", className)}
       {...props}
     >
       <DesktopWallpaper className="absolute h-full w-full" />

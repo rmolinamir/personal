@@ -50,7 +50,7 @@ function ApplicationSidebar({
       variant="floating"
       collapsible="offcanvas"
       className={cn(
-        "inset-y-auto top-24 bottom-24 h-[calc(100svh-12rem)]",
+        "inset-y-auto top-24 bottom-24 h-[calc(100dvh-12rem)]",
         className,
       )}
       style={{ "--sidebar-width": "22rem" } as React.CSSProperties}

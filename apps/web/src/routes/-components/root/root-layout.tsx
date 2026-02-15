@@ -17,9 +17,9 @@ export function RootLayout({
   const isOn = power === "on";
 
   return (
-    <div className={cn("relative", className)} {...props}>
+    <div className={cn("relative flex flex-1", className)} {...props}>
       <div
-        className={cn({
+        className={cn("flex flex-1", {
           "animate-power-off": isOff,
           "animate-power-on": isOn,
         })}

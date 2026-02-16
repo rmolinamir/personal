@@ -180,7 +180,7 @@ function RouteShellComponent({ children }: { children: React.ReactNode }) {
         <HeadContent />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body className="bg-background">
+      <body className="relative bg-background">
         <RootProviders>
           {children}
           <ApplicationSidebar />

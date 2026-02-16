@@ -28,9 +28,13 @@ export function TaskbarStart({ className, ...props }: TaskbarLogoProps) {
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" asChild>
-              <TaskbarItem variant="icon" onClick={quitApplications}>
+              <TaskbarItem
+                className="text-accent hover:text-accent-foreground"
+                variant="icon"
+                onClick={quitApplications}
+              >
                 <svg
-                  className={cn("h-6 w-6", className)}
+                  className={cn("size-5", className)}
                   role="img"
                   viewBox="0 0 433 289"
                   fill="currentColor"

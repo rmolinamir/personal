@@ -1,3 +1,4 @@
+import { cn } from "@acme/ui/lib/utils";
 import { useApplicationManager } from "@acme/ui/os/application-manager";
 import {
   TabStrip,
@@ -12,11 +13,14 @@ import { useWindowManager } from "@acme/ui/os/window-manager";
 import React from "react";
 
 type ApplicationTabStripProps = Omit<
-  typeof TabStrip,
+  React.ComponentProps<typeof TabStrip>,
   "value" | "onValueChange"
 >;
 
-export function TaskbarTabStrip(props: ApplicationTabStripProps) {
+export function TaskbarTabStrip({
+  className,
+  ...props
+}: ApplicationTabStripProps) {
   const { runningApplications, close } = useApplicationManager();
   const { activateWindow, getTopWindow, hideWindow } = useWindowManager();
 
@@ -37,7 +41,11 @@ export function TaskbarTabStrip(props: ApplicationTabStripProps) {
   }, [activeWindow]);
 
   return (
-    <TabStrip value={activeWindow?.id ?? ""} {...props} className="border-none">
+    <TabStrip
+      className={cn("w-full min-w-0 flex-1 border-none", className)}
+      value={activeWindow?.id ?? ""}
+      {...props}
+    >
       <TabStripRail>
         <TabStripList className="border-none p-0">
           {runningApplications.map((application) => {

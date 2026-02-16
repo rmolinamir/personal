@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@acme/ui/components/tooltip";
 import { defineApplication, useApplication } from "@acme/ui/os/application";
 import {
   ApplicationManagerProvider,
@@ -64,46 +65,48 @@ export const Default: Story = {
     }, []);
 
     return (
-      <ApplicationManagerProvider>
-        <WindowManagerProvider>
-          <PurpleWallpaper className="flex h-dvh flex-col">
-            <WindowBoundary className="h-full">
-              <WindowSnap>
-                {/* Applications layer. */}
-                <AboutApplication.Component />
-                <NotesApplication.Component />
+      <TooltipProvider>
+        <ApplicationManagerProvider>
+          <WindowManagerProvider>
+            <PurpleWallpaper className="flex h-dvh flex-col">
+              <WindowBoundary className="h-full">
+                <WindowSnap>
+                  {/* Applications layer. */}
+                  <AboutApplication.Component />
+                  <NotesApplication.Component />
 
-                {/* Desktop layer. */}
-                <div className="m-6 select-none font-semibold text-sm text-white tracking-wide">
-                  Win-doughs 11
-                </div>
-                {!isActivated && (
-                  <div className="pointer-events-none absolute top-6 right-6 select-none text-white/70">
-                    <div className="font-medium text-[13px]">
-                      Activate Win-dough
-                    </div>
-                    <div className="text-[11px] text-white/35">
-                      Type <code>`doughnut`</code> to activate Win-dough.
-                    </div>
+                  {/* Desktop layer. */}
+                  <div className="m-6 select-none font-semibold text-sm text-white tracking-wide">
+                    Win-doughs 11
                   </div>
-                )}
-                <div className="m-6">
-                  <AboutApplicationLauncher />
-                  <NotesApplicationLauncher />
-                </div>
-              </WindowSnap>
-            </WindowBoundary>
-            <div className="m-4">
-              <nav className="flex h-12 w-full items-center gap-3 border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
-                <div className="flex flex-1 items-center gap-2">
-                  <ApplicationTaskbarItems />
-                </div>
-                <div className="text-white/70 text-xs">10:24</div>
-              </nav>
-            </div>
-          </PurpleWallpaper>
-        </WindowManagerProvider>
-      </ApplicationManagerProvider>
+                  {!isActivated && (
+                    <div className="pointer-events-none absolute top-6 right-6 select-none text-white/70">
+                      <div className="font-medium text-[13px]">
+                        Activate Win-dough
+                      </div>
+                      <div className="text-[11px] text-white/35">
+                        Type <code>`doughnut`</code> to activate Win-dough.
+                      </div>
+                    </div>
+                  )}
+                  <div className="m-6">
+                    <AboutApplicationLauncher />
+                    <NotesApplicationLauncher />
+                  </div>
+                </WindowSnap>
+              </WindowBoundary>
+              <div className="m-4">
+                <nav className="flex h-12 w-full items-center gap-3 border border-white/10 bg-black/40 px-4 text-white shadow-xl backdrop-blur-md">
+                  <div className="flex flex-1 items-center gap-2">
+                    <ApplicationTaskbarItems />
+                  </div>
+                  <div className="text-white/70 text-xs">10:24</div>
+                </nav>
+              </div>
+            </PurpleWallpaper>
+          </WindowManagerProvider>
+        </ApplicationManagerProvider>
+      </TooltipProvider>
     );
   },
 };

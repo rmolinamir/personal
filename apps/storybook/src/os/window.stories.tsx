@@ -1,4 +1,5 @@
 import { Button } from "@acme/ui/components/button";
+import { TooltipProvider } from "@acme/ui/components/tooltip";
 import { useInitialWindowFraming } from "@acme/ui/hooks/use-initial-window-framing";
 import {
   getCascadingWindowFraming,
@@ -306,57 +307,61 @@ export const WithSnapping: Story = {
 
 export const WithControls: Story = {
   render: () => (
-    <WindowManagerProvider>
-      <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
-        <FloatingHiddenWindows />
-        <Window
-          defaultFraming={{
-            position: { x: 10, y: 12 },
-            size: { height: 45, width: 40 },
-          }}
-        >
-          <WindowControlsHeader />
-          <WindowContent>
-            <div className="space-y-2 text-sm">
-              <p className="font-medium">Double-click the header.</p>
-              <p className="text-muted-foreground">
-                Use the hide button to move it to the taskbar.
-              </p>
-            </div>
-          </WindowContent>
-        </Window>
-        <Window
-          defaultFraming={{
-            position: { x: 58, y: 30 },
-            size: { height: 42, width: 38 },
-          }}
-        >
-          <WindowControlsHeader />
-          <WindowContent>
-            <div className="space-y-2 text-sm">
-              <p className="font-medium">Third window</p>
-              <p className="text-muted-foreground">
-                Taskbar entries restore hidden windows.
-              </p>
-            </div>
-          </WindowContent>
-        </Window>
-        <Window
-          defaultFraming={{
-            position: { x: 34, y: 22 },
-            size: { height: 46, width: 42 },
-          }}
-        >
-          <WindowControlsHeader />
-          <WindowContent>
-            <div className="space-y-2 text-sm">
-              <p className="font-medium">Second window</p>
-              <p className="text-muted-foreground">Try hiding this one too.</p>
-            </div>
-          </WindowContent>
-        </Window>
-      </WindowBoundary>
-    </WindowManagerProvider>
+    <TooltipProvider>
+      <WindowManagerProvider>
+        <WindowBoundary className="relative h-180 w-full overflow-hidden bg-muted/30 p-6">
+          <FloatingHiddenWindows />
+          <Window
+            defaultFraming={{
+              position: { x: 10, y: 12 },
+              size: { height: 45, width: 40 },
+            }}
+          >
+            <WindowControlsHeader />
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Double-click the header.</p>
+                <p className="text-muted-foreground">
+                  Use the hide button to move it to the taskbar.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
+          <Window
+            defaultFraming={{
+              position: { x: 58, y: 30 },
+              size: { height: 42, width: 38 },
+            }}
+          >
+            <WindowControlsHeader />
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Third window</p>
+                <p className="text-muted-foreground">
+                  Taskbar entries restore hidden windows.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
+          <Window
+            defaultFraming={{
+              position: { x: 34, y: 22 },
+              size: { height: 46, width: 42 },
+            }}
+          >
+            <WindowControlsHeader />
+            <WindowContent>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">Second window</p>
+                <p className="text-muted-foreground">
+                  Try hiding this one too.
+                </p>
+              </div>
+            </WindowContent>
+          </Window>
+        </WindowBoundary>
+      </WindowManagerProvider>
+    </TooltipProvider>
   ),
 };
 

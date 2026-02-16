@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/images/website-preview.webp" alt="Website Preview" width="900" />
+  <img src="docs/images/website-preview.webp" alt="Website Preview" width="720" />
   <h1><a href="https://www.robertmolina.dev/">My Personal Website</a></h1>
 </div>
 

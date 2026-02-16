@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { cn } from "../lib/utils";
 import { Button } from "./button";
 import {
   DropdownMenu,
@@ -139,26 +138,20 @@ export function ThemeMenu(props: ThemeToggleProps) {
   );
 }
 
-export function LightThemeOnly({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LightThemeOnly({ children }: React.PropsWithChildren) {
   const { theme } = useTheme();
 
   if (theme !== "light") return null;
 
-  return <div className={cn("hidden", className)} {...props} />;
+  return children;
 }
 
-export function DarkThemeOnly({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function DarkThemeOnly({ children }: React.PropsWithChildren) {
   const { theme } = useTheme();
 
   if (theme !== "dark") return null;
 
-  return <div className={cn("hidden", className)} {...props} />;
+  return children;
 }
 
 function getSystemTheme() {

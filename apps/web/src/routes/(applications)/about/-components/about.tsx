@@ -9,8 +9,6 @@ import { GITHUB_URL, LINKEDIN_URL } from "@/lib/socials/constants";
 
 export function About() {
   const { theme } = useTheme();
-
-  // Creates a new editor instance.
   const editor = useBlockNoteEditor({
     initialContent: [
       {

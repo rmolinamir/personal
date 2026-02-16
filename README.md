@@ -1,6 +1,16 @@
-# [My Personal Website](https://www.robertmolina.dev/)
+<div align="center">
+  <img src="docs/images/website-preview.webp" alt="Website Preview" width="720" />
+  <h1><a href="https://www.robertmolina.dev/">My Personal Website</a></h1>
+</div>
 
-<img src="docs/images/website-preview.webp" alt="Website Preview" width="900" />
+<p align="center">
+  <a href="https://www.robertmolina.dev/">
+    <img src="https://img.shields.io/badge/Website-robertmolina.dev-111111?logo=vercel&logoColor=white" alt="Website" />
+  </a>
+  <a href="https://rmolinamir.github.io/personal/">
+    <img src="https://img.shields.io/badge/Storybook-Live-ff4785?logo=storybook&logoColor=white" alt="Storybook" />
+  </a>
+</p>
 
 This is an OS-inspired personal site with a desktop shell, windowed apps, and playful system interactions.
 The experience is meant to feel like a lightweight desktop: icons on the wallpaper, windowed apps, and system overlays.

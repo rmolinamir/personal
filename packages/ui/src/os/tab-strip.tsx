@@ -6,7 +6,9 @@ import { useIsMobile } from "../hooks/use-mobile";
 import { cn } from "../lib/utils";
 
 function TabStrip({ className, ...props }: React.ComponentProps<typeof Tabs>) {
-  return <Tabs className={cn("w-full", className)} {...props} />;
+  return (
+    <Tabs className={cn("w-full min-w-0 max-w-full", className)} {...props} />
+  );
 }
 
 function TabStripRail({
@@ -72,9 +74,9 @@ function TabStripTabTrigger({
       ref={tabRef}
       data-slot="tabstrip-tab-trigger"
       className={cn(
-        "h-7 max-w-48 justify-start rounded-md border border-transparent px-2 pr-6 text-foreground/70",
+        "h-7 max-w-48 justify-start rounded-md border px-2 pr-6 text-foreground/70",
         "hover:bg-muted/60 hover:text-foreground",
-        "data-[state=active]:border-border/60 data-[state=active]:bg-background/90 data-[state=active]:text-foreground",
+        "data-[state=active]:border-border/60! data-[state=active]:bg-background/90 data-[state=active]:text-foreground",
         className,
       )}
       value={value}

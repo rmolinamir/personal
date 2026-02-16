@@ -16,7 +16,6 @@
         -webkit-user-select: none;
         user-select: none;
         -webkit-touch-callout: none;
-        touch-action: none;
       }
 
       #screen {
@@ -34,6 +33,7 @@
         height: 100%;
         outline: none;
         background: #000;
+        touch-action: none;
       }
 
       /* Status badge (hidden once runtime is ready) */
@@ -556,6 +556,7 @@
             controls.querySelectorAll("button[data-key]"),
           );
           const activeCounts = new Map();
+          const activeKeyInfo = new Map();
           const pointerKeys = new Map();
           const joystickElements = Array.from(
             controls.querySelectorAll("[data-joystick]"),
@@ -608,6 +609,7 @@
             const count = activeCounts.get(info.code) || 0;
             if (count === 0) sendKey("keydown", info);
             activeCounts.set(info.code, count + 1);
+            activeKeyInfo.set(info.code, info);
           }
 
           function release(info) {
@@ -615,6 +617,7 @@
             if (count <= 1) {
               activeCounts.delete(info.code);
               sendKey("keyup", info);
+              activeKeyInfo.delete(info.code);
             } else {
               activeCounts.set(info.code, count - 1);
             }
@@ -788,11 +791,29 @@
             });
           }
 
+          function releaseAllButtons() {
+            activeKeyInfo.forEach((info) => {
+              sendKey("keyup", info);
+            });
+            activeCounts.clear();
+            activeKeyInfo.clear();
+            pointerKeys.clear();
+            buttons.forEach((button) => {
+              button.classList.remove("is-pressed");
+            });
+          }
+
+          function releaseAllInputs() {
+            releaseAllButtons();
+            releaseAllJoysticks();
+          }
+
           buttons.forEach((button) => {
             button.addEventListener("pointerdown", handlePointerDown);
             button.addEventListener("pointerup", handlePointerUp);
             button.addEventListener("pointercancel", handlePointerCancel);
             button.addEventListener("pointerleave", handlePointerUp);
+            button.addEventListener("lostpointercapture", handlePointerCancel);
           });
 
           joystickElements.forEach((joystick) => {
@@ -819,9 +840,11 @@
             event.preventDefault();
           });
 
-          window.addEventListener("blur", releaseAllJoysticks);
+          window.addEventListener("blur", releaseAllInputs);
+          window.addEventListener("pagehide", releaseAllInputs);
+          window.addEventListener("pointercancel", releaseAllInputs);
           document.addEventListener("visibilitychange", () => {
-            if (document.hidden) releaseAllJoysticks();
+            if (document.hidden) releaseAllInputs();
           });
         }
 

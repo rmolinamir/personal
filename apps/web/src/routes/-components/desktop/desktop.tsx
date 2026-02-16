@@ -48,14 +48,14 @@ export function Desktop({ className, children, ...props }: DesktopProps) {
       {/* Nested Routes are rendered here. For now, these will only be programmatic launchers, no HTML will be rendered. */}
       {children}
 
-      <DesktopGrid className="absolute bottom-9 h-[calc(100dvh-2.25rem)] min-h-0 flex-1 p-2">
+      <DesktopGrid className="absolute max-h-full min-h-0 flex-1 p-2">
         <AboutLauncher />
         <ResumeLauncher />
         <DoomLauncher />
         <BSODLauncher />
       </DesktopGrid>
 
-      <Taskbar className="z-taskbar shrink-0">
+      <Taskbar className="z-taskbar max-w-dvw shrink-0">
         <TaskbarSection className="h-full" align="start">
           <TaskbarStart />
           <TaskbarGitHub />

@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@acme/ui/components/sidebar";
+import { SidebarProvider, SidebarWrapper } from "@acme/ui/components/sidebar";
 import { ApplicationManagerProvider } from "@acme/ui/os/application-manager";
 import { Taskbar, TaskbarItem, TaskbarSection } from "@acme/ui/os/taskbar";
 import { WindowBoundary } from "@acme/ui/os/window-boundary";
@@ -54,66 +54,66 @@ export const Default: Story = {
     }, [sidebarOpen]);
 
     return (
-      <SidebarProvider
-        open={sidebarOpen}
-        onOpenChange={setSidebarOpen}
-        className="flex flex-col bg-transparent"
-        style={{ "--sidebar-width": "22rem" } as React.CSSProperties}
-      >
-        <WindowManagerProvider>
-          <ApplicationManagerProvider>
-            <div className="flex h-full min-h-dvh w-full flex-col bg-[#e9e2d2]">
-              <WindowBoundary className="h-full w-full flex-1">
-                <WindowSnap>
-                  {/* Application layer. */}
-                  <MailApplication.Component />
-                  <NotesApplication.Component />
-                  <InsightsApplication.Component />
+      <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SidebarWrapper
+          className="flex flex-col bg-transparent"
+          style={{ "--sidebar-width": "22rem" } as React.CSSProperties}
+        >
+          <WindowManagerProvider>
+            <ApplicationManagerProvider>
+              <div className="flex h-full min-h-dvh w-full flex-col bg-[#e9e2d2]">
+                <WindowBoundary className="h-full w-full flex-1">
+                  <WindowSnap>
+                    {/* Application layer. */}
+                    <MailApplication.Component />
+                    <NotesApplication.Component />
+                    <InsightsApplication.Component />
 
-                  {/* Desktop layer. */}
-                  <div ref={panelRef}>
-                    <ApplicationManagerSidebar />
-                  </div>
-                  <div className="m-4">
-                    <MailApplicationLauncher />
-                    <NotesApplicationLauncher />
-                    <InsightsApplicationLauncher />
-                  </div>
-                </WindowSnap>
-              </WindowBoundary>
+                    {/* Desktop layer. */}
+                    <div ref={panelRef}>
+                      <ApplicationManagerSidebar />
+                    </div>
+                    <div className="m-4">
+                      <MailApplicationLauncher />
+                      <NotesApplicationLauncher />
+                      <InsightsApplicationLauncher />
+                    </div>
+                  </WindowSnap>
+                </WindowBoundary>
 
-              <Taskbar className="mx-4 my-2 rounded-full border border-black/10 text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.25)]">
-                <TaskbarSection
-                  align="start"
-                  className="gap-1 text-slate-700 text-sm"
-                  grow
-                >
-                  <TaskbarItem
-                    variant="icon"
-                    className="text-slate-700 hover:bg-black/5"
+                <Taskbar className="mx-4 my-2 rounded-full border border-black/10 text-slate-900 shadow-[0_18px_40px_rgba(15,23,42,0.25)]">
+                  <TaskbarSection
+                    align="start"
+                    className="gap-1 text-slate-700 text-sm"
+                    grow
                   >
-                    <span className="h-7 bg-slate-900 text-white">OS</span>
-                  </TaskbarItem>
-                  <ProductMenu />
-                  <MoreMenu />
-                </TaskbarSection>
+                    <TaskbarItem
+                      variant="icon"
+                      className="text-slate-700 hover:bg-black/5"
+                    >
+                      <span className="h-7 bg-slate-900 text-white">OS</span>
+                    </TaskbarItem>
+                    <ProductMenu />
+                    <MoreMenu />
+                  </TaskbarSection>
 
-                <TaskbarSection>
-                  <TaskbarItem
-                    variant="icon"
-                    aria-label="Window manager"
-                    active={sidebarOpen}
-                    className="text-slate-700 hover:bg-black/5"
-                    onClick={() => setSidebarOpen((prev) => !prev)}
-                    ref={toggleRef}
-                  >
-                    <PanelRightOpen className="size-4" />
-                  </TaskbarItem>
-                </TaskbarSection>
-              </Taskbar>
-            </div>
-          </ApplicationManagerProvider>
-        </WindowManagerProvider>
+                  <TaskbarSection>
+                    <TaskbarItem
+                      variant="icon"
+                      aria-label="Window manager"
+                      active={sidebarOpen}
+                      className="text-slate-700 hover:bg-black/5"
+                      onClick={() => setSidebarOpen((prev) => !prev)}
+                      ref={toggleRef}
+                    >
+                      <PanelRightOpen className="size-4" />
+                    </TaskbarItem>
+                  </TaskbarSection>
+                </Taskbar>
+              </div>
+            </ApplicationManagerProvider>
+          </WindowManagerProvider>
+        </SidebarWrapper>
       </SidebarProvider>
     );
   },

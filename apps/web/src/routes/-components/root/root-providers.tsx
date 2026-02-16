@@ -16,11 +16,7 @@ export function RootProviders({ children }: RootLayoutProps) {
   return (
     <ApplicationManagerProvider>
       <WindowManagerProvider>
-        <SidebarProvider
-          open={sidebarOpen}
-          onOpenChange={setSidebarOpen}
-          className="flex flex-col"
-        >
+        <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <TooltipProvider delayDuration={DEFAULT_TOOLTIP_DELAY_DURATION}>
             <ClientRootProviders>{children}</ClientRootProviders>
           </TooltipProvider>

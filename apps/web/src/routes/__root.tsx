@@ -18,7 +18,6 @@ import {
   SITE_TITLE,
 } from "@/lib/socials/constants";
 import appCss from "../styles.css?url";
-import { ApplicationSidebar } from "./-components/applications/application-sidebar";
 import { BSODScreen } from "./-components/bsod/bsod";
 import { RootLayout } from "./-components/root/root-layout";
 import { RootProviders } from "./-components/root/root-providers";
@@ -181,10 +180,7 @@ function RouteShellComponent({ children }: { children: React.ReactNode }) {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="relative bg-background">
-        <RootProviders>
-          {children}
-          <ApplicationSidebar />
-        </RootProviders>
+        <RootProviders>{children}</RootProviders>
         <TanStackDevtools
           config={{
             position: "bottom-right",

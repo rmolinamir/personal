@@ -1,5 +1,3 @@
-"use client";
-
 import { XIcon } from "lucide-react";
 import React from "react";
 import { Button } from "../components/button";

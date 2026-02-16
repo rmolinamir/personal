@@ -3,14 +3,19 @@
   "display": "standalone",
   "icons": [
     {
-      "sizes": "64x64 32x32 24x24 16x16",
-      "src": "favicon.svg",
+      "sizes": "any",
+      "src": "logo.svg",
       "type": "image/svg+xml"
     },
     {
-      "sizes": "433x289",
-      "src": "rmolinamir-logo.svg",
+      "sizes": "any",
+      "src": "logo-square.svg",
       "type": "image/svg+xml"
+    },
+    {
+      "sizes": "460x460",
+      "src": "logo-square.png",
+      "type": "image/png"
     }
   ],
   "name": "Robert Molina",

@@ -38,7 +38,7 @@ export function About() {
       },
       {
         content:
-          "I’m a product engineer. I like taking something from zero to shipping an experience people actually use. In practice, that shows up as:",
+          "I’m a software engineer. I like taking something from zero to shipping an experience people actually use. In practice, that shows up as:",
         type: "paragraph",
       },
       {

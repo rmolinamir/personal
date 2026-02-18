@@ -24,9 +24,9 @@ export function RootLayout({
       className={cn("relative flex flex-col", className)}
       {...props}
     >
-      <div className={"flex flex-1"}>
+      <div className="flex h-dvh w-full overflow-hidden">
         <div
-          className={cn("flex flex-1", {
+          className={cn("flex h-full w-full min-w-0 flex-1", {
             "animate-power-off": isOff,
             "animate-power-on": isOn,
           })}

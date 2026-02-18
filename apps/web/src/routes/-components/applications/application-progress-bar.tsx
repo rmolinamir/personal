@@ -2,6 +2,10 @@ import { Progress } from "@acme/ui/components/progress";
 import React from "react";
 import { useSystem } from "../system/system-provider";
 
+const START_PROGRESS_INTERVAL_MS = 120;
+const END_PROGRESS_TIMEOUT_MS = START_PROGRESS_INTERVAL_MS * 3;
+const END_PROGRESS_MIN_TIMEOUT_MS = START_PROGRESS_INTERVAL_MS * 5;
+
 type ApplicationProgressProps = Omit<
   React.ComponentProps<typeof Progress>,
   "value"
@@ -10,14 +14,16 @@ type ApplicationProgressProps = Omit<
 export function ApplicationProgressBar({ ...props }: ApplicationProgressProps) {
   const { loadingApplications } = useSystem();
   const [progress, setProgress] = React.useState(0);
-  const intervalRef = React.useRef<number | null>(null);
-  const completionTimeoutRef = React.useRef<number | null>(null);
+
   const previousCountRef = React.useRef(0);
+  const startTimeRef = React.useRef<number | null>(null);
+  const progressIntervalRef = React.useRef<number | null>(null);
+  const completionTimeoutRef = React.useRef<number | null>(null);
 
   const clearTimers = React.useCallback(() => {
-    if (intervalRef.current) {
-      window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (progressIntervalRef.current) {
+      window.clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
     }
     if (completionTimeoutRef.current) {
       window.clearTimeout(completionTimeoutRef.current);
@@ -27,18 +33,22 @@ export function ApplicationProgressBar({ ...props }: ApplicationProgressProps) {
 
   const startProgress = React.useCallback(() => {
     clearTimers();
-    intervalRef.current = window.setInterval(() => {
+    if (startTimeRef.current === null) {
+      startTimeRef.current = performance.now();
+    }
+    progressIntervalRef.current = window.setInterval(() => {
       setProgress((prev) => {
         const ceiling = 92;
         const rate = prev < 50 ? 0.18 : 0.06;
         const next = prev + (ceiling - prev) * rate;
         return Math.min(next, ceiling);
       });
-    }, 120);
+    }, START_PROGRESS_INTERVAL_MS);
   }, [clearTimers]);
 
   const resetProgress = React.useCallback(() => {
     clearTimers();
+    startTimeRef.current = null;
     setProgress(0);
   }, [clearTimers]);
 
@@ -48,12 +58,19 @@ export function ApplicationProgressBar({ ...props }: ApplicationProgressProps) {
    * The progress bar will be hidden after a short delay when setting the progress to 100.
    * If another application starts within this range, it will be reset to 0.
    */
-  const finishProgress = React.useCallback(() => {
-    clearTimers();
-    setProgress(99.99999);
+  const endProgress = React.useCallback(() => {
+    const startedAt = startTimeRef.current ?? performance.now();
+    const elapsed = performance.now() - startedAt;
+    const remaining = Math.max(0, END_PROGRESS_MIN_TIMEOUT_MS - elapsed);
+
     completionTimeoutRef.current = window.setTimeout(() => {
-      setProgress(100);
-    }, 360);
+      clearTimers();
+      setProgress(99.99999);
+      completionTimeoutRef.current = window.setTimeout(() => {
+        setProgress(100);
+        startTimeRef.current = null;
+      }, END_PROGRESS_TIMEOUT_MS);
+    }, remaining);
   }, [clearTimers]);
 
   React.useEffect(() => {
@@ -64,16 +81,11 @@ export function ApplicationProgressBar({ ...props }: ApplicationProgressProps) {
       if (currentCount > previousCount) resetProgress();
       startProgress();
     } else if (previousCount > 0) {
-      finishProgress();
+      endProgress();
     }
 
     previousCountRef.current = currentCount;
-  }, [
-    loadingApplications.length,
-    startProgress,
-    resetProgress,
-    finishProgress,
-  ]);
+  }, [loadingApplications.length, startProgress, resetProgress, endProgress]);
 
   // If unmounted, clear any pending timers.
   React.useEffect(() => clearTimers, [clearTimers]);

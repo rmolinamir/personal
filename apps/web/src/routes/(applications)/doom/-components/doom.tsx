@@ -72,6 +72,8 @@ export function Doom() {
                   <img
                     src="/dwasm/freedoom.webp"
                     alt="Freedoom"
+                    width={1536}
+                    height={1024}
                     className="w-auto max-w-90 object-contain drop-shadow-xl sm:max-w-105"
                   />
                   <div className="flex flex-wrap items-center justify-center gap-2">

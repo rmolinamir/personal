@@ -1,3 +1,10 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@acme/ui/components/select";
 import { useIsMobile } from "@acme/ui/hooks/use-mobile";
 import { cn } from "@acme/ui/lib/utils";
 import React from "react";
@@ -76,28 +83,49 @@ export function Doom() {
                     height={1024}
                     className="w-auto max-w-90 object-contain drop-shadow-xl sm:max-w-105"
                   />
-                  <div className="flex flex-wrap items-center justify-center gap-2">
-                    <DoomSelectButton
-                      active={game === "doom1"}
-                      onClick={() => selectGame("doom1")}
+                  <div className="flex flex-col items-center gap-2">
+                    <span
+                      className="font-mono text-[11px] text-muted-foreground uppercase tracking-[0.2em]"
+                      id="doom-game-label"
                     >
-                      Shareware Doom
-                    </DoomSelectButton>
-                    <DoomSelectButton
-                      active={game === "freedoom1"}
-                      onClick={() => selectGame("freedoom1")}
+                      Select Game
+                    </span>
+                    <Select
+                      onValueChange={(value) => selectGame(value as Game)}
+                      value={game}
                     >
-                      Freedoom I
-                    </DoomSelectButton>
-                    <DoomSelectButton
-                      active={game === "freedoom2"}
-                      onClick={() => selectGame("freedoom2")}
-                    >
-                      Freedoom II
-                    </DoomSelectButton>
+                      <SelectTrigger
+                        aria-label="Select game"
+                        aria-labelledby="doom-game-label"
+                        className="w-full max-w-64 border-border/60 bg-muted/40 font-mono text-[11px] text-foreground uppercase tracking-[0.2em] shadow-sm hover:bg-muted/60 data-[state=open]:border-primary/60 data-[state=open]:bg-muted/60"
+                        id="doom-game-select"
+                      >
+                        <SelectValue placeholder="Select a game" />
+                      </SelectTrigger>
+                      <SelectContent className="border-border/60 bg-card/95 font-mono text-[11px] text-foreground uppercase tracking-[0.2em]">
+                        <SelectItem
+                          className="focus:bg-primary/10 focus:text-foreground"
+                          value="doom1"
+                        >
+                          Shareware Doom
+                        </SelectItem>
+                        <SelectItem
+                          className="focus:bg-primary/10 focus:text-foreground"
+                          value="freedoom1"
+                        >
+                          Freedoom I
+                        </SelectItem>
+                        <SelectItem
+                          className="focus:bg-primary/10 focus:text-foreground"
+                          value="freedoom2"
+                        >
+                          Freedoom II
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <button
-                    className="border border-primary/70 bg-primary px-6 py-2 font-mono text-[12px] text-primary-foreground uppercase tracking-[0.3em] shadow-sm transition hover:bg-primary/90"
+                    className="border border-primary/70 bg-primary px-6 py-2 font-mono text-[12px] text-foreground uppercase tracking-[0.3em] shadow-sm transition hover:bg-primary/90"
                     onClick={() => startGame()}
                     type="button"
                   >
@@ -115,34 +143,6 @@ export function Doom() {
 
       {started && <DoomFooter active={started} runKey={`${nonce}-${game}`} />}
     </div>
-  );
-}
-
-type DoomSelectButtonProps = {
-  active: boolean;
-  children: React.ReactNode;
-  onClick: () => void;
-};
-
-function DoomSelectButton({
-  active,
-  children,
-  onClick,
-}: DoomSelectButtonProps) {
-  return (
-    <button
-      className={cn(
-        "border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] transition",
-        "border-border/60 bg-muted/40 text-muted-foreground",
-        "hover:bg-muted/60 hover:text-foreground",
-        active && "border-primary/70 bg-primary/15 text-foreground",
-      )}
-      data-active={active}
-      onClick={onClick}
-      type="button"
-    >
-      {children}
-    </button>
   );
 }
 

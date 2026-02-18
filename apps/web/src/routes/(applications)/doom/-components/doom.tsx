@@ -125,7 +125,7 @@ export function Doom() {
                     </Select>
                   </div>
                   <button
-                    className="border border-primary/70 bg-primary px-6 py-2 font-mono text-[12px] text-black uppercase tracking-[0.3em] shadow-sm transition hover:bg-primary/90"
+                    className="border border-primary/70 bg-primary px-6 py-2 font-mono text-[12px] text-foreground uppercase tracking-[0.3em] shadow-sm transition hover:bg-primary/90"
                     onClick={() => startGame()}
                     type="button"
                   >

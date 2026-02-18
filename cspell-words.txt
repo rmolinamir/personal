@@ -40,3 +40,4 @@ deadzone
 BSOD
 Turborepo
 agentic
+orientationchange

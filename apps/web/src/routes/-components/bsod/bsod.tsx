@@ -12,7 +12,9 @@ import {
 import { useSystem } from "../system/system-provider";
 
 export function BSODScreen() {
-  const { shutdown } = useSystem();
+  const { shutdown, viewportAspect } = useSystem();
+  const vignetteRadius =
+    0.33 * Math.min(1.4, Math.max(1, viewportAspect / (16 / 9)));
 
   return (
     <div className="relative flex h-dvh w-dvw items-center justify-center overflow-hidden bg-[#0b2ea3] text-[#e6f0ff]">
@@ -26,7 +28,7 @@ export function BSODScreen() {
             brightness={1.11}
             contrast={1.06}
             vignetteIntensity={1.16}
-            vignetteRadius={0.33}
+            vignetteRadius={vignetteRadius}
           >
             <Shatter intensity={12} crackWidth={9}>
               <SolidColor color="#0b2ea3" />

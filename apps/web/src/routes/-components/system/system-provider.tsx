@@ -8,6 +8,7 @@ type SystemContextValue = {
   insertLoadingApplication: (application: ApplicationInstance) => void;
   removeLoadingApplication: (application: ApplicationInstance) => void;
   isLoadingApplication: (application: ApplicationInstance) => boolean;
+  viewportAspect: number;
   power: PowerState;
   shutdown: () => void;
   boot: () => void;
@@ -21,6 +22,7 @@ type SystemProviderProps = {
 
 export function SystemProvider({ children }: SystemProviderProps) {
   const [power, setPower] = React.useState<PowerState>("on");
+  const [viewportAspect, setViewportAspect] = React.useState(16 / 9);
   const [loadingApplications, setLoadingApplications] = React.useState<
     Set<ApplicationInstance>
   >(new Set());
@@ -58,6 +60,31 @@ export function SystemProvider({ children }: SystemProviderProps) {
     [loadingApplications],
   );
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    function handleResize() {
+      const viewport = window.visualViewport;
+      const width = viewport?.width ?? window.innerWidth;
+      const height = viewport?.height ?? window.innerHeight;
+      const aspect = height > 0 ? width / height : 16 / 9;
+      setViewportAspect(aspect);
+    }
+
+    handleResize();
+
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+
+    return () => {
+      viewport?.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, []);
+
   const value = React.useMemo(
     () => ({
       boot,
@@ -67,6 +94,7 @@ export function SystemProvider({ children }: SystemProviderProps) {
       power,
       removeLoadingApplication,
       shutdown,
+      viewportAspect,
     }),
     [
       boot,
@@ -76,6 +104,7 @@ export function SystemProvider({ children }: SystemProviderProps) {
       insertLoadingApplication,
       removeLoadingApplication,
       isLoadingApplication,
+      viewportAspect,
     ],
   );
 

@@ -9,6 +9,7 @@ import {
   Liquify,
   Shader,
 } from "shaders/react";
+import { useSystem } from "../system/system-provider";
 
 const LIGHT_WALLPAPER = "/vibrant-wallpaper-light.webp";
 const DARK_WALLPAPER = "/vibrant-wallpaper-dark.webp";
@@ -16,6 +17,10 @@ const DARK_WALLPAPER = "/vibrant-wallpaper-dark.webp";
 type WallpaperProps = React.ComponentProps<typeof Shader>;
 
 export function Wallpaper(props: WallpaperProps) {
+  const { viewportAspect } = useSystem();
+  const vignetteRadius =
+    0.33 * Math.min(1.4, Math.max(1, viewportAspect / (16 / 9)));
+
   return (
     <ClientOnly>
       <Shader aria-hidden="true" {...props}>
@@ -27,7 +32,7 @@ export function Wallpaper(props: WallpaperProps) {
           brightness={1.11}
           contrast={1.06}
           vignetteIntensity={1.16}
-          vignetteRadius={0.33}
+          vignetteRadius={vignetteRadius}
         >
           <Glitch intensity={0.1} speed={0.5}>
             <Liquify intensity={0.8} decay={2.5} radius={1.5} edges="mirror">

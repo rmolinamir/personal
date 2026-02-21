@@ -12,8 +12,10 @@
   </a>
 </p>
 
-This is an OS-inspired personal site with a desktop shell, windowed apps, and playful system interactions.
-The experience is meant to feel like a lightweight desktop: icons on the wallpaper, windowed apps, and system overlays.
+<p align="center">
+  This is an OS-inspired personal site with a desktop shell, windowed apps, and playful system interactions.
+  The experience is meant to feel like a lightweight desktop: icons on the wallpaper, windowed apps, and system overlays.
+</p>
 
 ---
 

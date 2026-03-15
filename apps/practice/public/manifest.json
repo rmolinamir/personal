@@ -1,0 +1,25 @@
+{
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "icons": [
+    {
+      "sizes": "any",
+      "src": "logo.svg",
+      "type": "image/svg+xml"
+    },
+    {
+      "sizes": "any",
+      "src": "logo-square.svg",
+      "type": "image/svg+xml"
+    },
+    {
+      "sizes": "460x460",
+      "src": "logo-square.png",
+      "type": "image/png"
+    }
+  ],
+  "name": "Robert Molina",
+  "short_name": "rmolinamir",
+  "start_url": ".",
+  "theme_color": "#000000"
+}

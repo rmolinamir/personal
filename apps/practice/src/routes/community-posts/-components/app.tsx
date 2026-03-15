@@ -28,7 +28,7 @@ function useAppContext() {
 function PostCard({ post }: PostProps) {
   const { setPosts } = useAppContext();
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(post.title);
   const [like, setLike] = useState(0);
   const [dislike, setDislike] = useState(0);
   const [editing, setEditing] = useState(false);

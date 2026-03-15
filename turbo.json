@@ -8,6 +8,7 @@
       "outputs": [
         ".cache/tsbuildinfo.json",
         ".output/**",
+        ".vercel/output/**",
         "dist/**",
         "storybook-static/**"
       ]

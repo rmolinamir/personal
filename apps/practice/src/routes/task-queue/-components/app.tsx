@@ -30,6 +30,7 @@ export function App() {
       signal: controller.signal,
     })
       .then(async (res) => {
+        if (!res.ok) throw new Error("Something went wrong.");
         const initialTasks = await res.json();
         setTasks(initialTasks);
       })

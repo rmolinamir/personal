@@ -147,7 +147,7 @@ export function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [postSorting, setPostSorting] = useState<Sort>(sort.newest);
   const [postFilter, setPostFilter] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const fetchPosts = useCallback(() => {
@@ -181,7 +181,7 @@ export function App() {
     return fetchPosts();
   }, [fetchPosts]);
 
-  const sortedPosts = useMemo(() => {
+  const filteredPosts = useMemo(() => {
     return posts
       .filter((p) => p.title.toLowerCase().includes(postFilter))
       .sort((a, b) => {
@@ -241,10 +241,10 @@ export function App() {
             </div>
           ) : loading ? (
             <div>Loading...</div>
-          ) : sortedPosts.length === 0 ? (
+          ) : filteredPosts.length === 0 ? (
             <div>No posts found.</div>
           ) : (
-            sortedPosts.map((p) => <PostCard key={p.id} post={p} />)
+            filteredPosts.map((p) => <PostCard key={p.id} post={p} />)
           )}
         </div>
       </div>

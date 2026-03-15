@@ -18,7 +18,7 @@ export function About() {
       },
       {
         content:
-          "I was born in Venezuela. I studied mechanical engineering, then took a hard turn into software because I liked building systems more than writing reports about them.",
+          "My name is Robert Molina. I was born in Venezuela. I studied mechanical engineering, then took a hard turn into software because I liked building systems more than writing reports about them.",
         type: "paragraph",
       },
       {

@@ -20,7 +20,7 @@ const POSTS: Post[] = [
   {
     body: "This is our first community update.",
     id: 1,
-    title: "Welcome to Coinbase community posts",
+    title: "Welcome to Acme community posts",
     userId: 2,
   },
   {
@@ -145,7 +145,7 @@ describe("Community Posts assessment", () => {
       target: { value: "oldest" },
     });
 
-    const oldest = screen.getByText("Welcome to Coinbase community posts");
+    const oldest = screen.getByText("Welcome to Acme community posts");
     const newest = screen.getByText("Release notes: security improvements");
     const relation = oldest.compareDocumentPosition(newest);
 

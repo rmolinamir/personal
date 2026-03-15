@@ -1,6 +1,6 @@
 # Community Posts Assessment (React + TypeScript)
 
-This is a Coinbase-style 90-minute progressive frontend assessment.
+This is a 90-minute progressive frontend assessment.
 
 ## Constraints
 

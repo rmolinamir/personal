@@ -6,11 +6,12 @@ Purpose
 - Keep this file stable and high level.
 
 Repo layout
-- `apps/web`: TanStack Start app (Vite + Nitro).
+- `apps/frontend-practice`: Interview-style React exercises and tests.
 - `apps/storybook`: Storybook for UI demos.
+- `apps/web`: TanStack Start app (Vite + Nitro).
 - `packages/ui`: UI components and OS windowing primitives.
-- `tooling/tsconfig`: Shared TS configs.
 - `specs`: Product specs and roadmap.
+- `tooling/tsconfig`: Shared TS configs.
 
 Command sources
 - Root scripts: `package.json`.

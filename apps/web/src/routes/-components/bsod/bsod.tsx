@@ -52,7 +52,7 @@ export function BSODScreen() {
           <p>Your PC ran into a problem and needs to restart.</p>
           <p>If you call a support person, give them this info:</p>
           <code>
-            ERROR: <b>AI_SLOP_DEPLOYED_TO_PROD</b>
+            ERROR: <b>YOU_ARE_ABSOLUTELY_RIGHT</b>
           </code>
         </div>
         <Button

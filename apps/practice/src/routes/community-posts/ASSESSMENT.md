@@ -47,7 +47,7 @@ The tests look for these labels/texts:
 From repo root:
 
 ```bash
-pnpm --filter @acme/coinbase test -- src/routes/post-feed/-components/app.test.tsx
+pnpm --filter @acme/practice test -- src/routes/community-posts/-components/app.test.tsx
 ```
 
 Passing all tests means your implementation is in strong interview shape for this problem format.

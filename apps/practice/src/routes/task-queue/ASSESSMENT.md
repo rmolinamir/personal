@@ -48,7 +48,7 @@ These labels/texts are what the tests look for:
 From repo root:
 
 ```bash
-pnpm --filter @acme/coinbase test -- src/routes/task-queue/-components/app.test.tsx
+pnpm --filter @acme/practice test -- src/routes/task-queue/-components/app.test.tsx
 ```
 
 If all tests pass, your implementation is in strong interview shape for this problem style.

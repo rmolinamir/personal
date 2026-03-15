@@ -1,0 +1,47 @@
+table {
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid black;
+  max-width: 720px;
+
+  th,
+  tr,
+  td {
+    border: 1px solid black;
+    padding: 8px;
+  }
+}
+
+.completed,
+.open {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.completed {
+  color: green;
+}
+
+.open {
+  color: gray;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.search-filter,
+.status-filter {
+  display: flex;
+  padding: 8px 4px;
+  align-items: center;
+  flex-direction: column;
+  label {
+    margin-right: 8px;
+  }
+}

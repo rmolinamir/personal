@@ -1,0 +1,28 @@
+{
+  "extends": "@acme/tsconfig/tsconfig.react.json",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["public/dwasm/index.js"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "types": ["vite/client"],
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+
+    /* Linting */
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

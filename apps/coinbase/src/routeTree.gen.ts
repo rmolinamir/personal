@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskQueueIndexRouteImport } from './routes/task-queue/index'
+import { Route as CommunityPostsIndexRouteImport } from './routes/community-posts/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const TaskQueueIndexRoute = TaskQueueIndexRouteImport.update({
   path: '/task-queue/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityPostsIndexRoute = CommunityPostsIndexRouteImport.update({
+  id: '/community-posts/',
+  path: '/community-posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/community-posts/': typeof CommunityPostsIndexRoute
   '/task-queue/': typeof TaskQueueIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/community-posts': typeof CommunityPostsIndexRoute
   '/task-queue': typeof TaskQueueIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/community-posts/': typeof CommunityPostsIndexRoute
   '/task-queue/': typeof TaskQueueIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/task-queue/'
+  fullPaths: '/' | '/community-posts/' | '/task-queue/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/task-queue'
-  id: '__root__' | '/' | '/task-queue/'
+  to: '/' | '/community-posts' | '/task-queue'
+  id: '__root__' | '/' | '/community-posts/' | '/task-queue/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CommunityPostsIndexRoute: typeof CommunityPostsIndexRoute
   TaskQueueIndexRoute: typeof TaskQueueIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaskQueueIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community-posts/': {
+      id: '/community-posts/'
+      path: '/community-posts'
+      fullPath: '/community-posts/'
+      preLoaderRoute: typeof CommunityPostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CommunityPostsIndexRoute: CommunityPostsIndexRoute,
   TaskQueueIndexRoute: TaskQueueIndexRoute,
 }
 export const routeTree = rootRouteImport

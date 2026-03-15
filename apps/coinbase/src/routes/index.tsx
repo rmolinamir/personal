@@ -12,6 +12,9 @@ function App() {
         <li>
           <Link to="/task-queue">Task Queue</Link>
         </li>
+        <li>
+          <Link to="/community-posts">Community Posts</Link>
+        </li>
       </ul>
     </div>
   );

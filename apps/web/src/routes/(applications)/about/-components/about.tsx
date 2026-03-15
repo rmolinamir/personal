@@ -48,7 +48,7 @@ export function About() {
           },
           {
             styles: {},
-            text: "I don’t like trading it away. I look for ways to move faster by improving the system, not by cutting corners.",
+            text: "I don’t like trading it away. I look for ways to move faster by improving the system (durable speed), not by cutting corners (fake speed).",
             type: "text",
           },
         ],

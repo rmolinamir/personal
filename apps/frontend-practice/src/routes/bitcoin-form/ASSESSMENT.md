@@ -12,5 +12,3 @@ Requirements:
 * bitcoin quote integration
 * format money and BTC values with `Intl`
 * preserve last valid parsed value if the user types junk
-
-<img src="./-assessment/bitcoin-form-mock.png" alt="Bitcoin Form Mock" width="720" />

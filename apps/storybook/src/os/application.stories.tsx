@@ -142,6 +142,7 @@ const AboutContent = React.lazy(() =>
 const AboutApplication = defineApplication("about-application")({
   component: () => (
     <Window
+      className="text-white"
       defaultFraming={{
         position: { x: 12, y: 12 },
         size: { height: 46, width: 45 },
@@ -211,6 +212,7 @@ const NotesContent = React.lazy(() =>
 const NotesApplication = defineApplication("notes-application")({
   component: () => (
     <Window
+      className="text-white"
       defaultFraming={{
         position: { x: 42, y: 18 },
         size: { height: 48, width: 42 },

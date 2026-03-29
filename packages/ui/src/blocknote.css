@@ -1,6 +1,0 @@
-/* Applies some additional necessary border styles within the BlockNote editor. */
-@layer base {
-  .bn-shadcn * {
-    @apply border-border outline-ring/50;
-  }
-}

@@ -190,4 +190,8 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Applies some additional necessary border styles within the BlockNote editor. */
+  .bn-shadcn * {
+    @apply border-border outline-ring/50;
+  }
 }

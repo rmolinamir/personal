@@ -93,7 +93,7 @@ export const FixedShell: Story = {
       <WindowManagerProvider>
         <WindowBoundary className="relative m-6 h-70 w-120 overflow-hidden border border-red-500 bg-green-200">
           <WindowSnap>
-            <Window>
+            <Window className="bg-white">
               <WindowHeader>
                 <WindowTitle>Fixed Shell</WindowTitle>
               </WindowHeader>
@@ -382,7 +382,7 @@ export const CenteredFraming: Story = {
     return (
       <WindowManagerProvider>
         <WindowBoundary className="relative h-160 w-full overflow-hidden bg-blue-300/30 p-6">
-          <CenteredWindow>
+          <CenteredWindow className="bg-white">
             <WindowHeader>
               <WindowTitle>Centered Framing</WindowTitle>
             </WindowHeader>

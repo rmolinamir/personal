@@ -127,7 +127,7 @@ export function BitcoinFormInput({
         data-slot="bitcoin-form-input-currency"
         type="button"
         onClick={handleClick}
-        className="h-7 w-full flex-1 text-left text-lg text-muted-foreground"
+        className="h-7 w-full flex-1 cursor-text text-left text-lg text-muted-foreground"
         tabIndex={-1}
       >
         {currency}

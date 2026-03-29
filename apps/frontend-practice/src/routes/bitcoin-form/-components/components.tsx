@@ -47,12 +47,11 @@ export function BitcoinForm({
   const [value, setValue] = React.useState<string>("");
 
   const purchaseAmount = Number(removeGroupSeparators(value) ?? 0);
+  const btcAmount = purchaseAmount / bitcoinQuote.value;
   const feeAmount = Number(removeGroupSeparators(value) ?? 0) * purchaseFee;
   const totalAmount = purchaseAmount + feeAmount;
 
-  const btcAmount = purchaseAmount / bitcoinQuote.value;
-
-  const isValid = purchaseAmount > 0 && accountBalance.value >= purchaseAmount;
+  const isValid = purchaseAmount > 0 && accountBalance.value >= totalAmount;
 
   const context: BitcoinFormContextValue = {
     accountBalance,

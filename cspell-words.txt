@@ -41,3 +41,6 @@ BSOD
 Turborepo
 agentic
 orientationchange
+labelledby
+Autofocus
+fieldset

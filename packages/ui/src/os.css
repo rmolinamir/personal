@@ -1,0 +1,8 @@
+.tabstrip-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabstrip-rail::-webkit-scrollbar {
+  display: none;
+}

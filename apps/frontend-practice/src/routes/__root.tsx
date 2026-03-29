@@ -5,9 +5,13 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import type * as React from "react";
+import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
   component: RouteComponent,
+  head: () => ({
+    links: [{ href: appCss, rel: "stylesheet" }],
+  }),
   shellComponent: RouteShellComponent,
 });
 

@@ -6,5 +6,12 @@
     }
   },
   "extends": "//",
+  "linter": {
+    "rules": {
+      "a11y": {
+        "noAutofocus": "off"
+      }
+    }
+  },
   "root": false
 }

@@ -18,6 +18,7 @@
     "./hooks/*": "./src/hooks/*.ts",
     "./lib/*": "./src/lib/*.ts",
     "./os/*": "./src/os/*.tsx",
+    "./themes/*.css": "./src/themes/*.css",
     "./styles.css": "./src/styles.css"
   },
   "dependencies": {

@@ -178,6 +178,9 @@ export function SelectOption({
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
     if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+
       setValue(value);
       setDisplayValue(children);
       setOpen(false);

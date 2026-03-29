@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskQueueIndexRouteImport } from './routes/task-queue/index'
+import { Route as SelectComponentIndexRouteImport } from './routes/select-component/index'
 import { Route as CommunityPostsIndexRouteImport } from './routes/community-posts/index'
+import { Route as BitcoinFormIndexRouteImport } from './routes/bitcoin-form/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +25,73 @@ const TaskQueueIndexRoute = TaskQueueIndexRouteImport.update({
   path: '/task-queue/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SelectComponentIndexRoute = SelectComponentIndexRouteImport.update({
+  id: '/select-component/',
+  path: '/select-component/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityPostsIndexRoute = CommunityPostsIndexRouteImport.update({
   id: '/community-posts/',
   path: '/community-posts/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BitcoinFormIndexRoute = BitcoinFormIndexRouteImport.update({
+  id: '/bitcoin-form/',
+  path: '/bitcoin-form/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bitcoin-form/': typeof BitcoinFormIndexRoute
   '/community-posts/': typeof CommunityPostsIndexRoute
+  '/select-component/': typeof SelectComponentIndexRoute
   '/task-queue/': typeof TaskQueueIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bitcoin-form': typeof BitcoinFormIndexRoute
   '/community-posts': typeof CommunityPostsIndexRoute
+  '/select-component': typeof SelectComponentIndexRoute
   '/task-queue': typeof TaskQueueIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bitcoin-form/': typeof BitcoinFormIndexRoute
   '/community-posts/': typeof CommunityPostsIndexRoute
+  '/select-component/': typeof SelectComponentIndexRoute
   '/task-queue/': typeof TaskQueueIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community-posts/' | '/task-queue/'
+  fullPaths:
+    | '/'
+    | '/bitcoin-form/'
+    | '/community-posts/'
+    | '/select-component/'
+    | '/task-queue/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community-posts' | '/task-queue'
-  id: '__root__' | '/' | '/community-posts/' | '/task-queue/'
+  to:
+    | '/'
+    | '/bitcoin-form'
+    | '/community-posts'
+    | '/select-component'
+    | '/task-queue'
+  id:
+    | '__root__'
+    | '/'
+    | '/bitcoin-form/'
+    | '/community-posts/'
+    | '/select-component/'
+    | '/task-queue/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BitcoinFormIndexRoute: typeof BitcoinFormIndexRoute
   CommunityPostsIndexRoute: typeof CommunityPostsIndexRoute
+  SelectComponentIndexRoute: typeof SelectComponentIndexRoute
   TaskQueueIndexRoute: typeof TaskQueueIndexRoute
 }
 
@@ -75,6 +111,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaskQueueIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/select-component/': {
+      id: '/select-component/'
+      path: '/select-component'
+      fullPath: '/select-component/'
+      preLoaderRoute: typeof SelectComponentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community-posts/': {
       id: '/community-posts/'
       path: '/community-posts'
@@ -82,12 +125,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityPostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bitcoin-form/': {
+      id: '/bitcoin-form/'
+      path: '/bitcoin-form'
+      fullPath: '/bitcoin-form/'
+      preLoaderRoute: typeof BitcoinFormIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BitcoinFormIndexRoute: BitcoinFormIndexRoute,
   CommunityPostsIndexRoute: CommunityPostsIndexRoute,
+  SelectComponentIndexRoute: SelectComponentIndexRoute,
   TaskQueueIndexRoute: TaskQueueIndexRoute,
 }
 export const routeTree = rootRouteImport

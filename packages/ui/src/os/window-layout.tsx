@@ -113,7 +113,11 @@ function WindowFooter({
     <CardFooter
       ref={ref}
       data-slot="window-footer"
-      className={cn("px-3 py-2", className)}
+      className={cn(
+        "px-3 py-2",
+        "border-border/80 border-t bg-accent/90 text-accent-foreground backdrop-blur-xs",
+        className,
+      )}
       {...props}
     />
   );
